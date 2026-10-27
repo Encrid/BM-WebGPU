@@ -12,7 +12,7 @@ It covers the instance, the adapter, the device and the surface of `webgpu.h`. I
 | `abi` | `1` |
 | `config` | `webgpu:DeviceSettings` |
 | `settings` | `present format alpha power fallback backend feature_level samples depth limits features` |
-| `pinned` | `false`, because WebGPU binds no call to a thread. |
+| `pinned` | `true`, because on macOS the module must make and configure the surface on the thread of the window. |
 | `reloadable` | `false`, because the objects of each render module belong to its device. |
 
 The manifest also gives a default for each of these keys of the module. A deployment that states one of them replaces its default.

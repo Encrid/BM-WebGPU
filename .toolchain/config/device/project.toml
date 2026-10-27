@@ -1,0 +1,6 @@
+[project]
+name = "BM-WebGPU-Device"
+
+[test]
+timeout = 120
+copies = 1

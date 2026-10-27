@@ -11,7 +11,7 @@ It covers the instance, the adapter, the device and the surface of `webgpu.h`. I
 | The identity | `webgpu:device@1.0.0` |
 | `abi` | `1` |
 | `config` | `webgpu:DeviceSettings` |
-| `settings` | `present format alpha power fallback backend feature_level samples depth limits features` |
+| `settings` | `present format alpha power fallback backend feature_level samples depth limits features error_room` |
 | `pinned` | `true`, because on macOS the module must make and configure the surface on the thread of the window. |
 | `reloadable` | `false`, because the objects of each render module belong to its device. |
 
@@ -79,6 +79,10 @@ The module writes each error of the device that no scope catches: `webgpu error:
 Each object that the module makes has a label that starts with `webgpu:device`.
 Each render module gives its objects a label that starts with its full name. Thus the text of an error tells which module made the object.
 
+wgpu-native calls the callback of an error inside the call that finds it, which can be a call of a render module, on its thread.
+That callback cannot write a line of this module. Thus it copies the text into a room of `error_room` bytes.
+The next run of `frame` writes each text that waits. Then it writes the count of the texts that did not fit, if there are some.
+
 ## webgpu:DeviceSettings
 
 `webgpu:DeviceSettings` is the singleton of the settings. Bridge writes it from the deployment, or from the defaults of the manifest.
@@ -96,6 +100,7 @@ Each render module gives its objects a label that starts with its full name. Thu
 | `depth` | `webgpu_depth_t` | The depth texture of the frame. The default is `WEBGPU_DEPTH_24_PLUS_STENCIL_8`. |
 | `limits` | `webgpu_limits_t` | The limits that the device asks for. The default is `WEBGPU_LIMITS_ADAPTER`. |
 | `features` | `webgpu_features_t` | The features that the device asks for. The default is `WEBGPU_FEATURES_ADAPTER`. |
+| `error_room` | `uint32_t` | The bytes of the room where the texts of the errors wait for `frame`: *The errors*. The default is 8192. |
 
 If `fallback` is `true`, or `backend` is not `WEBGPU_BACKEND_ANY`, a system with no such adapter gives none: *Messages*.
 If the surface or the device does not give the value of a setting, the module uses another value. It writes a line at the level 4.
@@ -316,6 +321,7 @@ The module writes these lines at the level 3, and the system goes on:
 
 - `device lost: <reason>: <text>`: *A lost device*.
 - `webgpu error: <type>: <text>`: *The errors*.
+- `webgpu error: <count> texts did not fit in error_room`: *The errors*.
 
 The module writes these lines at the level 4, when the surface or the device does not give the value of a setting:
 

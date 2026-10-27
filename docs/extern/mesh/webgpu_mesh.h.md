@@ -13,17 +13,17 @@ It draws into the frame of `webgpu:device`. It does not cover the shaders of an 
 | `config` | `webgpu:MeshSettings` |
 | `settings` | `load blend clear_depth depth_compare cull clockwise repeat gpu_memory` |
 | `pinned` | `false`, because WebGPU encodes and submits passes on any thread, and the module does not touch the surface. |
-| `reloadable` | `false` |
+| `reloadable` | `false`, because its pipelines and samplers live in its own memory, and a reload would lose them. |
 
 The manifest also gives a default for each of these keys of the module. A deployment that states one of them replaces its default.
 
 | Key | Default | Reason |
 | --- | --- | --- |
-| `scratch` | `8192` | The declarations of the ten types of `init`. |
+| `scratch` | `8192` | The declarations of the twelve types of `init`. |
 | `log_ring` | `2048` | Room for 64 records of 32 bytes: the lines of one round. |
-| `spans` | `4096` | A cell for each of the ten types in each table, and the spans of `render`, which matches each table. |
+| `spans` | `4096` | A cell for each of the twelve types in each table, and the spans of `render` and of its two observers. |
 | `spawns` | `"none"` | The module makes no entity. |
-| `changes` | `"none"` | The module attaches, detaches and destroys nothing. |
+| `changes` | `65536` | The attaches and the detaches of `webgpu:MeshGpu` and `webgpu:TextureGpu` in one round: *The GPU objects*. |
 | `persistent` | `"none"` | The module keeps no data in the arena. |
 | `hot_reload` | `false` | The module cannot reload. |
 
@@ -36,10 +36,10 @@ It needs no SDL3: it reads the device and the frame from `webgpu:Frame`.
 
 `render` runs in the phase `render`, and does these steps:
 
-1. If no `webgpu:Frame` is there, or its state is `WEBGPU_FRAME_NO_DEVICE`, it releases each object that it holds.
+1. If no `webgpu:Frame` is there, or its state is `WEBGPU_FRAME_NO_DEVICE`, it releases each object. It also detaches each component of *The GPU objects*.
 2. If the state is not `WEBGPU_FRAME_READY`, it stops.
 3. For a device that it holds no objects of, it makes its pipelines and its samplers.
-4. It uploads each mesh and each texture whose `gen` changed.
+4. It uploads each mesh and each texture whose `gen` changed, and keeps its GPU objects: *The GPU objects*.
 5. With `WEBGPU_LOAD_CLEAR`, it clears the frame with `clear` of `webgpu:Scene`, and the depth with `clear_depth`.
 6. For each view in `order`, it draws the draws, then the batches, that hold a bit of its `mask`.
 7. With more than 1 sample, its pass resolves the multisample texture into the frame.
@@ -47,6 +47,23 @@ It needs no SDL3: it reads the device and the frame from `webgpu:Frame`.
 `render` does not present the frame. The module `webgpu:device` does that.
 Each object that the module makes has a label that starts with `webgpu:mesh`. Thus an error of WebGPU tells that the module made the object.
 The full name of the system for `[order]` is `webgpu:mesh:render`.
+
+## The GPU objects
+
+The module keeps the GPU objects of an entity in a component of its own on that entity:
+
+| Component | On the entity of | Holds |
+| --- | --- | --- |
+| `webgpu:MeshGpu` | `webgpu:Mesh` | The buffer of the vertices, and the `gen` that it shows. |
+| `webgpu:TextureGpu` | `webgpu:Texture` | The texture, its view, and the `gen` that it shows. |
+
+Each one is a sparse set, with `on_destroy` set to `BRIDGE_ON_DESTROY_KEEP`. Thus an entity that the app destroys stays as a husk, until the module releases its objects.
+The observers `mesh_gone` and `texture_gone` hear `BRIDGE_ON_LEAVE` of `webgpu:Mesh` and of `webgpu:Texture`.
+Each one releases the GPU objects of the entity, and detaches the component of the module. Then Bridge destroys a husk.
+
+An upload that finds no room in `changes` waits for the next round.
+The two components are the module's own, so their C types are in its private header, not in `include/webgpu_mesh.h`.
+The full names of the observers for `[order]` are `webgpu:mesh:mesh_gone` and `webgpu:mesh:texture_gone`.
 
 ## webgpu:MeshSettings
 

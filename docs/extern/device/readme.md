@@ -21,6 +21,8 @@ Python 3.11 or a later version.
 | `python project.py clean` | Removes what the build made. Keeps what `fetch` downloaded. |
 | `python project.py distclean` | Removes the folder `build`, also what `fetch` downloaded. |
 
+The module `webgpu:device@1.0.0` runs on Bridge-Host with BB-Native. `docs/extern/webgpu_device.h.md` tells its window, its frame, its settings and its deployment.
+
 ## Contributing
 
 | Document | Content |

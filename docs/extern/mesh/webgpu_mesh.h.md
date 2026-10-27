@@ -19,9 +19,9 @@ The manifest also gives a default for each of these keys of the module. A deploy
 
 | Key | Default | Reason |
 | --- | --- | --- |
-| `scratch` | `8192` | The declarations of the twelve types of `init`. |
+| `scratch` | `8192` | The declarations of the fourteen types of `init`: its twelve, and `webgpu:webgpu_frame_state_t` and `webgpu:Frame` of `webgpu:device`. At a run of `render`, the texts of its lines. |
 | `log_ring` | `2048` | Room for 64 records of 32 bytes: the lines of one round. |
-| `spans` | `4096` | A cell for each of the twelve types in each table, and the spans of `render` and of its two observers. |
+| `spans` | `4096` | A cell for each of the fourteen types in each table, and the spans of `render` and of its two observers. |
 | `spawns` | `"none"` | The module makes no entity. |
 | `changes` | `65536` | The attaches and the detaches of `webgpu:MeshGpu` and `webgpu:TextureGpu` in one round: *The GPU objects*. |
 | `persistent` | `"none"` | The module keeps no data in the arena. |
@@ -38,13 +38,17 @@ It needs no SDL3: it reads the device and the frame from `webgpu:Frame`.
 
 1. If no `webgpu:Frame` is there, or its state is `WEBGPU_FRAME_NO_DEVICE`, it releases each object. It also detaches each component of *The GPU objects*.
 2. If the state is not `WEBGPU_FRAME_READY`, it stops.
-3. For a device that it holds no objects of, it makes its pipelines and its samplers.
+3. For a device that it holds no objects of, it makes its samplers. It makes each pipeline at the first draw that needs it.
 4. It uploads each mesh and each texture whose `gen` changed, and keeps its GPU objects: *The GPU objects*.
 5. With `WEBGPU_LOAD_CLEAR`, it clears the frame with `clear` of `webgpu:Scene`, and the depth with `clear_depth`.
 6. For each view in `order`, it draws the draws, then the batches, that hold a bit of its `mask`.
 7. With more than 1 sample, its pass resolves the multisample texture into the frame.
 
 `render` does not present the frame. The module `webgpu:device` does that.
+A new device, or a new format, samples or depth format of `webgpu:Frame`, makes `render` release each object and draw nothing in that round.
+With no `webgpu:Scene`, `render` takes each of its fields as 0.
+
+`blend`, `depth_compare`, `cull`, `clockwise` and `repeat` act from the next device. `load`, `clear_depth` and `gpu_memory` act from the next round.
 Each object that the module makes has a label that starts with `webgpu:mesh`. Thus an error of WebGPU tells that the module made the object.
 The full name of the system for `[order]` is `webgpu:mesh:render`.
 
@@ -54,16 +58,21 @@ The module keeps the GPU objects of an entity in a component of its own on that 
 
 | Component | On the entity of | Holds |
 | --- | --- | --- |
-| `webgpu:MeshGpu` | `webgpu:Mesh` | The buffer of the vertices, and the `gen` that it shows. |
-| `webgpu:TextureGpu` | `webgpu:Texture` | The texture, its view, and the `gen` that it shows. |
+| `webgpu:MeshGpu` | `webgpu:Mesh` | The buffer of the vertices, the `gen` that it shows, and the count, `layout` and `primitive` of its vertices. |
+| `webgpu:TextureGpu` | `webgpu:Texture` | The texture, its view, its bind group, the `gen` that it shows, and its bytes. |
 
 Each one is a sparse set, with `on_destroy` set to `BRIDGE_ON_DESTROY_KEEP`. Thus an entity that the app destroys stays as a husk, until the module releases its objects.
-The observers `mesh_gone` and `texture_gone` hear `BRIDGE_ON_LEAVE` of `webgpu:Mesh` and of `webgpu:Texture`.
+The observers `release_mesh` and `release_texture` hear `BRIDGE_ON_LEAVE` of `webgpu:Mesh` and of `webgpu:Texture`.
 Each one releases the GPU objects of the entity, and detaches the component of the module. Then Bridge destroys a husk.
 
+A detach that finds no room waits for a later round. If the item uploads again before it, the component takes the new objects.
+
+The first upload of an item takes two rounds. In the first round, `render` attaches the component with no object. From the next round, it uploads into the component.
+Thus an attach that Bridge does not apply loses no GPU object. A draw whose mesh or texture waits draws from that next round.
 An upload that finds no room in `changes` waits for the next round.
+
 The two components are the module's own, so their C types are in its private header, not in `include/webgpu_mesh.h`.
-The full names of the observers for `[order]` are `webgpu:mesh:mesh_gone` and `webgpu:mesh:texture_gone`.
+The full names of the observers for `[order]` are `webgpu:mesh:release_mesh` and `webgpu:mesh:release_texture`.
 
 ## webgpu:MeshSettings
 
@@ -73,7 +82,7 @@ The full names of the observers for `[order]` are `webgpu:mesh:mesh_gone` and `w
 | --- | --- | --- |
 | `load` | `webgpu_load_t` | What the module does with the frame before it draws. The default is `WEBGPU_LOAD_CLEAR`. |
 | `blend` | `bool` | `true`: each draw and each batch blends by its alpha, source alpha over one minus source alpha. The alpha of the frame becomes the alpha of the item. The default is `true`. |
-| `clear_depth` | `float` | The depth that `WEBGPU_LOAD_CLEAR` clears to. The views share it. The default is 1.0. |
+| `clear_depth` | `float` | The depth that `WEBGPU_LOAD_CLEAR` clears to, from 0 to 1. A value outside is taken as the nearer end. The views share it. The default is 1.0. |
 | `depth_compare` | `webgpu_compare_t` | The test of bit 0 of `depth`. The default is `WEBGPU_COMPARE_LESS_EQUAL`. |
 | `cull` | `webgpu_cull_t` | The faces that the module does not draw. The default is `WEBGPU_CULL_NONE`. |
 | `clockwise` | `bool` | `true`: a front face turns clockwise. The default is `false`, as in WebGPU. |
@@ -82,6 +91,8 @@ The full names of the observers for `[order]` are `webgpu:mesh:mesh_gone` and `w
 
 An alpha of 1 gives the result of an opaque draw. Draw the transparent items last, with a higher `order`, and without bit 1 of `depth`.
 Past `gpu_memory`, the module leaves out the new item, and writes a line at the level 4: *Messages*.
+The buffer of a round counts against `gpu_memory` too. If it cannot grow, that round draws only its clear.
+With `WEBGPU_DEPTH_NONE` of `webgpu:device`, `depth`, `depth_compare` and `clear_depth` do nothing.
 
 Each enum of the settings is of `uint32_t`. A deployment states a constant by its name or by its value.
 
@@ -136,6 +147,7 @@ The values are those of `webgpu.h`: `WEBGPU_CULL_NONE` 1, `WEBGPU_CULL_FRONT` 2 
 | `order` | `int32_t` | The views draw from the lowest `order`. |
 
 A view can reach past the right or the bottom edge of the frame. The module draws its part inside the frame, with no change to its projection.
+The module leaves out a view with no part inside the frame, and a view wider or taller than `maxTextureDimension2D` of the device.
 
 ## webgpu:Mesh
 
@@ -145,7 +157,7 @@ A view can reach past the right or the bottom edge of the frame. The module draw
 | --- | --- | --- |
 | `data` | `bridge_text_t` | The vertices, in the persistent memory of the app. |
 | `layout` | `uint32_t` | The parts of a vertex, as bits. *The vertices* tells them. |
-| `primitive` | `uint32_t` | 0 triangles, 1 lines, 2 points. |
+| `primitive` | `uint32_t` | 0 triangles, 1 lines, 2 points. A line joins each two vertices, so a wide line drops the last vertex of an odd count. |
 | `gen` | `uint32_t` | A change uploads the data again. |
 
 ## webgpu:Texture
@@ -172,7 +184,7 @@ A view can reach past the right or the bottom edge of the frame. The module draw
 | `shading` | `uint32_t` | 0 unlit, 1 lambert, 2 textured. *The shading* tells them. |
 | `views` | `uint32_t` | The bits of the views that draw it. |
 | `order` | `int32_t` | In a view, the draws draw from the lowest `order`. Draws of one `order` draw in the order of their entities. |
-| `depth` | `uint32_t` | Bit 0 tests the depth. Bit 1 writes the depth. |
+| `depth` | `uint32_t` | Bit 0 tests the depth. Bit 1 writes the depth. The other bits do nothing. |
 | `bias` | `float` | A positive `bias` moves each vertex toward the view: its depth after the projection, from 0 to 1, gets smaller by `bias`. It keeps lines in front of faces. |
 | `size` | `float` | The width of each point and of each line of the mesh, in pixels. *The widths* tells it. |
 
@@ -215,6 +227,7 @@ A draw gets a white texture in each round in which its `texture` is 0, or names 
 
 A `size` of 1 or less draws each point and each line 1 pixel wide, as WebGPU draws them.
 Above 1, the module draws each point as a square, and each line as a band, of `size` pixels. A wide line has no join at a sharp corner.
+On the GL backend of wgpu-native, the module needs OpenGL 4.3 or OpenGL ES 3.1, the level of the compatibility of WebGPU. Below them, a buffer of stride 0 reads wrong data.
 
 ## The data rules
 
@@ -246,8 +259,9 @@ Above 1, the module draws each point as a square, and each line as a band, of `s
 
 - `phases` lists `render` after the phase `frame` of `webgpu:device`, and before `present`.
 - The app writes `webgpu:Scene` and the five tables, so it needs `write` with the six names.
-- The module reads `webgpu:Frame`, so it needs `read` with `webgpu:Frame`.
+- The module reads `webgpu:Frame` of its own namespace, so it needs no grant for it.
 - The app needs a `persistent` share for the data.
+- The world needs `[budget] terms` of 10 or more for `render`, and `[budget] sparse_sets` of 2 or more.
 - A deployment gives the settings in `[module."webgpu:mesh@1.0.0".config]`.
 - The backend of BB-Native has no capability of a limit, so `work_limit`, `memory_limit` and the three timeouts of the module are `"none"`.
 
@@ -255,9 +269,9 @@ The readme of Bridge-Host tells each key of a deployment.
 
 ## Messages
 
-The module writes this line at the level 4, and leaves out the item:
+The module writes this line at the level 4, at most once in a round, and leaves out the item:
 
 - `no room: <bytes> bytes of gpu_memory are taken, and the item needs <bytes> more`: the item does not fit in `gpu_memory`.
 
 The errors of WebGPU are lines of the module `webgpu:device`, with the label of the object that the error names.
-If the memory of the caches or of a round cannot be allocated, `render` gives 1 with no line, and tries again.
+If the memory of a round cannot be allocated, `render` gives 1 with no line, and tries again.

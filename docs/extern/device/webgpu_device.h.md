@@ -19,7 +19,7 @@ The manifest also gives a default for each of these keys of the module. A deploy
 
 | Key | Default | Reason |
 | --- | --- | --- |
-| `scratch` | `16384` | The declarations of the fifteen types of `init`, and the value of `webgpu:Frame` that it attaches. |
+| `scratch` | `16384` | The declarations of the fifteen types of `init`, and the value of `webgpu:Frame` that it attaches. At a run of `frame`, the texts of its lines: the texts of the room of *The errors*, and the head of each line. With a larger `error_room`, make `scratch` larger too, or a line is cut to the room that is left. |
 | `log_ring` | `2048` | Room for 64 records of 32 bytes: the errors of the device in one round. |
 | `spans` | `4096` | A cell for each of the fifteen types in each table, and the spans of the two systems. |
 | `spawns` | `"none"` | The module makes no entity. |
@@ -46,15 +46,32 @@ The full names of the systems for `[order]` are `webgpu:device:frame` and `webgp
 
 `frame` does these steps at each run:
 
-1. If no `webgpu:Window` is there, or its `surface` is `WEBGPU_SURFACE_NONE`, it releases the surface and the device.
+1. It writes each text that waits in the room of *The errors*.
+2. If no `webgpu:Window` is there, or its `surface` is `WEBGPU_SURFACE_NONE`, it releases the surface and the device.
    Then it writes the state `WEBGPU_FRAME_NO_DEVICE`, and stops.
-2. If it has no device, it makes the instance, the surface, the adapter and the device, with the settings.
-3. If the size of `webgpu:Window` changed, it configures the surface for the new size.
-4. It gets the texture of the frame from the surface, and acts on its status: *The status of a frame*.
-5. It writes `webgpu:Frame` with the state `WEBGPU_FRAME_READY`.
+3. If it has no device, it takes the next step of *The make*, writes the state `WEBGPU_FRAME_SKIPPED`, and stops.
+4. If the size of `webgpu:Window` changed, it configures the surface for the new size.
+5. It gets the texture of the frame from the surface, and acts on its status: *The status of a frame*.
+6. It writes `webgpu:Frame` with the state `WEBGPU_FRAME_READY`.
 
 If a step gets no adapter, device or surface, it writes its line of *Messages* at the level 3. Then the system gives 1.
 The system tries again at its next run, until `max_system_failures` stops the module.
+
+The module configures the surface only for a size from 1 to `maxTextureDimension2D` of the device on each side.
+A window of another size, for example a minimized window, gives the state `WEBGPU_FRAME_SKIPPED`.
+A change of a setting after the device is there acts at the next device, for example after a loss.
+
+## The make
+
+The module makes its objects one step at a time, one step at each run of `frame`. Thus a round never waits for an answer.
+
+1. It makes the instance and the surface of the window, and asks for an adapter.
+2. It asks the adapter for a device.
+3. It takes the queue and the limits of the device.
+4. With 2, 8 or 16 samples, it checks that the device gives that count: *webgpu:webgpu_samples_t*.
+
+Each run calls `wgpuInstanceProcessEvents` once, so that an answer can come before the step that needs it.
+With wgpu-native v29.0.1.1, each request answers inside its call. Thus each step takes one run.
 
 ## The status of a frame
 
@@ -64,13 +81,16 @@ The system tries again at its next run, until `max_system_failures` stops the mo
 | `SuccessSuboptimal` | It gives the frame, and configures the surface again at its next run. |
 | `Timeout`, `Outdated` | It writes the state `WEBGPU_FRAME_SKIPPED`, and configures the surface again. |
 | `Lost` | It writes the state `WEBGPU_FRAME_SKIPPED`, and makes the surface again at its next run. |
+| `Occluded` of `wgpu.h` | It writes the state `WEBGPU_FRAME_SKIPPED`. The surface stays good while the window does not show. Only Metal gives this status. |
 | `Error` | It writes `no frame: the surface gives an error` at the level 3, and the system gives 1. |
+
+`present` does not read the status of `wgpuSurfacePresent`, because wgpu-native gives the cause of a failed present only to its own log.
 
 ## A lost device
 
 When the device is lost, the module writes `device lost: <reason>: <text>` at the level 3.
 `<reason>` is `unknown`, `destroyed`, `callback cancelled` or `failed creation`, and `<text>` is the text of wgpu-native.
-In that round, the state of `webgpu:Frame` is `WEBGPU_FRAME_NO_DEVICE`. At the next run of `frame`, the module makes a new device with the same settings.
+In that round, the state of `webgpu:Frame` is `WEBGPU_FRAME_NO_DEVICE`. At the next run of `frame`, the module starts *The make* again, with the settings of that run.
 
 ## The errors
 
@@ -80,7 +100,7 @@ Each object that the module makes has a label that starts with `webgpu:device`.
 Each render module gives its objects a label that starts with its full name. Thus the text of an error tells which module made the object.
 
 wgpu-native calls the callback of an error inside the call that finds it, which can be a call of a render module, on its thread.
-That callback cannot write a line of this module. Thus it copies the text into a room of `error_room` bytes.
+That callback cannot write a line of this module. Thus it copies the text into a room of `error_room` bytes. The callback of a loss copies its text there too.
 The next run of `frame` writes each text that waits. Then it writes the count of the texts that did not fit, if there are some.
 
 ## webgpu:DeviceSettings
@@ -95,7 +115,7 @@ The next run of `frame` writes each text that waits. Then it writes the count of
 | `power` | `webgpu_power_t` | The adapter to prefer. The default is `WEBGPU_POWER_HIGH_PERFORMANCE`. |
 | `fallback` | `bool` | `true`: only a fallback adapter, for example a software one. The default is `false`. |
 | `backend` | `webgpu_backend_t` | The API under WebGPU. The default is `WEBGPU_BACKEND_ANY`. |
-| `feature_level` | `webgpu_feature_level_t` | The level of WebGPU. The default is `WEBGPU_FEATURE_LEVEL_CORE`. |
+| `feature_level` | `webgpu_feature_level_t` | The level of WebGPU. The default is `WEBGPU_FEATURE_LEVEL_CORE`. wgpu-native v29.0.1.1 does not read it, so it does not change the adapter. |
 | `samples` | `webgpu_samples_t` | The samples of each pixel of the frame. The default is `WEBGPU_SAMPLES_1`. |
 | `depth` | `webgpu_depth_t` | The depth texture of the frame. The default is `WEBGPU_DEPTH_24_PLUS_STENCIL_8`. |
 | `limits` | `webgpu_limits_t` | The limits that the device asks for. The default is `WEBGPU_LIMITS_ADAPTER`. |
@@ -160,12 +180,13 @@ The values are those of `webgpu.h`.
 | Constant | Value | The API under WebGPU |
 | --- | --- | --- |
 | `WEBGPU_BACKEND_ANY` | 1 | wgpu-native chooses the API of the system. |
-| `WEBGPU_BACKEND_D3D11` | 2 | Direct3D 11. |
-| `WEBGPU_BACKEND_D3D12` | 3 | Direct3D 12. |
-| `WEBGPU_BACKEND_METAL` | 4 | Metal. |
-| `WEBGPU_BACKEND_VULKAN` | 5 | Vulkan. |
-| `WEBGPU_BACKEND_OPENGL` | 6 | OpenGL. |
-| `WEBGPU_BACKEND_OPENGLES` | 7 | OpenGL ES. |
+| `WEBGPU_BACKEND_D3D12` | 2 | Direct3D 12. |
+| `WEBGPU_BACKEND_METAL` | 3 | Metal. |
+| `WEBGPU_BACKEND_VULKAN` | 4 | Vulkan. |
+| `WEBGPU_BACKEND_OPENGL` | 5 | OpenGL. |
+| `WEBGPU_BACKEND_OPENGLES` | 6 | OpenGL ES. |
+
+wgpu-native v29.0.1.1 gives its one GL backend for `WEBGPU_BACKEND_OPENGL` and for `WEBGPU_BACKEND_OPENGLES`. It has no backend of Direct3D 11.
 
 ### webgpu:webgpu_feature_level_t
 
@@ -211,7 +232,7 @@ The depth texture has the samples of the frame. Each render pass chooses to use 
 | Constant | Value | The limits of the device |
 | --- | --- | --- |
 | `WEBGPU_LIMITS_ADAPTER` | 1 | Each limit that the adapter gives. |
-| `WEBGPU_LIMITS_DEFAULT` | 2 | The minimum limits of WebGPU, which each device gives. A world that runs with them fits each WebGPU device. |
+| `WEBGPU_LIMITS_DEFAULT` | 2 | The minimum limits of WebGPU, which each device gives. A world that runs with them fits each WebGPU device. On an adapter that cannot give them, wgpu-native gives lower limits. |
 
 ### webgpu:webgpu_features_t
 
@@ -234,6 +255,8 @@ The depth texture has the samples of the frame. Each render pass chooses to use 
 | `wl_display`, `wl_surface` | `uint64_t` | On Wayland: the display, and the surface of the window. |
 
 The module reads only the handles of the kind of `surface`. The handles of the other kinds are 0.
+A kind of another system, or a handle of 0, gives no surface: *Messages*.
+The module makes its surface from the handles once. To give another window, the app writes `WEBGPU_SURFACE_NONE` for one round first.
 
 ### webgpu:webgpu_surface_t
 
@@ -259,10 +282,11 @@ The module reads only the handles of the kind of `surface`. The handles of the o
 | `device` | `uint64_t` | The `WGPUDevice`. |
 | `queue` | `uint64_t` | The `WGPUQueue` of the device. |
 | `frame` | `uint64_t` | The `WGPUTextureView` of the frame, which the surface presents. |
-| `target` | `uint64_t` | The `WGPUTextureView` to draw into: `frame` with 1 sample, else the multisample texture. |
-| `depth` | `uint64_t` | The `WGPUTextureView` of the depth texture, or 0 with `WEBGPU_DEPTH_NONE`. |
+| `target` | `uint64_t` | The `WGPUTextureView` to draw into: `frame` with 1 sample, else the multisample texture. Its usage is `RenderAttachment`. |
+| `depth` | `uint64_t` | The `WGPUTextureView` of the depth texture, or 0 with `WEBGPU_DEPTH_NONE`. Its usages are `RenderAttachment` and `CopySrc`. |
 
-In `WEBGPU_FRAME_SKIPPED`, `device` and `queue` stay, and `frame`, `target` and `depth` are 0. In `WEBGPU_FRAME_NO_DEVICE`, each handle is 0.
+In `WEBGPU_FRAME_SKIPPED`, `frame`, `target` and `depth` are 0, and `device` and `queue` stay once the device is there.
+While *The make* takes its steps, and in `WEBGPU_FRAME_NO_DEVICE`, each field but `state` is 0.
 With more than 1 sample, each render pass resolves `target` into `frame`.
 A frame that no render module clears is black, because WebGPU clears each new frame to 0.
 
@@ -314,7 +338,7 @@ The module writes these lines at the level 3. Then the system gives 1, and tries
 
 - `no adapter: <reason>`: the request gives no adapter for the settings. `<reason>` is the text of wgpu-native.
 - `no device: <reason>`: the adapter gives no device. `<reason>` is the text of wgpu-native.
-- `no surface: <reason>`: the surface of the window cannot be made or configured. `<reason>` is the text of wgpu-native.
+- `no surface: <reason>`: the surface of the window cannot be made. `<reason>` is `the window has no handle of this system`, or `the adapter gives no format for the window`.
 - `no frame: the surface gives an error`: *The status of a frame*.
 
 The module writes these lines at the level 3, and the system goes on:

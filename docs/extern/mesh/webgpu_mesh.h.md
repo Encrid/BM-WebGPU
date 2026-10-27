@@ -12,7 +12,7 @@ It draws into the frame of `webgpu:device`. It does not cover the shaders of an 
 | `abi` | `1` |
 | `config` | `webgpu:MeshSettings` |
 | `settings` | `load blend clear_depth depth_compare cull clockwise repeat gpu_memory` |
-| `pinned` | `false`, because WebGPU binds no call to a thread. |
+| `pinned` | `false`, because WebGPU encodes and submits passes on any thread, and the module does not touch the surface. |
 | `reloadable` | `false` |
 
 The manifest also gives a default for each of these keys of the module. A deployment that states one of them replaces its default.

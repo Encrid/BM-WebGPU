@@ -1,7 +1,7 @@
 [kinds.wgpu_program]
 output = "{name}{exe}"
 steps = [
-    { run = ["{python}", "tests/smoke/link.py", "{wgpu_native}/lib", "{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "-I{wgpu_native}/include", "{sources}", "{wgpu_file}", "{rpath}", "-o", "{output}", "{stack}"] },
+    { cwd = "{wgpu_native}/lib", run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "-I{wgpu_native}/include", "{sources}", "{wgpu_file}", "{rpath}", "-o", "{output}", "{stack}"] },
 ]
 
 [kinds.pe_file]

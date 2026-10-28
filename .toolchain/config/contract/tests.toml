@@ -1,6 +1,6 @@
 [variables]
 probe_words = [
-    "abi=1", "config=none", "pinned=false", "reloadable=false", "scratch=4096", "log_ring=512",
+    "abi=2", "config=none", "pinned=false", "reloadable=false", "scratch=4096", "log_ring=512",
     "spans=1024", "spawns=none", "changes=256", "persistent=none", "hot_reload=false",
 ]
 

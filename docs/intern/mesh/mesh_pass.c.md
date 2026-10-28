@@ -27,6 +27,16 @@ A round with no view only clears, or draws nothing.
 wgpu-core needs a load and a store of the stencil for a format with a stencil, and reads none for another format.
 The source is https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-core/src/command/render.rs, lines 1696 to 1716.
 
+## The errors of the commands
+
+`mesh_encode` catches no error of its commands with a scope of `webgpu.h`.
+wgpu-core finds most errors of a pass only when the encoder finishes: https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-core/src/command/render.rs#L1840.
+Then the command buffer would have to stay out of the queue.
+
+wgpu-native v29.0.1.1 drops a command buffer only after `wgpuQueueSubmit` takes it: https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/lib.rs#L111-L118 and https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/lib.rs#L3084.
+On D3D12 and on WARP, a command buffer that stays holds the back buffer. Then the next configure of the surface fails, and stops the process: https://github.com/gfx-rs/wgpu-native/issues/638.
+Thus `mesh_encode` always submits, and an error in the commands stops the process: `docs/extern/webgpu_mesh.h.md`, *Messages*.
+
 ## A view
 
 `draw_view` sets the viewport and the scissor of the view, and binds the group 0 at the block of the view.

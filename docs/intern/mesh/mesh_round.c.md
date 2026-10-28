@@ -1,78 +1,79 @@
 # src/mesh_round.c
 
-This file holds the system `render`. It gives the order of the steps of a round, and the release of all the GPU objects.
+This file holds the systems `keep_meshes` and `keep_textures`. They start each round, and keep the uploads of the meshes and of the textures.
 
-## A round
+## The start of a round
 
-`bridge_render` follows the steps of `docs/extern/webgpu_mesh.h.md`, *The system render*:
+`keep_meshes` runs first in the phase `render`: `docs/intern/mesh_systems.c.md`, *The order*.
+It does the steps of `docs/extern/webgpu_mesh.h.md`, *The systems*, that come before the draws:
 
 ```pseudo
-FUNCTION bridge_render(f : Frame) RETURNS I32
-   IF f.state = WEBGPU_FRAME_NO_DEVICE THEN
-      CALL mesh_release_all()
-      RETURN 0
+FUNCTION bridge_keep_meshes(f : Frame) RETURNS I32
+   CALL open_round(f)
+   CALL sweep_set(MESH_GPU)
+   IF state.release THEN
+      CALL mesh_release_device()
    ENDIF
-   IF f.state <> WEBGPU_FRAME_READY THEN
-      RETURN 0
+   IF state.ready THEN
+      IF state.frame.device = 0 THEN
+         CALL mesh_make_device(f)
+      ENDIF
+      CALL mesh_walk(KEEP_MESHES, MESH, mesh_keep_mesh)
    ENDIF
-   IF state.frame.device <> 0 AND NOT is_same_device(state.frame, f) THEN
-      CALL mesh_release_all()
-      RETURN 0
-   ENDIF
-   IF state.left THEN
-      meshes <- mesh_sweep(MESH_GPU, FALSE)
-      textures <- mesh_sweep(TEXTURE_GPU, FALSE)
-      state.left <- meshes OR textures
-   ENDIF
-   IF state.frame.device = 0 THEN
-      CALL mesh_make_device(f)
-   ENDIF
-   IF NOT read_round(f) THEN
-      RETURN 1
-   ENDIF
-   CALL mesh_encode(f)
    RETURN 0
 ENDFUNCTION
 ```
 
 The pseudo code takes a frame that is not there as a frame of the state `WEBGPU_FRAME_NO_DEVICE`.
-`is_same_device` compares the copy that the state keeps with the four fields of `webgpu:Frame` that `docs/extern/webgpu_mesh.h.md`, *The system render*, names.
-The detaches of a release apply at the next barrier, so no upload of the next round meets an object of the old device.
-`state.left` tells that a detach found no room: `docs/intern/mesh_release.c.md`, *No room for a detach*.
+`keep_textures` runs next. It gives `TEXTURE_GPU` to `sweep_set`, and in a ready round it gives each texture to `mesh_keep_texture`.
+Each system first keeps its api in the state, so that the helpers of `src/mesh_lines.c` write with it.
 
-## The read
+## The flags of a round
 
-`read_round` does these steps:
+`open_round` sets the flags `release` and `ready` of the state. The systems after it read them:
 
-1. `mesh_reserve_round` grows the arrays of the round: `docs/intern/mesh_memory.c.md`, *The arrays of a round*.
-2. It clears `said` of the state, and keeps where the frame and the scene of the round are.
-3. With `mesh_walk`, it gives each mesh to `mesh_keep_mesh`, then each texture to `mesh_keep_texture`.
-4. With `mesh_walk`, it gives each view, each draw and each batch to its visit in `src/mesh_draw.c`.
-5. It sorts the views and the items with `compare_keys`.
-6. `mesh_put_round` puts the blocks, the records and the vertices of the batches into the round buffer.
+```pseudo
+PROCEDURE open_round(f : Frame)
+   lost <- f.state = WEBGPU_FRAME_NO_DEVICE
+   moved <- f.state = WEBGPU_FRAME_READY AND state.frame.device <> 0
+   moved <- moved AND NOT is_same_device(state.frame, f)
+   waits <- state.left[MESH_GPU] OR state.left[TEXTURE_GPU]
+   state.release <- moved OR (lost AND (state.frame.device <> 0 OR waits))
+   state.ready <- f.state = WEBGPU_FRAME_READY AND NOT moved
+   state.said_room <- FALSE
+   state.said_rule <- FALSE
+ENDPROCEDURE
+```
 
-Step 3 comes before step 4, so a draw finds the objects of each upload of its round.
-For a round with no `webgpu:Scene`, step 2 keeps where a constant scene of zeros is.
-If the arrays of the round cannot grow, `read_round` gives false, and `render` acts as `docs/extern/webgpu_mesh.h.md`, *Messages*, tells.
+`open_round` also sets the counts of the round to 0: the views, the items and the bytes of the batches.
+`is_same_device` compares the copy that the state keeps with the four fields of `webgpu:Frame` that `docs/extern/webgpu_mesh.h.md`, *The systems*, names.
 
-## The order
+## The sweep of a set
 
-`compare_keys` orders two keys by `rank`, then by `order`, then by `id`.
-A view has the rank 0. A draw has the rank 0, and a batch has the rank 1, so in each view the draws come before the batches.
-Two items of one `order` keep the order of their entity ids, the same on each run.
-`compare_keys` gives -1, 0 or 1, and does not subtract, so a large `order` cannot overflow.
+`sweep_set` sweeps one set, as the flags of the round tell:
 
-## The release of all
+```pseudo
+PROCEDURE sweep_set(set : U32)
+   IF state.release THEN
+      state.left[set] <- mesh_sweep(set, TRUE)
+   ENDIF
+   IF state.ready AND state.left[set] THEN
+      state.left[set] <- mesh_sweep(set, FALSE)
+   ENDIF
+ENDPROCEDURE
+```
 
-`mesh_release_all` sweeps each `webgpu:MeshGpu` and each `webgpu:TextureGpu` with `all`, and then releases the objects of the device.
-It sets `state.left` when a detach of the sweep found no room.
-`render` calls it at a lost device and at a new device, and `bridge_shutdown` calls it at the stop.
+A round that releases is never ready, so one call makes at most one sweep.
+The release writes zeros over each GPU component in place. Thus the next ready round uploads each item into its component, with the objects of the new device.
+`left` of the state holds a flag for each set. A flag tells that a detach found no room: `docs/intern/mesh_release.c.md`, *No room for a detach*.
+With no objects of a device and no detach that waits, a round with no frame sweeps nothing.
 
 ## Functions
 
 | Function | Result |
 | --- | --- |
-| `bridge_render` | Runs the steps of a round. Gives 0, or 1 when the arrays of the round cannot grow. |
-| `read_round` | Uploads what changed, and fills the sorted views and items of the round. Gives false when its arrays cannot grow. |
-| `compare_keys` | Orders two sort keys by rank, then order, then entity. |
-| `mesh_release_all` | Releases the objects of each GPU component and of the device. |
+| `bridge_keep_meshes` | Starts the round, makes or releases the objects of the device, and keeps each mesh. Gives 0. |
+| `bridge_keep_textures` | Sweeps the set of the textures, and keeps each texture. Gives 0. |
+| `open_round` | Sets the flags and the counts of a round from the frame. |
+| `sweep_set` | Sweeps one set at a lost device or a new device, or after a detach that found no room. |
+| `is_same_device` | Tells if the frame has the same four fields as the copy that the state keeps. |

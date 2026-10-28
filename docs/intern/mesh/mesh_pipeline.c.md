@@ -118,7 +118,7 @@ FUNCTION mesh_get_pipeline(layout : U32, shape : U32, depth : U32) RETURNS U32
 ENDFUNCTION
 ```
 
-Step 3 of `docs/extern/webgpu_mesh.h.md`, *The system render*, makes no pipeline in advance. wgpu-native has no call that makes a pipeline in the background.
+Step 3 of `docs/extern/webgpu_mesh.h.md`, *The systems*, makes no pipeline in advance. wgpu-native has no call that makes a pipeline in the background.
 Thus the round of the first draw of a pipeline makes it, and a pipeline that no draw needs is never made.
 `make_pipeline` gives each pipeline these states:
 
@@ -133,7 +133,7 @@ Thus the round of the first draw of a pipeline makes it, and a pipeline that no 
 | The color target | `format` of the frame. |
 
 The settings of the device are the copy that `docs/intern/mesh_device.c.md`, *The objects of a device*, tells.
-The pipelines of a `depth_format` of 0 have no depth state, so `WEBGPU_DEPTH_NONE` acts as the Usage tells in `docs/extern/webgpu_mesh.h.md`, *webgpu:MeshSettings*.
+The pipelines of a `depth_format` of 0 have no depth state. Thus a frame with no depth texture acts as `docs/extern/webgpu_mesh.h.md`, *webgpu:MeshSettings*, tells.
 The descriptor of each object gives a label that starts with `webgpu:mesh:`, because wgpu-native has no call `SetLabel`.
 
 ## Functions

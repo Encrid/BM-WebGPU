@@ -2,14 +2,14 @@
 
 `include/webgpu_mesh.h` is the header of the module `webgpu:mesh@1.0.0`, a renderer of Bridge that draws with WebGPU.
 The module draws what its components describe: views and meshes, with textures, draws and batches.
-It draws into the frame of `webgpu:device`. It does not cover the shaders of an app, or text.
+It draws into the frame that the device module writes, for example `webgpu:device`. It does not cover the shaders of an app, or text.
 
 ## The module
 
 | Word of the manifest | Value |
 | --- | --- |
 | The identity | `webgpu:mesh@1.0.0` |
-| `abi` | `1` |
+| `abi` | `2` |
 | `config` | `webgpu:MeshSettings` |
 | `settings` | `load blend clear_depth depth_compare cull clockwise repeat gpu_memory` |
 | `pinned` | `false`, because WebGPU encodes and submits passes on any thread, and the module does not touch the surface. |
@@ -19,9 +19,9 @@ The manifest also gives a default for each of these keys of the module. A deploy
 
 | Key | Default | Reason |
 | --- | --- | --- |
-| `scratch` | `8192` | The declarations of the fourteen types of `init`: its twelve, and `webgpu:webgpu_frame_state_t` and `webgpu:Frame` of `webgpu:device`. At a run of `render`, the texts of its lines. |
-| `log_ring` | `2048` | Room for 64 records of 32 bytes: the lines of one round. |
-| `spans` | `4096` | A cell for each of the fourteen types in each table, and the spans of `render` and of its two observers. |
+| `scratch` | `8192` | The declarations of the fourteen types of `init`: its twelve, and `webgpu:webgpu_frame_state_t` and `webgpu:Frame` of BL-WebGPU-Contract. At a run of a system, the texts of its lines. |
+| `log_ring` | `64` | Room for 2 records of 32 bytes: a round writes each line of *Messages* at most once. |
+| `spans` | `65536` | A cell for each of the fourteen types in each table, the spans of its five systems, and the lists of its two observers. A list holds 16 bytes for each mesh and each texture that leaves at one barrier. |
 | `spawns` | `"none"` | The module makes no entity. |
 | `changes` | `65536` | The attaches and the detaches of `webgpu:MeshGpu` and `webgpu:TextureGpu` in one round: *The GPU objects*. |
 | `persistent` | `"none"` | The module keeps no data in the arena. |
@@ -32,25 +32,38 @@ The header `bridge.h` of Bridge tells the room that `spans` needs in a world wit
 The file of the module is `webgpu_mesh`, with the suffix of a library. It runs on the backend of BB-Native, and loads the wgpu-native library of BL-WGPU-Native, which sits beside it.
 It needs no SDL3: it reads the device and the frame from `webgpu:Frame`.
 
-## The system render
+## The systems
 
-`render` runs in the phase `render`, and does these steps:
+The module has five systems in the phase `render`. They run one after another, in the order of this table:
 
-1. If no `webgpu:Frame` is there, or its state is `WEBGPU_FRAME_NO_DEVICE`, it releases each object. It also detaches each component of *The GPU objects*.
-2. If the state is not `WEBGPU_FRAME_READY`, it stops.
-3. For a device that it holds no objects of, it makes its samplers. It makes each pipeline at the first draw that needs it.
-4. It uploads each mesh and each texture whose `gen` changed, and keeps its GPU objects: *The GPU objects*.
-5. With `WEBGPU_LOAD_CLEAR`, it clears the frame with `clear` of `webgpu:Scene`, and the depth with `clear_depth`.
-6. For each view in `order`, it draws the draws, then the batches, that hold a bit of its `mask`.
-7. With more than 1 sample, its pass resolves the multisample texture into the frame.
+| Full name for `[order]` | Term of `BRIDGE_AND` | What it does |
+| --- | --- | --- |
+| `webgpu:mesh:keep_meshes` | `webgpu:Mesh` | It starts the round from `webgpu:Frame`, and uploads the meshes. |
+| `webgpu:mesh:keep_textures` | `webgpu:Texture` | It uploads the textures. |
+| `webgpu:mesh:draws` | `webgpu:Draw` | It adds each draw to the round. |
+| `webgpu:mesh:batches` | `webgpu:Batch` | It adds each batch to the round. |
+| `webgpu:mesh:render` | `webgpu:View` | It adds each view to the round, and encodes the pass of the round. |
 
-`render` does not present the frame. The module `webgpu:device` does that.
-A new device, or a new format, samples or depth format of `webgpu:Frame`, makes `render` release each object and draw nothing in that round.
+Each system reads only the tables that hold its kind of item. In each round, the five systems do these steps:
+
+1. If no `webgpu:Frame` is there, or its state is `WEBGPU_FRAME_NO_DEVICE`, they release each object.
+   Each component of *The GPU objects* stays, with no object.
+2. If the state is not `WEBGPU_FRAME_READY`, they draw nothing.
+3. For a new device, they make its samplers, the buffer of its defaults and a white texture.
+   They make each pipeline at the first draw that needs it.
+4. They upload each mesh and each texture whose `gen` changed, and keep its GPU objects: *The GPU objects*.
+5. With `WEBGPU_LOAD_CLEAR`, `render` clears the frame with `clear` of `webgpu:Scene`, and the depth with `clear_depth`.
+6. For each view in `order`, `render` draws the draws, then the batches, that hold a bit of its `mask`.
+7. With more than 1 sample, the pass resolves the multisample texture into the frame.
+
+A round with no view still runs `render`, which then does only step 5.
+`render` does not present the frame. The device module does that.
+A new device, or a new format, samples or depth format of `webgpu:Frame`, makes the module release each object and draw nothing in that round.
+From the next round, each item uploads again into its component.
 With no `webgpu:Scene`, `render` takes each of its fields as 0.
 
-`blend`, `depth_compare`, `cull`, `clockwise` and `repeat` act from the next device. `load`, `clear_depth` and `gpu_memory` act from the next round.
+`blend`, `depth_compare`, `cull`, `clockwise` and `repeat` act from the next device. `load`, `clear_depth` and `gpu_memory` act at the next run of the phase `render`.
 Each object that the module makes has a label that starts with `webgpu:mesh`. Thus an error of WebGPU tells that the module made the object.
-The full name of the system for `[order]` is `webgpu:mesh:render`.
 
 ## The GPU objects
 
@@ -67,9 +80,9 @@ Each one releases the GPU objects of the entity, and detaches the component of t
 
 A detach that finds no room waits for a later round. If the item uploads again before it, the component takes the new objects.
 
-The first upload of an item takes two rounds. In the first round, `render` attaches the component with no object. From the next round, it uploads into the component.
+The first upload of an item takes two rounds. In the first round, `keep_meshes` or `keep_textures` attaches the component with no object. From the next round, it uploads into the component.
 Thus an attach that Bridge does not apply loses no GPU object. A draw whose mesh or texture waits draws from that next round.
-An upload that finds no room in `changes` waits for the next round.
+An attach that finds no room in `changes` waits for the next round, so its item draws one round later.
 
 The two components are the module's own, so their C types are in its private header, not in `include/webgpu_mesh.h`.
 The full names of the observers for `[order]` are `webgpu:mesh:release_mesh` and `webgpu:mesh:release_texture`.
@@ -78,21 +91,27 @@ The full names of the observers for `[order]` are `webgpu:mesh:release_mesh` and
 
 `webgpu:MeshSettings` is the singleton of the settings. Bridge writes it from the deployment, or from the defaults of the manifest.
 
-| Field | C type | Value |
-| --- | --- | --- |
-| `load` | `webgpu_load_t` | What the module does with the frame before it draws. The default is `WEBGPU_LOAD_CLEAR`. |
-| `blend` | `bool` | `true`: each draw and each batch blends by its alpha, source alpha over one minus source alpha. The alpha of the frame becomes the alpha of the item. The default is `true`. |
-| `clear_depth` | `float` | The depth that `WEBGPU_LOAD_CLEAR` clears to, from 0 to 1. A value outside is taken as the nearer end. The views share it. The default is 1.0. |
-| `depth_compare` | `webgpu_compare_t` | The test of bit 0 of `depth`. The default is `WEBGPU_COMPARE_LESS_EQUAL`. |
-| `cull` | `webgpu_cull_t` | The faces that the module does not draw. The default is `WEBGPU_CULL_NONE`. |
-| `clockwise` | `bool` | `true`: a front face turns clockwise. The default is `false`, as in WebGPU. |
-| `repeat` | `bool` | `true`: the texture coordinates repeat. `false`: they clamp to the edge. The default is `true`. |
-| `gpu_memory` | `uint64_t` | The most bytes of the buffers and the textures that the module holds. The default is 18446744073709551615, so only the device bounds them. |
+| Field | C type | Offset | Value |
+| --- | --- | --- | --- |
+| `load` | `webgpu_load_t` | 0 | What the module does with the frame before it draws. The default is `WEBGPU_LOAD_CLEAR`. |
+| `blend` | `bool` | 4 | `true`: each draw and each batch blends by its alpha, source alpha over one minus source alpha. The alpha of the frame becomes the alpha of the item. The default is `true`. |
+| `clear_depth` | `float` | 8 | The depth that `WEBGPU_LOAD_CLEAR` clears to, from 0 to 1. A value below 0 is taken as 0, and a value above 1 as 1. The views share it. The default is 1.0. |
+| `depth_compare` | `webgpu_compare_t` | 12 | The test of bit 0 of `depth`. The default is `WEBGPU_COMPARE_LESS_EQUAL`. |
+| `cull` | `webgpu_cull_t` | 16 | The faces that the module does not draw. The default is `WEBGPU_CULL_NONE`. |
+| `clockwise` | `bool` | 20 | `true`: a front face turns clockwise. The default is `false`, as in WebGPU. |
+| `repeat` | `bool` | 21 | `true`: the texture coordinates repeat. `false`: they clamp to the edge. The default is `true`. |
+| `gpu_memory` | `uint64_t` | 24 | The most bytes of the buffers and the textures that the module holds. The default is 9223372036854775807, the largest value of a setting, so only the device bounds them. |
+
+The bytes 5 to 7 and 22 to 23 hold no field.
 
 An alpha of 1 gives the result of an opaque draw. Draw the transparent items last, with a higher `order`, and without bit 1 of `depth`.
+
 Past `gpu_memory`, the module leaves out the new item, and writes a line at the level 4: *Messages*.
-The buffer of a round counts against `gpu_memory` too. If it cannot grow, that round draws only its clear.
-With `WEBGPU_DEPTH_NONE` of `webgpu:device`, `depth`, `depth_compare` and `clear_depth` do nothing.
+The buffer of the defaults and the white texture of each device take 28 bytes of `gpu_memory`.
+The buffer of a round counts too: 256 bytes for each view, 92 for each draw and each batch, and the vertices of the batches.
+Its size is the smallest power of 2 that holds these bytes. If it cannot grow, that round draws no view.
+
+With no depth texture in `webgpu:Frame`, `depth`, `depth_compare` and `clear_depth` do nothing. An example is `WEBGPU_DEPTH_NONE` of `webgpu:device`.
 
 Each enum of the settings is of `uint32_t`. A deployment states a constant by its name or by its value.
 
@@ -128,23 +147,23 @@ The values are those of `webgpu.h`: `WEBGPU_CULL_NONE` 1, `WEBGPU_CULL_FRONT` 2 
 
 `webgpu:Scene` is a singleton that the app writes at each round.
 
-| Field | C type | Value |
-| --- | --- | --- |
-| `clear` | `float[4]` | The color that `WEBGPU_LOAD_CLEAR` clears the frame to: red, green, blue and alpha. |
-| `light` | `float[3]` | The direction from a face toward the light, for the shading `lambert`. |
-| `light_color` | `float[3]` | The color of the light. |
-| `ambient` | `float[3]` | The color that each face gets with no light. |
+| Field | C type | Offset | Value |
+| --- | --- | --- | --- |
+| `clear` | `float[4]` | 0 | The color that `WEBGPU_LOAD_CLEAR` clears the frame to: red, green, blue and alpha. |
+| `light` | `float[3]` | 16 | The direction from a face toward the light, for the shading `lambert`. |
+| `light_color` | `float[3]` | 28 | The color of the light. |
+| `ambient` | `float[3]` | 40 | The color that each face gets with no light. |
 
 ## webgpu:View
 
 `webgpu:View` is a table, with one entity for each view.
 
-| Field | C type | Value |
-| --- | --- | --- |
-| `matrix` | `float[16]` | The matrix of the view and of the projection, column by column. It maps the world to the clip space of WebGPU, where the depth goes from 0 to 1. |
-| `rect` | `uint32_t[4]` | The rectangle of the view, in pixels from the top left: x, y, width and height. A width of 0 is the whole frame. |
-| `mask` | `uint32_t` | The bits of the view. |
-| `order` | `int32_t` | The views draw from the lowest `order`. |
+| Field | C type | Offset | Value |
+| --- | --- | --- | --- |
+| `matrix` | `float[16]` | 0 | The matrix of the view and of the projection, column by column. It maps the world to the clip space of WebGPU, where the depth goes from 0 to 1. |
+| `rect` | `uint32_t[4]` | 64 | The rectangle of the view, in pixels from the top left: x, y, width and height. A width of 0 is the whole frame. |
+| `mask` | `uint32_t` | 80 | The bits of the view. |
+| `order` | `int32_t` | 84 | The views draw from the lowest `order`. |
 
 A view can reach past the right or the bottom edge of the frame. The module draws its part inside the frame, with no change to its projection.
 The module leaves out a view with no part inside the frame, and a view wider or taller than `maxTextureDimension2D` of the device.
@@ -153,52 +172,52 @@ The module leaves out a view with no part inside the frame, and a view wider or 
 
 `webgpu:Mesh` is a table, with one entity for each mesh.
 
-| Field | C type | Value |
-| --- | --- | --- |
-| `data` | `bridge_text_t` | The vertices, in the persistent memory of the app. |
-| `layout` | `uint32_t` | The parts of a vertex, as bits. *The vertices* tells them. |
-| `primitive` | `uint32_t` | 0 triangles, 1 lines, 2 points. A line joins each two vertices, so a wide line drops the last vertex of an odd count. |
-| `gen` | `uint32_t` | A change uploads the data again. |
+| Field | C type | Offset | Value |
+| --- | --- | --- | --- |
+| `data` | `bridge_text_t` | 0 | The vertices, in the persistent memory of the app. |
+| `layout` | `uint32_t` | 8 | The parts of a vertex, as bits. *The vertices* tells them. |
+| `primitive` | `uint32_t` | 12 | 0 triangles, 1 lines, 2 points. A line joins each two vertices. A list drops the vertices after its last whole triangle or line. |
+| `gen` | `uint32_t` | 16 | A change uploads the data again. A change of `data`, `layout` or `primitive` acts only with a new `gen`. |
 
 ## webgpu:Texture
 
 `webgpu:Texture` is a table, with one entity for each texture.
 
-| Field | C type | Value |
-| --- | --- | --- |
-| `data` | `bridge_text_t` | The pixels in RGBA8, row by row from the top. (0, 0) is the top left. |
-| `width`, `height` | `uint32_t` | The size of the texture, in pixels. |
-| `gen` | `uint32_t` | A change uploads the pixels again. |
-| `filter` | `uint32_t` | 0 nearest, 1 linear. |
+| Field | C type | Offset | Value |
+| --- | --- | --- | --- |
+| `data` | `bridge_text_t` | 0 | The pixels in RGBA8, row by row from the top. (0, 0) is the top left. |
+| `width`, `height` | `uint32_t` | 8, 12 | The size of the texture, in pixels. |
+| `gen` | `uint32_t` | 16 | A change uploads the pixels again. A change of `data`, `width`, `height` or `filter` acts only with a new `gen`. |
+| `filter` | `uint32_t` | 20 | 0 nearest, 1 linear. |
 
 ## webgpu:Draw
 
 `webgpu:Draw` is a table, with one entity for each mesh that draws.
 
-| Field | C type | Value |
-| --- | --- | --- |
-| `mesh` | `uint64_t` | The entity of the mesh. |
-| `texture` | `uint64_t` | The entity of the texture, or 0. |
-| `model` | `float[16]` | The matrix of the model, column by column. |
-| `color` | `float[4]` | The color that multiplies each vertex. |
-| `shading` | `uint32_t` | 0 unlit, 1 lambert, 2 textured. *The shading* tells them. |
-| `views` | `uint32_t` | The bits of the views that draw it. |
-| `order` | `int32_t` | In a view, the draws draw from the lowest `order`. Draws of one `order` draw in the order of their entities. |
-| `depth` | `uint32_t` | Bit 0 tests the depth. Bit 1 writes the depth. The other bits do nothing. |
-| `bias` | `float` | A positive `bias` moves each vertex toward the view: its depth after the projection, from 0 to 1, gets smaller by `bias`. It keeps lines in front of faces. |
-| `size` | `float` | The width of each point and of each line of the mesh, in pixels. *The widths* tells it. |
+| Field | C type | Offset | Value |
+| --- | --- | --- | --- |
+| `mesh` | `uint64_t` | 0 | The entity of the mesh. |
+| `texture` | `uint64_t` | 8 | The entity of the texture, or 0. |
+| `model` | `float[16]` | 16 | The matrix of the model, column by column. |
+| `color` | `float[4]` | 80 | The color that multiplies each vertex. |
+| `shading` | `uint32_t` | 96 | 0 unlit, 1 lambert, 2 textured. *The shading* tells them. |
+| `views` | `uint32_t` | 100 | The bits of the views that draw it. |
+| `order` | `int32_t` | 104 | In a view, the draws draw from the lowest `order`. Draws of one `order` draw in the order of their entity ids, from the lowest. |
+| `depth` | `uint32_t` | 108 | Bit 0 tests the depth. Bit 1 writes the depth. The other bits do nothing. |
+| `bias` | `float` | 112 | A positive `bias` moves each vertex toward the view: its depth after the projection, from 0 to 1, gets smaller by `bias`. It keeps lines in front of faces. The GPU does not draw a part with a depth below 0. |
+| `size` | `float` | 116 | The width of each point and of each line of the mesh, in pixels. *The widths* tells it. |
 
 ## webgpu:Batch
 
 `webgpu:Batch` is a table, with one entity for each batch of vertices that the app writes again at each round.
 
-| Field | C type | Value |
-| --- | --- | --- |
-| `data` | `bridge_text_t` | The vertices of the round. |
-| `layout`, `primitive` | `uint32_t` | As in `webgpu:Mesh`. |
-| `views`, `depth` | `uint32_t` | As in `webgpu:Draw`. |
-| `order` | `int32_t` | As in `webgpu:Draw`. |
-| `size` | `float` | As in `webgpu:Draw`. |
+| Field | C type | Offset | Value |
+| --- | --- | --- | --- |
+| `data` | `bridge_text_t` | 0 | The vertices of the round. |
+| `layout`, `primitive` | `uint32_t` | 8, 12 | As in `webgpu:Mesh`. |
+| `views`, `depth` | `uint32_t` | 16, 20 | As in `webgpu:Draw`. |
+| `order` | `int32_t` | 24 | As in `webgpu:Draw`. |
+| `size` | `float` | 28 | As in `webgpu:Draw`. |
 
 A batch draws unlit, with no texture and no model. Its color is the color of its vertices, or white.
 
@@ -222,6 +241,10 @@ The stride is 12 bytes, plus the bytes of each part.
 
 A vertex with no color is white, and a vertex with no normal or no texture coordinate gets 0 for it.
 A draw gets a white texture in each round in which its `texture` is 0, or names a texture that is left out or gone.
+The module lights each vertex, and the GPU interpolates the color between the vertices.
+
+The module gives each color as it is, and takes each texel as it is.
+With a frame of an sRGB format, the GPU blends the colors as they are, and then encodes the result to sRGB. Thus a color of 0.5 shows as 188 of 255.
 
 ## The widths
 
@@ -232,46 +255,99 @@ On the GL backend of wgpu-native, the module needs OpenGL 4.3 or OpenGL ES 3.1, 
 ## The data rules
 
 - The app allocates the data in its own persistent memory, and a field holds its place.
-- The module leaves out an item whose data is outside the memory of the world, or whose length is not a multiple of the stride.
+- The module leaves out an item whose data is outside the persistent arena, or whose length is not a multiple of the stride.
 - It leaves out a texture whose length is not `width` times `height` times 4.
 - It leaves out a draw that names no mesh, and an item whose data has a length of 0.
 - It leaves out an item with a `primitive` above 2, a `layout` above 7, a `shading` above 2 or a `filter` above 1.
 - It leaves out a texture that is larger than the limits of the device, and data that is larger than a buffer of the device.
+- It tries a left-out item again at each round. Thus a fix of its fields acts with no new `gen`.
+
+Each rule that leaves out an item, a view or a round writes the line `left out` of *Messages*.
 
 ## The C types
 
 `include/webgpu_mesh.h` gives the C type of each type of the module, and its descriptor for Bridge.
+It includes only headers of Bridge. It makes each C type and its descriptor from one text, with the macros of `bridge_schema.h`.
 
-| Type of Bridge | C type | Descriptor |
-| --- | --- | --- |
-| `webgpu:webgpu_load_t` | `webgpu_load_t` | `webgpu_load_t_desc` |
-| `webgpu:webgpu_compare_t` | `webgpu_compare_t` | `webgpu_compare_t_desc` |
-| `webgpu:webgpu_cull_t` | `webgpu_cull_t` | `webgpu_cull_t_desc` |
-| `webgpu:MeshSettings` | `webgpu_mesh_settings_t` | `webgpu_mesh_settings_t_desc` |
-| `webgpu:Scene` | `webgpu_scene_t` | `webgpu_scene_t_desc` |
-| `webgpu:View` | `webgpu_view_t` | `webgpu_view_t_desc` |
-| `webgpu:Mesh` | `webgpu_mesh_t` | `webgpu_mesh_t_desc` |
-| `webgpu:Texture` | `webgpu_texture_t` | `webgpu_texture_t_desc` |
-| `webgpu:Draw` | `webgpu_draw_t` | `webgpu_draw_t_desc` |
-| `webgpu:Batch` | `webgpu_batch_t` | `webgpu_batch_t_desc` |
+| Type of Bridge | C type | Descriptor | Size | Alignment |
+| --- | --- | --- | --- | --- |
+| `webgpu:webgpu_load_t` | `webgpu_load_t` | `webgpu_load_t_desc` | 4 | 4 |
+| `webgpu:webgpu_compare_t` | `webgpu_compare_t` | `webgpu_compare_t_desc` | 4 | 4 |
+| `webgpu:webgpu_cull_t` | `webgpu_cull_t` | `webgpu_cull_t_desc` | 4 | 4 |
+| `webgpu:MeshSettings` | `webgpu_mesh_settings_t` | `webgpu_mesh_settings_t_desc` | 32 | 8 |
+| `webgpu:Scene` | `webgpu_scene_t` | `webgpu_scene_t_desc` | 52 | 4 |
+| `webgpu:View` | `webgpu_view_t` | `webgpu_view_t_desc` | 88 | 4 |
+| `webgpu:Mesh` | `webgpu_mesh_t` | `webgpu_mesh_t_desc` | 20 | 4 |
+| `webgpu:Texture` | `webgpu_texture_t` | `webgpu_texture_t_desc` | 24 | 4 |
+| `webgpu:Draw` | `webgpu_draw_t` | `webgpu_draw_t_desc` | 120 | 8 |
+| `webgpu:Batch` | `webgpu_batch_t` | `webgpu_batch_t_desc` | 32 | 4 |
+
+A module in another language does not include the header. It states the descriptor of each type with these bytes, in the order of the table:
+
+```text
+uint32_t { WEBGPU_LOAD_CLEAR = 1, WEBGPU_LOAD_KEEP = 2 }
+uint32_t { WEBGPU_COMPARE_NEVER = 1, WEBGPU_COMPARE_LESS = 2, WEBGPU_COMPARE_EQUAL = 3, WEBGPU_COMPARE_LESS_EQUAL = 4, WEBGPU_COMPARE_GREATER = 5, WEBGPU_COMPARE_NOT_EQUAL = 6, WEBGPU_COMPARE_GREATER_EQUAL = 7, WEBGPU_COMPARE_ALWAYS = 8 }
+uint32_t { WEBGPU_CULL_NONE = 1, WEBGPU_CULL_FRONT = 2, WEBGPU_CULL_BACK = 3 }
+{ webgpu_load_t load; bool blend; float clear_depth; webgpu_compare_t depth_compare; webgpu_cull_t cull; bool clockwise; bool repeat; uint64_t gpu_memory; }
+{ float clear[4]; float light[3]; float light_color[3]; float ambient[3]; }
+{ float matrix[16]; uint32_t rect[4]; uint32_t mask; int32_t order; }
+{ bridge_text_t data; uint32_t layout; uint32_t primitive; uint32_t gen; }
+{ bridge_text_t data; uint32_t width; uint32_t height; uint32_t gen; uint32_t filter; }
+{ uint64_t mesh; uint64_t texture; float model[16]; float color[4]; uint32_t shading; uint32_t views; int32_t order; uint32_t depth; float bias; float size; }
+{ bridge_text_t data; uint32_t layout; uint32_t primitive; uint32_t views; uint32_t depth; int32_t order; float size; }
+```
+
+`webgpu:webgpu_frame_state_t` and `webgpu:Frame` are the types of BL-WebGPU-Contract. Its header `webgpu_contract.h` gives their C types and descriptors.
+The document of that header tells their fields and their constants.
 
 ## The deployment
 
-- `phases` lists `render` after the phase `frame` of `webgpu:device`, and before `present`.
+- `phases` lists `render` after the phase in which the device module writes the frame, and before the phase in which it presents the frame.
+  For `webgpu:device`, these phases are `frame` and `present`.
 - The app writes `webgpu:Scene` and the five tables, so it needs `write` with the six names.
-- The module reads `webgpu:Frame` of its own namespace, so it needs no grant for it.
+- A module of another namespace that changes a setting while the world runs needs `write` with `webgpu:MeshSettings`.
+  It also needs `read` with `webgpu:webgpu_load_t`, `webgpu:webgpu_compare_t` and `webgpu:webgpu_cull_t`.
+- The module reads `webgpu:Frame` and `webgpu:webgpu_frame_state_t` of its own namespace, so it needs no grant for them.
 - The app needs a `persistent` share for the data.
-- The world needs `[budget] terms` of 10 or more for `render`, and `[budget] sparse_sets` of 2 or more.
+- The world needs `[budget] terms` of 4 or more, for `keep_meshes` and `render`, and `[budget] sparse_sets` of 2 or more.
+- The world needs `[budget] types` for the fourteen types of the module, and `[budget] systems` for its five systems and its two observers.
+- Bridge stops the module when the list of an observer does not fit in `spans`. Thus a deployment sizes `spans` for the most items that one barrier removes.
 - A deployment gives the settings in `[module."webgpu:mesh@1.0.0".config]`.
+- The wgpu-native library of BL-WGPU-Native sits beside the module, and `content.ignore` names it.
+- On aarch64-windows-gnu, the machine needs the Microsoft Visual C++ Redistributable for arm64. The readme of BL-WGPU-Native tells why.
 - The backend of BB-Native has no capability of a limit, so `work_limit`, `memory_limit` and the three timeouts of the module are `"none"`.
 
 The readme of Bridge-Host tells each key of a deployment.
 
 ## Messages
 
-The module writes this line at the level 4, at most once in a round, and leaves out the item:
+The module writes these lines at the level 4. A round writes each line at most once.
 
-- `no room: <bytes> bytes of gpu_memory are taken, and the item needs <bytes> more`: the item does not fit in `gpu_memory`.
+- `no room: <bytes> bytes of gpu_memory are taken, and the item needs <bytes> more`: the item does not fit in `gpu_memory`, and the module leaves it out.
+- `left out <entity>: <rule>`: a rule leaves out the item or the view of the entity. For a round that the module leaves out, the entity is 0.
 
-The errors of WebGPU are lines of the module `webgpu:device`, with the label of the object that the error names.
-If the memory of a round cannot be allocated, `render` gives 1 with no line, and tries again.
+The line `left out` names the first item that a rule leaves out in the round. The module looks at the meshes, the textures, the draws, the batches, the views, and then the round.
+`<rule>` is one of these texts:
+
+| Rule | What it leaves out |
+| --- | --- |
+| `its data lies outside the persistent arena` | A mesh, a texture or a batch. |
+| `its data has a length of 0` | A mesh, a texture or a batch. |
+| `its length is not a multiple of its stride` | A mesh or a batch. |
+| `its length is not width times height times 4` | A texture. |
+| `its primitive is above 2` | A mesh or a batch. |
+| `its layout is above 7` | A mesh or a batch. |
+| `its shading is above 2` | A draw. |
+| `its filter is above 1` | A texture. |
+| `it names no mesh` | A draw whose `mesh` is not an entity with `webgpu:Mesh`. |
+| `its data is larger than a buffer of the device` | A mesh. |
+| `it is wider or taller than maxTextureDimension2D` | A texture or a view. |
+| `it has no part inside the frame` | A view. |
+| `the round is larger than a buffer of the device` | The round, which then draws no view. |
+
+Each error of a call of the module reaches the error callback of the device, with the label of its object.
+If the commands of a round hold an error, wgpu-native v29.0.1.1 stops the process in `wgpuQueueSubmit`: https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/lib.rs#L3090.
+Before it stops, it writes `Error in wgpuQueueSubmit:` and the text of the error to the standard error.
+The device module writes the line of an error at its next frame, so that line does not come.
+
+If the memory of a round cannot be allocated, the system that needs it gives 1 with no line. That round draws nothing, and the next round tries again.

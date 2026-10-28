@@ -10,8 +10,10 @@ It fills the block of each view, and the record of each item.
 1. A `rect` with a width of 0 becomes the whole frame.
 2. The viewport is the whole `rect`, also where it passes the frame on the right or at the bottom.
 3. The scissor is the part of `rect` inside the frame. Its sums have 64 bits.
-4. It applies the rules of `docs/extern/webgpu_mesh.h.md`, *webgpu:View*, to the scissor and to the size of `rect`.
+4. It applies the rules of `docs/extern/webgpu_mesh.h.md`, *webgpu:View*: first to the size of `rect`, then to the scissor.
 5. It fills the block: `matrix`, the light of the scene, and the width and the height of `rect`.
+
+`mesh_add_view` gives a view that a rule leaves out to `mesh_say_left_out`, with the id of the view and the rule.
 
 wgpu-core 29.0.1 accepts a viewport that passes the frame, up to that size, but it needs the scissor inside the frame.
 Thus the projection of a view stays the same, and the pass draws only its part inside the frame.
@@ -33,8 +35,17 @@ The source is https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-core/src/command/
 | `size` | `size` | `size` |
 | `shading` | `shading` | 0, unlit. |
 
-`mesh_add_draw` leaves out a draw whose mesh has no `webgpu:MeshGpu` with a buffer, and a draw whose `shading` is above 2.
-`mesh_add_batch` leaves out each batch that a rule of `docs/extern/webgpu_mesh.h.md`, *The data rules*, refuses.
+`mesh_add_draw` leaves out a draw whose `shading` is above 2. Then it looks at the `mesh` of the draw:
+
+| The `mesh` of the draw | The draw |
+| --- | --- |
+| 0, a dead id, or an entity with no `webgpu:Mesh` | Left out, with the rule `it names no mesh`. |
+| An entity with `webgpu:Mesh` and no `webgpu:MeshGpu` | None: the draw waits for the next round. |
+| An entity whose `webgpu:MeshGpu` holds zeros | Left out with no line of its own: the line of the mesh tells why. |
+| An entity whose `webgpu:MeshGpu` holds a buffer | It draws. |
+
+`mesh_add_batch` leaves out each batch that a rule of `docs/extern/webgpu_mesh.h.md`, *The data rules*, refuses: first `layout`, then `primitive`, then the data.
+`mesh_add_draw` and `mesh_add_batch` give an item that a rule leaves out to `mesh_say_left_out`, with the id of the item and the rule.
 The vertices of a batch come after the vertices of the batch before it, in the order of the walk.
 
 `add_item` gives the item the next record. The sort of the round moves the items and not the records, so each item keeps its record.

@@ -9,22 +9,20 @@ A native module gets only its API at each call, so its state has no other place 
 The file keeps it in one static struct, and `mesh_get_state` gives it to the other sources.
 A `[[style.exception]]` of the project excuses this struct from the rule G4, with that reason.
 Bridge runs the systems and the observers of one module one after another: `bridge.h.md` of Bridge, in its section bridge_run_phase.
-Thus no two calls change the state at the same time.
+Thus no two calls change the state at the same time, and the five systems pass the data of a round through it.
 
 ## The walk
 
-`mesh_walk` gives each row of one component to a visit, and gives the count of the rows. It reads the spans of the query of `render`:
+`mesh_walk` gives each row of one component to a visit, and gives the count of the rows. It reads the spans of the query of one system:
 
 ```pseudo
-FUNCTION mesh_walk(slot : U32, visit : Visit) RETURNS U32
+FUNCTION mesh_walk(system : U32, slot : U32, visit : Visit) RETURNS U32
+   query <- queries[system]
    n <- 0
    FOR s <- 0 TO query.spans - 1
       table <- query.span[s].table
       base <- column_base[table * types + slot]
       rows <- query.span[s].rows
-      IF base = 0 THEN
-         rows <- 0
-      ENDIF
       FOR row <- 0 TO rows - 1
          CALL visit(blocks[table].id[row], base + row * stride[slot])
       NEXT row
@@ -34,7 +32,9 @@ FUNCTION mesh_walk(slot : U32, visit : Visit) RETURNS U32
 ENDFUNCTION
 ```
 
-A `base` of 0 tells that the table does not carry the component. With no visit, `mesh_walk` only counts the rows.
+The query of each system has one term of `BRIDGE_AND`, on its kind of item: `docs/intern/mesh_systems.c.md`, *The statements*.
+Bridge writes a span only for a table that a query matches. Thus a walk reads only the tables that hold the kind of item of its system.
+Each caller gives the slot of that term, so each table of a span carries the component. With no visit, `mesh_walk` only counts the rows.
 
 ## The value of a component
 
@@ -51,9 +51,13 @@ A value stays good until the next barrier, so no source keeps it longer.
 
 ## The data rules
 
-`mesh_get_data` gives the bytes of a field `bridge_text_t`, or 0. It applies `docs/extern/webgpu_mesh.h.md`, *The data rules*.
-The bytes must lie from `arena_lo` to `arena_hi` of the header. The test does not add the place and the length, so a long field cannot wrap.
-The length must not be 0, and must be a multiple of the unit that the caller gives. The unit is the stride of a mesh or of a batch, or 4 for a texture.
+`mesh_get_data` gives the bytes of a field `bridge_text_t`, or 0 and the rule that refuses them. It applies `docs/extern/webgpu_mesh.h.md`, *The data rules*, in this order:
+
+1. The bytes must lie from `arena_lo` to `arena_hi` of the header. The test does not add the place and the length, so a long field cannot wrap.
+2. The length must not be 0.
+3. The length must be a multiple of the unit that the caller gives.
+
+The unit is the stride of a mesh or of a batch, or 1 for a texture. `upload_texture` tests the length of its pixels itself.
 
 ## The room of changes
 
@@ -70,7 +74,7 @@ With less room, more changes wait for a later round, and no invocation fails.
 | Function | Result |
 | --- | --- |
 | `mesh_get_state` | Gives the state of the module. |
-| `mesh_walk` | Gives each row of a component to a visit, and gives the count of the rows. |
+| `mesh_walk` | Gives each row of a component in the spans of one system to a visit, and gives the count of the rows. |
 | `mesh_find` | Gives where the value of a component of an entity is, or 0. |
-| `mesh_get_data` | Gives the bytes of a field of data, or 0 when a data rule refuses them. |
+| `mesh_get_data` | Gives the bytes of a field of data, or 0 and the rule that refuses them. |
 | `mesh_take_change` | Gives true when the room that is left in `changes` holds one change of that many bytes. |

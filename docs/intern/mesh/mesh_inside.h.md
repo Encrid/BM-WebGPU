@@ -1,7 +1,7 @@
 # src/mesh_inside.h
 
 This private header is shared by the sources of the module.
-It includes `include/webgpu_mesh.h`, the header `webgpu_device.h` of the module `webgpu:device`, `webgpu.h` of wgpu-native and the headers of BB-Native.
+It includes `include/webgpu_mesh.h`, the header `webgpu_contract.h` of BL-WebGPU-Contract, `webgpu.h` of wgpu-native and the headers of BB-Native.
 
 ## The slots
 
@@ -26,7 +26,8 @@ Each slot is a `constexpr`, and `bridge_init` of `src/webgpu_mesh.c` declares th
 | 13 | `TEXTURE_GPU` | `webgpu:TextureGpu` |
 
 An enum comes before the struct whose field names it.
-The system `render` has the slot 0. The observers `release_mesh` and `release_texture` have the slots 0 and 1.
+The systems `keep_meshes`, `keep_textures`, `draws`, `batches` and `render` have the slots 0 to 4, in this order.
+Their constants are `KEEP_MESHES`, `KEEP_TEXTURES`, `DRAWS`, `BATCHES` and `RENDER`. The observers `release_mesh` and `release_texture` have the slots 0 and 1.
 
 ## Types
 
@@ -34,8 +35,8 @@ The system `render` has the slot 0. The observers `release_mesh` and `release_te
 | --- | --- |
 | `webgpu_mesh_gpu_t` | The C type of `webgpu:MeshGpu`: `buffer`, then the `gen`, the `count` of vertices, the `layout` and the `primitive` of its upload. 24 bytes. |
 | `webgpu_texture_gpu_t` | The C type of `webgpu:TextureGpu`: `texture`, its `view`, its bind `group`, then the `gen` and the `bytes` of its upload. 32 bytes. |
-| `mesh_state_t` | The state of the module: the objects of a device, the pipelines, the round buffer, the count of `gpu_memory`, and the round. |
-| `mesh_round_t` | The memory of a round, its views, its items, its blocks and its records, with their counts. |
+| `mesh_state_t` | The state of the module: the objects of a device, the pipelines, the round buffer, the count of `gpu_memory`, and the round. It also keeps the api of the system that runs, the scene of the round, and the flags `ready` and `release` of the round. It keeps a flag `left` for each set, and the flags `said_room` and `said_rule` of the two lines. |
+| `mesh_round_t` | The memory of a round, its views, its items, its blocks and its records, with their counts: `docs/intern/mesh_memory.c.md`, *The arrays of a round*. |
 | `mesh_key_t` | The sort key of a view or of an item: `rank`, `order` and `id`. |
 | `mesh_view_t` | A view of the round: its key, `mask`, its viewport, its scissor, and the index of its block. |
 | `mesh_item_t` | A draw or a batch of the round: its key, `views`, its shape, `layout`, `depth`, its vertices, its record and its bind group. |
@@ -43,6 +44,7 @@ The system `render` has the slot 0. The observers `release_mesh` and `release_te
 | `mesh_block_t` | The data of one view for the shaders: `matrix`, the light of `webgpu:Scene`, and the size of the view in pixels. 128 bytes. |
 | `mesh_pass_t` | The pass of a round, with what it binds now: each vertex buffer and its offset, the pipeline, and the bind group 1. |
 | `mesh_shape_t` | An enum of `uint32_t`: `SHAPE_TRIANGLES`, `SHAPE_LINES`, `SHAPE_POINTS`, `SHAPE_WIDE_LINES` and `SHAPE_WIDE_POINTS`. |
+| `mesh_rule_t` | An enum of `uint32_t`, with one item for each rule of `docs/extern/webgpu_mesh.h.md`, *Messages*, in the order of its table. |
 
 The first field of a GPU component holds its main object, `buffer` or `texture`. A 0 there means that the component holds no object.
 The descriptor of each GPU component comes from the same text as its C type, with the macros of `bridge_schema.h` of Bridge.
@@ -61,7 +63,6 @@ The two GPU components have no gap, so they need no field `pad`.
 
 | Function | Source |
 | --- | --- |
-| `mesh_release_all` | `src/mesh_round.c` |
 | `mesh_get_state` | `src/mesh_store.c` |
 | `mesh_walk` | `src/mesh_store.c` |
 | `mesh_find` | `src/mesh_store.c` |
@@ -86,3 +87,6 @@ The two GPU components have no gap, so they need no field `pad`.
 | `mesh_put_round` | `src/mesh_memory.c` |
 | `mesh_release_round` | `src/mesh_memory.c` |
 | `mesh_free_round` | `src/mesh_memory.c` |
+| `mesh_say_no_room` | `src/mesh_lines.c` |
+| `mesh_say_left_out` | `src/mesh_lines.c` |
+| `mesh_add_systems` | `src/mesh_systems.c` |

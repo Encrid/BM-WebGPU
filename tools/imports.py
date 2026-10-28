@@ -47,7 +47,11 @@ def main():
         print(USAGE)
         return 2
     library, needed = sys.argv[1], {name.lower() for name in sys.argv[2:]}
-    names = read_imports(library)
+    try:
+        names = read_imports(library)
+    except (KeyError, StopIteration, ValueError):
+        print('imports: %s: incorrect PE file' % library)
+        return 1
     if names is None:
         print('imports: %s: no PE file' % library)
         return 1

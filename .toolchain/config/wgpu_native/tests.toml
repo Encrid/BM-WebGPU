@@ -7,7 +7,7 @@ steps = [
 [kinds.pe_file]
 output = "{name}.dll"
 steps = [
-    { run = ["{python}", "{sources}", "{output}"] },
+    { run = ["{python}", "{sources}", "{output}", "{manifest}"] },
 ]
 
 [[artifact]]
@@ -55,3 +55,7 @@ name = "delayed"
 kind = "pe_file"
 test = true
 sources = ["tests/imports/delayed.py"]
+
+[[artifact.variants]]
+name = "unmapped"
+manifest = ["0x9000"]

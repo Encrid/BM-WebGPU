@@ -8,6 +8,7 @@ RVA = 0x1000
 RAW = 0x200
 OPTIONAL = 0x58
 SECTION = OPTIONAL + 0xF0
+IMPORTS = int(sys.argv[2], 16) if len(sys.argv) > 2 else RVA
 
 
 def section():
@@ -29,7 +30,7 @@ def headers():
     struct.pack_into('<II', data, OPTIONAL + 32, 0x1000, 0x200)
     struct.pack_into('<II', data, OPTIONAL + 56, 0x2000, RAW)
     struct.pack_into('<I', data, OPTIONAL + 108, 16)
-    struct.pack_into('<II', data, OPTIONAL + 112 + 8, RVA + 0x00, 40)
+    struct.pack_into('<II', data, OPTIONAL + 112 + 8, IMPORTS, 40)
     struct.pack_into('<II', data, OPTIONAL + 112 + 13 * 8, RVA + 0x28, 64)
     data[SECTION:SECTION + 6] = b'.rdata'
     struct.pack_into('<IIII', data, SECTION + 8, 0x100, RVA, 0x200, RAW)

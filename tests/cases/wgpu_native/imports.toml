@@ -84,3 +84,9 @@ name = "the wgpu_native.dll of aarch64-windows-gnu fails when vcruntime140.dll i
 run = ["{python}", "tools/imports.py", "{wgpu_windows_aarch64}/lib/wgpu_native.dll"]
 claims = { status = 1, line = ["imports: {wgpu_windows_aarch64}/lib/wgpu_native.dll: vcruntime140.dll is not a library of the system"] }
 false = { run = ["{python}", "tools/imports.py", "{wgpu_windows_aarch64}/lib/wgpu_native.dll", "vcruntime140.dll"] }
+
+[[case]]
+name = "a PE file with its table of imports at an RVA that no section holds gives incorrect PE file, and 1"
+run = ["{python}", "tools/imports.py", "{out}/unmapped.dll"]
+claims = { status = 1, line = ["imports: {out}/unmapped.dll: incorrect PE file"] }
+false = { run = ["{python}", "tools/imports.py", "{out}/delayed.dll"] }

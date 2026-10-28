@@ -1,0 +1,215 @@
+[[case]]
+name = "a round with no webgpu:Window writes WEBGPU_FRAME_NO_DEVICE"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/render: r3 frame 3 0 0 0 0 0 0 0 0 0 0 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "WEBGPU_SURFACE_NONE releases the device, and the next window makes a new one"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+order = [
+    "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0",
+    "record[6] test:probe@1.0.0/render: r5 frame 3 0 0 0 0 0 0 0 0 0 0 0 0",
+    "record[6] test:probe@1.0.0/render: r9 frame 1 27 47 1 64 64 2 1 1 1 1 0 0",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "close"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "hide"
+'''
+
+[[case]]
+name = "a kind of window of another system gives no surface: the window has no handle of this system"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+has = ["record[3] webgpu:device@1.0.0/frame: no surface: the window has no handle of this system"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "foreign"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "a handle of 0 gives no surface"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+has = ["record[3] webgpu:device@1.0.0/frame: no surface: the window has no handle of this system"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "zero"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "a value of surface that names no kind gives no surface"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+has = ["record[3] webgpu:device@1.0.0/frame: no surface: the window has no handle of this system"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "nokind"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "the system gives 1 at each run with no surface, until max_system_failures stops the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+has = ["module 'webgpu:device@1.0.0' is stopped: its system 'frame' reached its max_system_failures of 3"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "foreign"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''

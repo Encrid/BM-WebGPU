@@ -1,0 +1,4 @@
+presets = ["probe.toml"]
+
+[module."webgpu:device@1.0.0".config]
+format = "WEBGPU_FORMAT_BGRA8_UNORM"

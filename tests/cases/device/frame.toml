@@ -1,0 +1,318 @@
+[[case]]
+name = "init attaches a webgpu:Frame with the state WEBGPU_FRAME_NO_DEVICE and each other field at 0"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/drive: r1 before 3 0 0 0 0 0 0 0 0 0 0 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[case.false.folders]
+"{case}/m" = ["probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[[case]]
+name = "a READY frame gives the device, the queue, the views, the format, the samples and the size"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 0
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+'''
+
+[[case]]
+name = "a new size of webgpu:Window gives a READY frame of that size in the same round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r6 frame 1 27 47 1 80 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "resize"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "pause"
+'''
+
+[[case]]
+name = "a width of 0 gives WEBGPU_FRAME_SKIPPED with the device and no view"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r6 frame 2 27 47 1 64 64 1 1 0 0 0 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "flat"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "pause"
+'''
+
+[[case]]
+name = "a height of 0 gives WEBGPU_FRAME_SKIPPED with the device and no view"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r6 frame 2 27 47 1 64 64 1 1 0 0 0 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "tall"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "pause"
+'''
+
+[[case]]
+name = "with limits WEBGPU_LIMITS_DEFAULT, a width of 8193 gives WEBGPU_FRAME_SKIPPED"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r6 frame 2 27 47 1 64 64 1 1 0 0 0 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "wide"
+[module."webgpu:device@1.0.0".config]
+limits = "WEBGPU_LIMITS_DEFAULT"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "pause"
+[module."webgpu:device@1.0.0".config]
+limits = "WEBGPU_LIMITS_DEFAULT"
+'''
+
+[[case]]
+name = "with limits WEBGPU_LIMITS_DEFAULT, a height of 8193 gives WEBGPU_FRAME_SKIPPED"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r6 frame 2 27 47 1 64 64 1 1 0 0 0 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "high"
+[module."webgpu:device@1.0.0".config]
+limits = "WEBGPU_LIMITS_DEFAULT"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "pause"
+[module."webgpu:device@1.0.0".config]
+limits = "WEBGPU_LIMITS_DEFAULT"
+'''
+
+[[case]]
+name = "a window that does not show keeps the device, and its frame comes back when it shows"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r9 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "hide"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "close"
+'''
+
+[[case]]
+name = "the check finds a loss that no call told: device lost, WEBGPU_FRAME_NO_DEVICE in that round, then a new device"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+has = ["record[3] webgpu:device@1.0.0/frame: device lost: destroyed: Device lost"]
+order = [
+    "record[6] test:probe@1.0.0/render: r6 frame 3 0 0 0 0 0 0 0 0 0 0 0 0",
+    "record[6] test:probe@1.0.0/render: r10 frame 1 27 47 1 64 64 2 1 1 1 1 0 0",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "silent"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/frame.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "pause"
+'''

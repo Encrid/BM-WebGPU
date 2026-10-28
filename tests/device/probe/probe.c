@@ -474,9 +474,12 @@ static void add_systems(const bridge_api_t *api)
         0 } };
     uint32_t changes[1] = { window_slot };
 
-    BRIDGE_NATIVE_ADD_SYSTEM(api, "drive", "drive", drive, 4, changes, 1);
-    BRIDGE_NATIVE_ADD_SYSTEM(api, "render", "render", render, 3, nullptr, 0);
-    BRIDGE_NATIVE_ADD_SYSTEM(api, "check", "check", check, 1, nullptr, 0);
+    BRIDGE_NATIVE_ADD_SYSTEM(api, "drive", "drive", drive, 4, changes, 1,
+        nullptr, 0);
+    BRIDGE_NATIVE_ADD_SYSTEM(api, "render", "render", render, 3, nullptr, 0,
+        nullptr, 0);
+    BRIDGE_NATIVE_ADD_SYSTEM(api, "check", "check", check, 1, nullptr, 0,
+        nullptr, 0);
 }
 
 BRIDGE_NATIVE(init)

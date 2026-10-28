@@ -1,0 +1,42 @@
+[leaks.pairs]
+wgpuCreateInstance = "wgpuInstanceRelease"
+wgpuInstanceCreateSurface = "wgpuSurfaceRelease"
+wgpuDeviceGetQueue = "wgpuQueueRelease"
+wgpuDeviceCreateBuffer = "wgpuBufferRelease"
+wgpuTextureCreateView = "wgpuTextureViewRelease"
+wgpuDeviceCreateSampler = "wgpuSamplerRelease"
+wgpuDeviceCreatePipelineLayout = "wgpuPipelineLayoutRelease"
+wgpuDeviceCreateRenderPipeline = "wgpuRenderPipelineRelease"
+wgpuDeviceCreateComputePipeline = "wgpuComputePipelineRelease"
+wgpuDeviceCreateBindGroup = "wgpuBindGroupRelease"
+wgpuDeviceCreateCommandEncoder = "wgpuCommandEncoderRelease"
+wgpuCommandEncoderBeginRenderPass = "wgpuRenderPassEncoderRelease"
+wgpuCommandEncoderBeginComputePass = "wgpuComputePassEncoderRelease"
+wgpuCommandEncoderFinish = "wgpuCommandBufferRelease"
+wgpuDeviceCreateQuerySet = "wgpuQuerySetRelease"
+wgpuDeviceCreateRenderBundleEncoder = "wgpuRenderBundleEncoderRelease"
+wgpuRenderBundleEncoderFinish = "wgpuRenderBundleRelease"
+
+[leaks.kinds.webgpu_texture]
+takes = { wgpuDeviceCreateTexture = "result", wgpuSurfaceGetCurrentTexture = "*2.texture" }
+gives = { wgpuTextureRelease = "1" }
+
+[leaks.kinds.webgpu_bind_group_layout]
+takes = { wgpuDeviceCreateBindGroupLayout = "result", wgpuRenderPipelineGetBindGroupLayout = "result", wgpuComputePipelineGetBindGroupLayout = "result" }
+gives = { wgpuBindGroupLayoutRelease = "1" }
+
+[leaks.kinds.webgpu_shader_module]
+takes = { wgpuDeviceCreateShaderModule = "result", wgpuDeviceCreateShaderModuleSpirV = "result", wgpuDeviceCreateShaderModuleTrusted = "result" }
+gives = { wgpuShaderModuleRelease = "1" }
+
+[leaks.kinds.webgpu_capabilities]
+takes = { wgpuSurfaceGetCapabilities = "*3" }
+gives = { wgpuSurfaceCapabilitiesFreeMembers = "1" }
+
+[leaks.kinds.webgpu_features]
+takes = { wgpuAdapterGetFeatures = "*2", wgpuDeviceGetFeatures = "*2" }
+gives = { wgpuSupportedFeaturesFreeMembers = "1" }
+
+[leaks.kinds.webgpu_adapter_info]
+takes = { wgpuAdapterGetInfo = "*2" }
+gives = { wgpuAdapterInfoFreeMembers = "1" }

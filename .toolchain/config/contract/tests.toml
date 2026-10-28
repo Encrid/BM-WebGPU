@@ -1,0 +1,45 @@
+[variables]
+probe_words = [
+    "abi=1", "config=none", "pinned=false", "reloadable=false", "scratch=4096", "log_ring=512",
+    "spans=1024", "spawns=none", "changes=256", "persistent=none", "hot_reload=false",
+]
+
+[[artifact]]
+name = "layout"
+kind = "program"
+test = true
+sources = ["tests/layout/layout.c"]
+include = ["include", "{bridge}/include"]
+
+[[artifact]]
+name = "probe"
+kind = "native_module"
+test = true
+sources = ["tests/probe/probe.c"]
+include = ["include"]
+defines = ["ROLE_ALL"]
+manifest = ["webgpu:probe@1.0.0", "{probe_words}"]
+
+[[artifact.variants]]
+name = "foreign"
+manifest = ["test:probe@1.0.0", "{probe_words}"]
+
+[[artifact.variants]]
+name = "late"
+defines = ["ROLE_LATE"]
+manifest = ["webgpu:late@1.0.0", "{probe_words}"]
+
+[[artifact.variants]]
+name = "app"
+defines = ["ROLE_APP"]
+manifest = ["test:app@1.0.0", "{probe_words}"]
+
+[[artifact.variants]]
+name = "device"
+defines = ["ROLE_DEVICE"]
+manifest = ["test:device@1.0.0", "{probe_words}"]
+
+[[artifact.variants]]
+name = "render"
+defines = ["ROLE_RENDER"]
+manifest = ["test:render@1.0.0", "{probe_words}"]

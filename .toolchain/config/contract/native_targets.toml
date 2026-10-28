@@ -1,0 +1,29 @@
+[targets.x86_64-windows-gnu]
+section = ".bridge"
+bridge_sha256 = "e5d942e037e2f3abaea964653a79360cf36984516f7c6d54cdd905027a032c59"
+bb_native_sha256 = "88b5358fb740308783596cf61e6141e8598d54a5745ed9864b5345a7bb7877db"
+
+[targets.x86_64-linux-gnu]
+section = ".bridge"
+bridge_sha256 = "bed00dc8a6430193eecb93aacb3a5f9cf6aa866d206f4f123d0ee7e389de460f"
+bb_native_sha256 = "71fe4dbcbb763569742accf4c9c76a19fbe2c89f39ae5103c58527472feec240"
+
+[targets.aarch64-macos]
+section = "__TEXT,.bridge"
+bridge_sha256 = "9c05f8c2fdd455e706c5e20d2cb4e2f1cac2934b4cbf94d1797bfa5355ed6cee"
+bb_native_sha256 = "65ba2dede6bbe454a262eb2f14549d13dc5918ea6af52fce4856312028d2eace"
+
+[targets.aarch64-linux-gnu]
+section = ".bridge"
+bridge_sha256 = "e84b2634d37a040c793e584f4cc7ffeb5c05e3303be9f809868ac93b636091e0"
+bb_native_sha256 = "57f784546c4f3015f8f76a1d25948990c817c644658c8de7866c31f1aca73956"
+
+[targets.x86_64-macos]
+section = "__TEXT,.bridge"
+bridge_sha256 = "1f8b465aa8fb0b187f96723e7b20b41e104c96d18e88497d98af5d7e66a6e3b1"
+bb_native_sha256 = "653bdf08779efcd6045bfc3236e7c2c526354e91223e55ec10be423224990d9e"
+
+[targets.aarch64-windows-gnu]
+section = ".bridge"
+bridge_sha256 = "9f83bceacfe849e9e58eef1f98b754ba9718af21f5d4cd0742d095aa50581f43"
+bb_native_sha256 = "c78172b8673a8c355bcaa9ac0b8753fda688df74a5756f2c438a96f8439524fc"

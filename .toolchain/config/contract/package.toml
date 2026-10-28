@@ -1,0 +1,6 @@
+[package]
+proof = "tests/package/proof.c"
+include = ["{bridge}/include"]
+
+[compose.base]
+headers = ["include/**/*.h"]

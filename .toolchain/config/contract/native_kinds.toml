@@ -1,6 +1,7 @@
 [kinds.native_module]
 output = "{name}{library}"
+flags = ["-I{bridge}/include", "-I{bb_native}/include", "-fvisibility=hidden", '-DMANIFEST="{manifest:\0}"', '-DMANIFEST_SECTION="{section}"']
 steps = [
-    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "-shared", "{pic}", "{soname}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "{include}", "-I{bridge}/include", "-I{bb_native}/include", "-fvisibility=hidden", '-DMANIFEST="{manifest:\0}"', '-DMANIFEST_SECTION="{section}"', "{sources}", "{link}", "{flags}", "-o", "{output}"] },
+    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "-shared", "{pic}", "{soname}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "{include}", "{sources}", "{link}", "{flags}", "-o", "{output}"] },
     { contains = "{manifest:\u0000}" },
 ]

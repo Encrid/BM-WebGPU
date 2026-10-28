@@ -32,7 +32,7 @@ BL-WebGPU-Contract holds no module. Each module or app in C that uses one of the
 name = "webgpu_contract"
 url = "https://github.com/Encrid/BL-WebGPU-Contract/releases/download/v<version>/BL-WebGPU-Contract-{target}.zip"
 sha256 = "{webgpu_contract_sha256}"
-into = "{build}/third_party/webgpu_contract/{target}"
+into = "build/third_party/webgpu_contract/{target}"
 ```
 
 `<version>` is the number of the release, for example `0.1.0`.

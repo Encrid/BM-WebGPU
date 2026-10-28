@@ -64,8 +64,8 @@ The device module makes its surface from the handles one time. To give another w
 | `target` | `uint64_t` | 48 | The `WGPUTextureView` to draw into: `frame` with 1 sample, else the multisample texture. Its usage is `RenderAttachment`. |
 | `depth` | `uint64_t` | 56 | The `WGPUTextureView` of the depth texture, or 0 when the frame has no depth texture. Its usages are `RenderAttachment` and `CopySrc`. |
 
-In `WEBGPU_FRAME_SKIPPED`, `frame`, `target` and `depth` are 0, and `device` and `queue` keep their values while the device is there.
-Before the device module has a device, and in `WEBGPU_FRAME_NO_DEVICE`, each field but `state` is 0.
+In `WEBGPU_FRAME_SKIPPED`, `frame`, `target` and `depth` are 0, and `device` and `queue` keep their values once the device module has made its device.
+While the device module makes its device, and in `WEBGPU_FRAME_NO_DEVICE`, each field but `state` is 0.
 With more than 1 sample, each render pass resolves `target` into `frame`.
 
 ### webgpu:webgpu_frame_state_t

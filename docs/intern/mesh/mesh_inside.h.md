@@ -34,7 +34,7 @@ The system `render` has the slot 0. The observers `release_mesh` and `release_te
 | --- | --- |
 | `webgpu_mesh_gpu_t` | The C type of `webgpu:MeshGpu`: `buffer`, then the `gen`, the `count` of vertices, the `layout` and the `primitive` of its upload. 24 bytes. |
 | `webgpu_texture_gpu_t` | The C type of `webgpu:TextureGpu`: `texture`, its `view`, its bind `group`, then the `gen` and the `bytes` of its upload. 32 bytes. |
-| `mesh_state_t` | The state of the module: the objects of a device, the pipelines, the round buffer, the counts of the two budgets, and the round. |
+| `mesh_state_t` | The state of the module: the objects of a device, the pipelines, the round buffer, the count of `gpu_memory`, and the round. |
 | `mesh_round_t` | The memory of a round, its views, its items, its blocks and its records, with their counts. |
 | `mesh_key_t` | The sort key of a view or of an item: `rank`, `order` and `id`. |
 | `mesh_view_t` | A view of the round: its key, `mask`, its viewport, its scissor, and the index of its block. |
@@ -53,7 +53,6 @@ The two GPU components have no gap, so they need no field `pad`.
 | Constant | Value |
 | --- | --- |
 | `STRIDES` | The bytes of one vertex of each `layout`, from 0 to 7: 12, 24, 20, 32, 16, 28, 24 and 36. |
-| `CHANGES` | 65536, the default of `changes` in the manifest: `docs/intern/mesh_store.c.md`, *The room of changes*. |
 | `CHANGE` | 24, the bytes of `changes` that one attach, detach or destroy takes before its value. |
 | `BLOCK` | 256, the step from one block to the next in the round buffer. |
 | `PIPELINES` | 160: 8 values of `layout`, by 5 shapes, by 4 values of the bits 0 and 1 of `depth`. |

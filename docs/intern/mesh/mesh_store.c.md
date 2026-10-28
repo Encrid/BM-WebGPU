@@ -1,14 +1,15 @@
 # src/mesh_store.c
 
 This file holds the state of the module, and reads the storage of Bridge.
-It also counts the room that the module takes in `changes`.
+It also reads the room that is left in `changes`.
 
 ## The state
 
 A native module gets only its API at each call, so its state has no other place between two rounds.
 The file keeps it in one static struct, and `mesh_get_state` gives it to the other sources.
 A `[[style.exception]]` of the project excuses this struct from the rule G4, with that reason.
-Bridge runs the systems of one module one after another. The design needs the same for the two observers, because they change the state too.
+Bridge runs the systems and the observers of one module one after another: `bridge.h.md` of Bridge, in its section bridge_run_phase.
+Thus no two calls change the state at the same time.
 
 ## The walk
 
@@ -57,25 +58,12 @@ The length must not be 0, and must be a multiple of the unit that the caller giv
 ## The room of changes
 
 Each change takes 24 bytes of `changes`, and an attach also takes its value: `bridge.h.md` of Bridge, in its section The reservations.
-A change that finds no room fails the invocation that makes it. Thus `mesh_take_change` counts the room before each attach and each detach of the module:
+A change that finds no room fails the invocation that makes it.
+`changes_left` of the header tells the room that is left: `bridge_abi.h.md` of Bridge, in its section bridge_header_t.
+Thus `mesh_take_change` reads it before each attach and each detach of the module, and gives true when the change fits.
 
-```pseudo
-FUNCTION mesh_take_change(bytes : U32) RETURNS BOOLEAN
-   IF header.barriers <> state.window THEN
-      state.window <- header.barriers
-      state.queued <- 0
-   ENDIF
-   IF state.queued + bytes > CHANGES THEN
-      RETURN FALSE
-   ENDIF
-   state.queued <- state.queued + bytes
-   RETURN TRUE
-ENDFUNCTION
-```
-
-The observers of a barrier and the systems of the next phase fill the same room, and they see the same `barriers`.
-The header of Bridge does not give `changes` of the config. Thus the module counts against `CHANGES`, the default of its manifest.
-A deployment that states less than `CHANGES` can make a change fail. A deployment that states more leaves the rest unused.
+The observers of a barrier and the systems of the next phase take from the same room.
+With less room, more changes wait for a later round, and no invocation fails.
 
 ## Functions
 
@@ -85,4 +73,4 @@ A deployment that states less than `CHANGES` can make a change fail. A deploymen
 | `mesh_walk` | Gives each row of a component to a visit, and gives the count of the rows. |
 | `mesh_find` | Gives where the value of a component of an entity is, or 0. |
 | `mesh_get_data` | Gives the bytes of a field of data, or 0 when a data rule refuses them. |
-| `mesh_take_change` | Takes room in `changes` for one change. Gives false when the room is used up. |
+| `mesh_take_change` | Gives true when the room that is left in `changes` holds one change of that many bytes. |

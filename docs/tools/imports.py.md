@@ -25,8 +25,10 @@ The lines:
 - `imports: <library>: <name> is a stated need`
 - `imports: <library>: <count> libraries of the system`
 - `imports: <library>: no PE file`
+- `imports: <library>: incorrect PE file`
 
 A path that names no file, or a file that is no PE file, gives the line `no PE file`, and 1.
+A PE file that the tool cannot read gives the line `incorrect PE file`, and 1. An example is a table at an RVA that no section holds.
 
 ## The libraries of the system
 
@@ -39,6 +41,6 @@ Thus the case of `aarch64-windows-gnu` names `vcruntime140.dll` as `<needed>`.
 
 | Function | Result |
 | --- | --- |
-| `read_imports(path)` | Gives the names that the two tables of the PE file hold, in lower case and each one time. Gives `None` for a path that names no PE file. |
+| `read_imports(path)` | Gives the names that the two tables of the PE file hold, in lower case and each one time. Gives `None` for a path that names no PE file. Stops with an error on a PE file that it cannot read. |
 | `is_system(name)` | Tells if a name is on the list of the libraries of the system. |
-| `main()` | Checks the library of the command line with its names `<needed>`, writes the lines, and gives 0 or 1. Gives 2 with no argument. |
+| `main()` | Checks the library of the command line with its names `<needed>`, writes the lines, and gives 0 or 1. Gives 2 with no argument. Writes `incorrect PE file` when `read_imports` stops with an error. |

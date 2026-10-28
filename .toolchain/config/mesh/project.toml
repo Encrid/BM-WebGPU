@@ -4,3 +4,8 @@ name = "BM-WebGPU-Mesh"
 [test]
 timeout = 120
 copies = 1
+writers = ["bridge_native_say"]
+
+[[test.rule]]
+lacks = "probe error:"
+exempt = ["errors"]

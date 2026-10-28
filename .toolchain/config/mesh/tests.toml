@@ -1,0 +1,79 @@
+[variables]
+probe_words = [
+    "abi=2", "settings=scene module", "pinned=false", "reloadable=false", "scratch=16384",
+    "log_ring=8192", "spans=65536", "spawns=1024", "changes=131072", "persistent=1048576",
+    "hot_reload=false", "config.scene=none", "config.module=none",
+]
+watch_words = [
+    "abi=2", "config=none", "pinned=false", "reloadable=false", "scratch=4096", "log_ring=256",
+    "spans=8192", "spawns=none", "changes=none", "persistent=none", "hot_reload=false",
+]
+
+[[artifact]]
+name = "probe"
+kind = "native_module"
+test = true
+sources = ["tests/probe/*.c"]
+include = ["include", "{webgpu_contract}/include", "{wgpu_native}/include"]
+link = ["{wgpu_native}/{wgpu_file}"]
+flags = ["{rpath}", "{dl}"]
+manifest = ["webgpu:probe@1.0.0", "config=webgpu:ProbeScene", "{probe_words}"]
+
+[[artifact.variants]]
+name = "app"
+defines = ["APP"]
+manifest = ["test:app@1.0.0", "config=test:ProbeScene", "{probe_words}"]
+
+[[artifact]]
+name = "watcher"
+kind = "native_module"
+test = true
+sources = ["tests/watch/watch.c"]
+include = ["include"]
+defines = ["WATCHED=webgpu_mesh_t", 'WATCHED_NAME="webgpu:Mesh"']
+manifest = ["webgpu:watcher@1.0.0", "{watch_words}"]
+
+[[artifact.variants]]
+name = "twatcher"
+defines = ["WATCHED=webgpu_texture_t", 'WATCHED_NAME="webgpu:Texture"']
+manifest = ["webgpu:twatcher@1.0.0", "{watch_words}"]
+
+[[artifact.variants]]
+name = "mwriter"
+defines = ["WATCHED=webgpu_mesh_t", 'WATCHED_NAME="webgpu:Mesh"', 'PHASE="render"']
+manifest = ["webgpu:watcher@1.0.0", "{watch_words}"]
+
+[[artifact.variants]]
+name = "twriter"
+defines = ["WATCHED=webgpu_texture_t", 'WATCHED_NAME="webgpu:Texture"', 'PHASE="render"']
+manifest = ["webgpu:watcher@1.0.0", "{watch_words}"]
+
+[[artifact.variants]]
+name = "dwriter"
+defines = ["WATCHED=webgpu_draw_t", 'WATCHED_NAME="webgpu:Draw"', 'PHASE="render"']
+manifest = ["webgpu:watcher@1.0.0", "{watch_words}"]
+
+[[artifact.variants]]
+name = "bwriter"
+defines = ["WATCHED=webgpu_batch_t", 'WATCHED_NAME="webgpu:Batch"', 'PHASE="render"']
+manifest = ["webgpu:watcher@1.0.0", "{watch_words}"]
+
+[[artifact.variants]]
+name = "vwriter"
+defines = ["WATCHED=webgpu_view_t", 'WATCHED_NAME="webgpu:View"', 'PHASE="render"']
+manifest = ["webgpu:watcher@1.0.0", "{watch_words}"]
+
+[[artifact]]
+name = "fake"
+kind = "native_module"
+test = true
+sources = ["tests/fake/fake.c"]
+include = ["{webgpu_contract}/include"]
+manifest = ["webgpu:fake@1.0.0", "{watch_words}"]
+
+[[artifact]]
+name = "types"
+kind = "program"
+test = true
+sources = ["tests/types/types.c"]
+include = ["include", "{bridge}/include"]

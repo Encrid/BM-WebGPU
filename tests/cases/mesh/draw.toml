@@ -1,0 +1,1888 @@
+[[case]]
+name = "the views draw from the lowest order"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "vieworder"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "vieworderswap"
+'''
+
+[[case]]
+name = "in a view, the draws come before the batches"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 0 255 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "drawbatch"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "drawbatchoff"
+'''
+
+[[case]]
+name = "a draw draws only in a view with which it shares a bit"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 16 32 is 51 102 153 255',
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 48 32 is 0 255 0 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "viewmask"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "viewmaskone"
+'''
+
+[[case]]
+name = "the matrix of a view maps the world to the clip space"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 16 16 is 255 0 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 48 48 is 51 102 153 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "viewmatrix"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "solid"
+'''
+
+[[case]]
+name = "the depth of the clip space goes from 0 to 1"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 51 102 153 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "clipout"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "firstmesh"
+'''
+
+[[case]]
+name = "the rect of a view places it in pixels from the top left"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 16 16 is 255 0 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 48 48 is 51 102 153 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "rect"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "solid"
+'''
+
+[[case]]
+name = "a rect of width 0 is the whole frame"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 63 63 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "wholerect"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "rect16"
+'''
+
+[[case]]
+name = "a view past the right edge draws its part inside, with no change of its projection"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 40 32 is 255 0 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 16 32 is 51 102 153 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "pastedge"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "inside"
+'''
+
+[[case]]
+name = "a view past the bottom edge draws its part inside, with no change of its projection"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 32 40 is 255 0 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 32 16 is 51 102 153 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "pastbottom"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "insidetop"
+'''
+
+[[case]]
+name = "a mesh of lines draws lines"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r1 pixel 16 31 is 255 255 255 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "lines"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "points"
+'''
+
+[[case]]
+name = "a mesh of points draws points"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 32 31 is 255 255 255 255',
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 33 31 is 51 102 153 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "points"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "lines"
+'''
+
+[[case]]
+name = "a mesh of triangles draws triangles"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r1 pixel 32 40 is 255 255 255 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "triangles"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "lines"
+'''
+
+[[case]]
+name = "a list of lines drops the last vertex of an odd count"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 20 32 is 255 255 255 255',
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 60 32 is 51 102 153 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "oddline"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "evenline"
+'''
+
+[[case]]
+name = "the pixels of a texture go row by row from the top"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 16 16 is 255 0 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 48 16 is 0 255 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 16 48 is 0 0 255 255',
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 48 48 is 255 255 0 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "textured"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texturedflip"
+'''
+
+[[case]]
+name = "filter 0 takes the nearest texel"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 0 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "nearest"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "linearnear"
+'''
+
+[[case]]
+name = "the module takes each texel as it is"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 128 128 128 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "graytexel"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texzero"
+'''
+
+[[case]]
+name = "the model of a draw moves its mesh"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 40 32 is 255 0 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 8 32 is 51 102 153 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "model"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "unmoved"
+'''
+
+[[case]]
+name = "the color of a draw multiplies the color of each vertex"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 51 204 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "unlit"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "white"
+'''
+
+[[case]]
+name = "lambert lights a face by the dot product of its normal and light"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 16 32 is 204 153 102 255',
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 48 32 is 51 51 51 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "lambert"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "lambertflip"
+'''
+
+[[case]]
+name = "the normal of lambert turns with model"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 204 153 102 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "turned"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "unturned"
+'''
+
+[[case]]
+name = "textured multiplies the color by the texel"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 0 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texred"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texzero"
+'''
+
+[[case]]
+name = "a vertex with no color is white"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 51 255 255 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "white"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "unlit"
+'''
+
+[[case]]
+name = "a vertex with no normal gets 0 for it"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 16 32 is 51 51 51 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "nonormal"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "lambert"
+'''
+
+[[case]]
+name = "a vertex with no texture coordinate gets 0 for it"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 48 48 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "nouv"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "textured"
+'''
+
+[[case]]
+name = "the draws draw from the lowest order"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "draworder"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "draworderswap"
+'''
+
+[[case]]
+name = "draws of one order draw in the order of their entity ids"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 0 255 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "sameorder"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "sameorderswap"
+'''
+
+[[case]]
+name = "the lowest order draws first, also at the ends of int32_t"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "extremes"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "extremesswap"
+'''
+
+[[case]]
+name = "bit 0 of depth tests the depth"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "depthtest"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "depthnotest"
+'''
+
+[[case]]
+name = "bit 1 of depth writes the depth"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "depthtest"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "depthnowrite"
+'''
+
+[[case]]
+name = "the other bits of depth do nothing"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "otherbits"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "otherbitsoff"
+'''
+
+[[case]]
+name = "a positive bias moves a vertex toward the view"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 31 is 0 255 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "bias"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "nobias"
+'''
+
+[[case]]
+name = "a size of 1 or less draws a point 1 pixel wide"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 32 31 is 255 255 255 255',
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 34 31 is 51 102 153 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "thinpoint"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "widepoint"
+'''
+
+[[case]]
+name = "a size above 1 draws a point as a square of size pixels"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 34 31 is 255 255 255 255',
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 30 31 is 255 255 255 255',
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 32 29 is 255 255 255 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "widepoint"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "thinpoint"
+'''
+
+[[case]]
+name = "the size of a draw sets the width of the points of its mesh"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 34 31 is 255 255 255 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "drawpoint"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "drawpointthin"
+'''
+
+[[case]]
+name = "a size above 1 draws a line as a band of size pixels"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 32 30 is 255 255 255 255',
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 32 32 is 255 255 255 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "wideline"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "thinline"
+'''
+
+[[case]]
+name = "a wide line has no join at a sharp corner"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 24 40 is 255 255 255 255',
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 42 42 is 51 102 153 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "corner"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "cornerpast"
+'''
+
+[[case]]
+name = "a wide line with an end before the near plane draws its part in front"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 48 32 is 255 255 255 255',
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 16 32 is 51 102 153 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "trim"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "trimaway"
+'''
+
+[[case]]
+name = "a batch draws the data of its round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 32 32 is 255 0 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 0 255 0 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "batchround"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "batchstill"
+'''
+
+[[case]]
+name = "a batch draws unlit, with no model and no texture, in the color of its vertices or white"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 8 32 is 0 255 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 255 0 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 56 32 is 255 255 255 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "batchsides"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "batchswap"
+'''
+
+[[case]]
+name = "batches of one view draw from the lowest order"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r1 pixel 32 32 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "batchorder"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "batchorderswap"
+'''
+
+[[case]]
+name = "the depth bits of a batch act as in webgpu:Draw"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "batchdepth"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "batchdepthoff"
+'''
+
+[[case]]
+name = "the views of a batch act as in webgpu:Draw"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r1 pixel 32 32 is 51 102 153 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "batchviews"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "batchviewsone"
+'''
+
+[[case]]
+name = "with 4 samples, the pass resolves the multisample texture into the frame"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['check: r1 pixel 32 32 is (12[6-9]|130) (12[6-9]|130) (12[6-9]|130) 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "msaa"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "msaaone"
+'''
+
+[[case]]
+name = "filter 1 mixes the texels"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['check: r2 pixel 32 32 is (12[6-9]|130) (12[6-9]|130) (12[6-9]|130) 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "linear"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "nearestmid"
+'''
+
+[[case]]
+name = "lambert keeps the alpha"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['check: r2 pixel 32 32 is 204 153 102 (12[6-9]|130)']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+blend = false
+[module."webgpu:probe@1.0.0".config]
+scene = "lambertalpha"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+blend = false
+[module."webgpu:probe@1.0.0".config]
+scene = "lambertopaque"
+'''
+
+[[case]]
+name = "the module lights each vertex, and the GPU interpolates the color"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['check: r2 pixel 32 32 is 12[4-8] (99|10[0-3]) 7[4-8] 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "bent"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "lambertopaque"
+'''
+
+[[case]]
+name = "with a frame of an sRGB format, a color of 0.5 shows as 188 of 255"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['check: r2 pixel 32 32 is 18[7-9] 18[7-9] 18[7-9] 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "srgb"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "unormgray"
+'''
+
+[[case]]
+name = "a wide point culls no front face"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r1 pixel 34 31 is 255 255 255 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+cull = "WEBGPU_CULL_FRONT"
+[module."webgpu:probe@1.0.0".config]
+scene = "widepoint"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+cull = "WEBGPU_CULL_FRONT"
+[module."webgpu:probe@1.0.0".config]
+scene = "awaypoint"
+'''
+
+[[case]]
+name = "a wide point culls no back face"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r1 pixel 34 31 is 255 255 255 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+cull = "WEBGPU_CULL_BACK"
+[module."webgpu:probe@1.0.0".config]
+scene = "widepoint"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+cull = "WEBGPU_CULL_BACK"
+[module."webgpu:probe@1.0.0".config]
+scene = "awaypoint"
+'''
+
+[[case]]
+name = "a view with no part inside the frame is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r1 pixel 40 32 is 51 102 153 255']
+matches = ['item 0 is ([0-9]+) .*left out \1: it has no part inside the frame']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "outview"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "inview"
+'''
+
+[[case]]
+name = "a view wider than maxTextureDimension2D is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 0 is ([0-9]+) .*left out \1: it is wider or taller than maxTextureDimension2D']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "wideview"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "fitview"
+'''
+
+[[case]]
+name = "the sums of a rect do not wrap"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r1 pixel 16 32 is 51 102 153 255']
+matches = ['item 0 is ([0-9]+) .*left out \1: it has no part inside the frame']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "farview"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "nearview"
+'''

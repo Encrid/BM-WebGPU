@@ -1,0 +1,23 @@
+[targets.x86_64-windows-gnu]
+wgpu_file = "wgpu_native.dll"
+dl = []
+
+[targets.x86_64-linux-gnu]
+wgpu_file = "libwgpu_native.so"
+dl = ["-ldl"]
+
+[targets.aarch64-macos]
+wgpu_file = "libwgpu_native.dylib"
+dl = []
+
+[targets.aarch64-linux-gnu]
+wgpu_file = "libwgpu_native.so"
+dl = ["-ldl"]
+
+[targets.x86_64-macos]
+wgpu_file = "libwgpu_native.dylib"
+dl = []
+
+[targets.aarch64-windows-gnu]
+wgpu_file = "wgpu_native.dll"
+dl = []

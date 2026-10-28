@@ -1,0 +1,23 @@
+threads = 1
+live = true
+
+[budget]
+entities = 8192
+tables = 16
+types = 32
+systems = 16
+terms = 16
+modules = 8
+persistent = 4194304
+columns = 16777216
+sparse_sets = 2
+direct_indexed = "none"
+
+[content.load]
+all = true
+
+[module.all]
+on_error = "skip"
+max_system_failures = 3
+log_level = 7
+losses = "none"

@@ -1,0 +1,34 @@
+[[case]]
+name = "an error in the commands of a round names its object by a label of webgpu:mesh, and stops the process at wgpuQueueSubmit"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = ['Error in wgpuQueueSubmit: Validation Error']
+matches = ['probe error: 2 .*webgpu:mesh']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "errors"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "clear"
+'''

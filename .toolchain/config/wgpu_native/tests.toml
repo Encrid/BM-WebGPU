@@ -1,0 +1,57 @@
+[kinds.wgpu_program]
+output = "{name}{exe}"
+steps = [
+    { run = ["{python}", "tests/smoke/link.py", "{wgpu_native}/lib", "{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "-I{wgpu_native}/include", "{sources}", "{wgpu_file}", "{rpath}", "-o", "{output}", "{stack}"] },
+]
+
+[kinds.pe_file]
+output = "{name}.dll"
+steps = [
+    { run = ["{python}", "{sources}", "{output}"] },
+]
+
+[[artifact]]
+name = "smoke"
+kind = "wgpu_program"
+test = true
+sources = ["tests/smoke/smoke.c"]
+
+[[artifact]]
+name = "other"
+kind = "library"
+target = "x86_64-windows-gnu"
+test = true
+sources = ["tests/imports/other.c"]
+
+[[artifact]]
+name = "vcruntime140"
+kind = "library"
+target = "x86_64-windows-gnu"
+test = true
+sources = ["tests/imports/runtime.c"]
+
+[[artifact]]
+name = "user"
+kind = "library"
+target = "x86_64-windows-gnu"
+test = true
+sources = ["tests/imports/user.c"]
+link = ["{out}/other.dll"]
+
+[[artifact]]
+name = "both"
+kind = "library"
+target = "x86_64-windows-gnu"
+test = true
+sources = ["tests/imports/both.c"]
+link = ["{out}/vcruntime140.dll", "{out}/other.dll"]
+
+[[artifact.variants]]
+name = "both_swapped"
+defines = ["SWAPPED"]
+
+[[artifact]]
+name = "delayed"
+kind = "pe_file"
+test = true
+sources = ["tests/imports/delayed.py"]

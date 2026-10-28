@@ -1,0 +1,5 @@
+[[case]]
+name = "a module that takes each object"
+run = ["{out}/use{exe}"]
+claims = { status = 0 }
+false = { run = ["{out}/use{exe}", "fail"] }

@@ -1,0 +1,20 @@
+[[case]]
+name = "the library is wgpu-native v29.0.1.1"
+run = ["{case}/bin/smoke{exe}", "version"]
+claims = { status = 0, line = ["version 1d000101"] }
+folders = { "{case}/bin" = ["smoke", "{wgpu_native}/lib/{wgpu_file}"] }
+false = { folders = { "{case}/bin" = ["smoke"] } }
+
+[[case]]
+name = "a program loads the library beside it and gets an adapter"
+run = ["{case}/bin/smoke{exe}"]
+claims = { status = 0, matches = ["(?m)^adapter [0-9]+ [0-9]+$"] }
+folders = { "{case}/bin" = ["smoke", "{wgpu_native}/lib/{wgpu_file}"] }
+false = { folders = { "{case}/bin" = ["smoke"] } }
+
+[[case]]
+name = "a call of the list of gaps.txt stops the process inside wgpu-native"
+run = ["{case}/bin/smoke{exe}", "wait"]
+claims = { status_not = 0, has = ["not implemented"], lacks = ["waited"] }
+folders = { "{case}/bin" = ["smoke", "{wgpu_native}/lib/{wgpu_file}"] }
+false = { run = ["{case}/bin/smoke{exe}", "version"] }

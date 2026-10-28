@@ -9,18 +9,18 @@ This file chooses the samples and the depth of the frame, and makes the two targ
 1. It keeps `samples`. `checked` is `true` for 1 and 4 samples: `docs/extern/webgpu_device.h.md`, *webgpu:webgpu_samples_t*.
 2. For 2, 8 and 16 samples, it adds `WGPUNativeFeature_TextureAdapterSpecificFormatFeatures` if the adapter has it.
 3. It keeps the `WGPUTextureFormat` of `depth`, from the table `DEPTHS`. `WEBGPU_DEPTH_NONE` gives 0.
-4. For `Depth32FloatStencil8`, it adds its feature if the adapter has it. Else it writes its line, and uses `Depth24PlusStencil8`.
+4. For `Depth32FloatStencil8`, it adds its feature if the adapter has it. Else it writes the line of `depth`, and uses `Depth24PlusStencil8`.
 
 ## The targets
 
 `device_make_targets` releases the targets, then makes them at the size in `gpu`:
 
-| Target | When | Format | Label |
-| --- | --- | --- | --- |
-| `color` | `samples` is more than 1. | The format of the frame. | `webgpu:device color` |
-| `depth` | `depth_format` is not 0. | `depth_format` | `webgpu:device depth` |
+| Target | When | Format | Usages | Label |
+| --- | --- | --- | --- | --- |
+| `color` | `samples` is more than 1. | The format of the frame. | `RenderAttachment` | `webgpu:device color` |
+| `depth` | `depth_format` is not 0. | `depth_format` | `RenderAttachment` and `CopySrc` | `webgpu:device depth` |
 
-Their usages are those of `docs/extern/webgpu_device.h.md`, *webgpu:Frame*.
+These usages are the usages that the contract gives to `target` and to `depth` of `webgpu:Frame`.
 `make_target` makes the texture with the samples of the frame, then its view with the same label.
 A view of the module states its counts of mip levels and of layers as undefined, because a count of 0 stops the process.
 https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/lib.rs#L4288-L4334 shows it.
@@ -52,7 +52,8 @@ ENDFUNCTION
 ```
 
 `take_scope` gets the answer in the mode `WGPUCallbackMode_AllowProcessEvents`, as a request does. It sets `checked`, and clears `waiting`.
-After an error, it writes `no <count> samples: the frame uses 4`, and keeps 4 samples. The first configure of the surface then makes the targets at the size of the window.
+After an error, it writes the line of `samples`, and keeps 4 samples. The first configure of the surface then makes the targets at the size of the window.
+`device_choose_targets` and `take_scope` write the line of a setting with `device_say_fallback`: `docs/intern/device_lines.c.md`.
 `take_scope` keeps the rules of `docs/intern/device_inside.h.md`, *Callbacks*.
 
 ## Functions

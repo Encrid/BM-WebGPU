@@ -9,7 +9,7 @@ It covers the instance, the adapter, the device and the surface of `webgpu.h`. I
 | Word of the manifest | Value |
 | --- | --- |
 | The identity | `webgpu:device@1.0.0` |
-| `abi` | `1` |
+| `abi` | `2` |
 | `config` | `webgpu:DeviceSettings` |
 | `settings` | `present format alpha power fallback backend feature_level samples depth limits features error_room` |
 | `pinned` | `true`, because on macOS the module must make and configure the surface on the thread of the window. |
@@ -32,6 +32,16 @@ The header `bridge.h` of Bridge tells the room that `spans` needs in a world wit
 The file of the module is `webgpu_device`, with the suffix of a library. It runs on the backend of BB-Native, and loads the wgpu-native library of BL-WGPU-Native, which sits beside it.
 It needs no SDL3: the app gives it the window through `webgpu:Window`.
 
+## The contract
+
+The module reads `webgpu:Window`, and writes `webgpu:Frame` for the render modules.
+These singletons and their enums `webgpu:webgpu_surface_t` and `webgpu:webgpu_frame_state_t` are the contract of BL-WebGPU-Contract.
+The document of `webgpu_contract.h` of that library tells their fields, their constants and the roles of the modules.
+
+The module makes no surface for a kind of window of another system, for example `WEBGPU_SURFACE_METAL` on Windows: *Messages*.
+It makes none for a value that names no kind, or for a handle of 0.
+While *The make* takes its steps, each field of `webgpu:Frame` but `state` is 0.
+
 ## The systems
 
 | System | Phase | What it does |
@@ -49,12 +59,13 @@ The full names of the systems for `[order]` are `webgpu:device:frame` and `webgp
 1. It writes each text that waits in the room of *The errors*.
 2. If no `webgpu:Window` is there, or its `surface` is `WEBGPU_SURFACE_NONE`, it releases the surface and the device.
    Then it writes the state `WEBGPU_FRAME_NO_DEVICE`, and stops.
-3. If it has no device, it takes the next step of *The make*, writes the state `WEBGPU_FRAME_SKIPPED`, and stops.
-4. If the size of `webgpu:Window` changed, it configures the surface for the new size.
-5. It gets the texture of the frame from the surface, and acts on its status: *The status of a frame*.
-6. It writes `webgpu:Frame` with the state `WEBGPU_FRAME_READY`.
+3. If *The make* is not done, it takes its next step, writes the state `WEBGPU_FRAME_SKIPPED`, and stops.
+4. It checks that the device is not lost: *A lost device*.
+5. If the size of `webgpu:Window` changed, it configures the surface for the new size.
+6. It gets the texture of the frame from the surface, and acts on its status: *The status of a frame*.
+7. It writes `webgpu:Frame` with the state `WEBGPU_FRAME_READY`.
 
-If a step gets no adapter, device or surface, it writes its line of *Messages* at the level 3. Then the system gives 1.
+If a step gets no device or no surface, it writes its line of *Messages* at the level 3. Then the system gives 1.
 The system tries again at its next run, until `max_system_failures` stops the module.
 
 The module configures the surface only for a size from 1 to `maxTextureDimension2D` of the device on each side.
@@ -82,26 +93,41 @@ With wgpu-native v29.0.1.1, each request answers inside its call. Thus each step
 | `Timeout`, `Outdated` | It writes the state `WEBGPU_FRAME_SKIPPED`, and configures the surface again. |
 | `Lost` | It writes the state `WEBGPU_FRAME_SKIPPED`, and makes the surface again at its next run. |
 | `Occluded` of `wgpu.h` | It writes the state `WEBGPU_FRAME_SKIPPED`. The surface stays good while the window does not show. Only Metal gives this status. |
-| `Error` | It writes `no frame: the surface gives an error` at the level 3, and the system gives 1. |
+| `Error` | It writes `no surface: the surface gives an error` at the level 3, and the system gives 1. |
 
 `present` does not read the status of `wgpuSurfacePresent`, because wgpu-native gives the cause of a failed present only to its own log.
 
 ## A lost device
 
 When the device is lost, the module writes `device lost: <reason>: <text>` at the level 3.
-`<reason>` is `unknown`, `destroyed`, `callback cancelled` or `failed creation`, and `<text>` is the text of wgpu-native.
+`<reason>` names the code of `webgpu.h`: `unknown`, `destroyed`, `callback cancelled` or `failed creation`. `<text>` is the text of wgpu-native.
+wgpu-native v29.0.1.1 gives `destroyed` for each loss, with the text `Device lost`.
 In that round, the state of `webgpu:Frame` is `WEBGPU_FRAME_NO_DEVICE`. At the next run of `frame`, the module starts *The make* again, with the settings of that run.
+
+wgpu-native v29.0.1.1 tells the module of a loss only inside a later call on the device. A loss alone, or `wgpuDeviceDestroy`, calls nothing.
+Thus, before the configure and the texture of step 5 and step 6 of *The frame*, `frame` makes a command encoder and releases it.
+The label of the encoder is `webgpu:device check`. On a lost device, that call tells the module of the loss, and `frame` acts on it in the same run.
 
 ## The errors
 
 The module writes each error of the device that no scope catches: `webgpu error: <type>: <text>`, at the level 3.
-`<type>` is `validation`, `out of memory`, `internal` or `unknown`. A render module can catch its own errors with a scope of `webgpu.h`.
-Each object that the module makes has a label that starts with `webgpu:device`.
+`<type>` names the code of `webgpu.h`: `validation`, `out of memory`, `internal` or `unknown`. wgpu-native v29.0.1.1 gives only `validation` and `out of memory`.
+A render module can catch its own errors with a scope of `webgpu.h`.
+
+Each object of the module that takes a label has a label that starts with `webgpu:device`.
 Each render module gives its objects a label that starts with its full name. Thus the text of an error tells which module made the object.
 
 wgpu-native calls the callback of an error inside the call that finds it, which can be a call of a render module, on its thread.
 That callback cannot write a line of this module. Thus it copies the text into a room of `error_room` bytes. The callback of a loss copies its text there too.
 The next run of `frame` writes each text that waits. Then it writes the count of the texts that did not fit, if there are some.
+
+## Limits
+
+With wgpu-native v29.0.1.1, a lost device stops the process at these calls:
+
+- `wgpuSurfaceConfigure` and `wgpuSurfaceGetCurrentTexture`. Thus `frame` checks the device before them: *A lost device*.
+- The release of the texture of a frame that the surface did not present. Thus a loss from `frame` to `present` stops the process, because the module holds that texture then.
+- `wgpuQueueSubmit`. Thus a render module that submits after a loss stops the process.
 
 ## webgpu:DeviceSettings
 
@@ -238,108 +264,94 @@ The depth texture has the samples of the frame. Each render pass chooses to use 
 
 | Constant | Value | The features of the device |
 | --- | --- | --- |
-| `WEBGPU_FEATURES_ADAPTER` | 1 | Each feature that the adapter gives. |
+| `WEBGPU_FEATURES_ADAPTER` | 1 | Each feature that the adapter gives, but the experimental features. |
 | `WEBGPU_FEATURES_DEFAULT` | 2 | Only the features that `samples` and `depth` need. |
 
-## webgpu:Window
-
-`webgpu:Window` is a singleton that the app writes at each round, from the window of the app, for example `sdl3:Window`.
-
-| Field | C type | Value |
-| --- | --- | --- |
-| `surface` | `webgpu_surface_t` | The kind of the window. |
-| `width`, `height` | `uint32_t` | The size of the frame, in pixels. |
-| `hinstance`, `hwnd` | `uint64_t` | On Windows: the instance of the program, and the window. |
-| `layer` | `uint64_t` | On macOS: the `CAMetalLayer` of the window. |
-| `x11_display`, `x11_window` | `uint64_t` | On X11: the display, and the number of the window. |
-| `wl_display`, `wl_surface` | `uint64_t` | On Wayland: the display, and the surface of the window. |
-
-The module reads only the handles of the kind of `surface`. The handles of the other kinds are 0.
-A kind of another system, or a handle of 0, gives no surface: *Messages*.
-The module makes its surface from the handles once. To give another window, the app writes `WEBGPU_SURFACE_NONE` for one round first.
-
-### webgpu:webgpu_surface_t
-
-| Constant | Value | The window |
-| --- | --- | --- |
-| `WEBGPU_SURFACE_NONE` | 1 | No window. The module releases the surface and the device. |
-| `WEBGPU_SURFACE_WINDOWS` | 2 | A window of Windows: `hinstance` and `hwnd`. |
-| `WEBGPU_SURFACE_METAL` | 3 | A window of macOS: `layer`. |
-| `WEBGPU_SURFACE_X11` | 4 | A window of X11: `x11_display` and `x11_window`. |
-| `WEBGPU_SURFACE_WAYLAND` | 5 | A window of Wayland: `wl_display` and `wl_surface`. |
-
-## webgpu:Frame
-
-`webgpu:Frame` is a singleton that only the module writes. Each render module reads it.
-
-| Field | C type | Value |
-| --- | --- | --- |
-| `state` | `webgpu_frame_state_t` | What a render module does in this round. |
-| `format` | `uint32_t` | The `WGPUTextureFormat` of `frame` and of `target`. |
-| `depth_format` | `uint32_t` | The `WGPUTextureFormat` of `depth`, or 0 with `WEBGPU_DEPTH_NONE`. |
-| `samples` | `uint32_t` | The samples of each pixel of `target` and of `depth`. |
-| `width`, `height` | `uint32_t` | The size of the frame, in pixels. |
-| `device` | `uint64_t` | The `WGPUDevice`. |
-| `queue` | `uint64_t` | The `WGPUQueue` of the device. |
-| `frame` | `uint64_t` | The `WGPUTextureView` of the frame, which the surface presents. |
-| `target` | `uint64_t` | The `WGPUTextureView` to draw into: `frame` with 1 sample, else the multisample texture. Its usage is `RenderAttachment`. |
-| `depth` | `uint64_t` | The `WGPUTextureView` of the depth texture, or 0 with `WEBGPU_DEPTH_NONE`. Its usages are `RenderAttachment` and `CopySrc`. |
-
-In `WEBGPU_FRAME_SKIPPED`, `frame`, `target` and `depth` are 0, and `device` and `queue` stay once the device is there.
-While *The make* takes its steps, and in `WEBGPU_FRAME_NO_DEVICE`, each field but `state` is 0.
-With more than 1 sample, each render pass resolves `target` into `frame`.
-A frame that no render module clears is black, because WebGPU clears each new frame to 0.
-
-### webgpu:webgpu_frame_state_t
-
-| Constant | Value | What a render module does |
-| --- | --- | --- |
-| `WEBGPU_FRAME_READY` | 1 | It draws into `target`. |
-| `WEBGPU_FRAME_SKIPPED` | 2 | It draws nothing in this round, and keeps its objects. |
-| `WEBGPU_FRAME_NO_DEVICE` | 3 | It releases its objects now, because the window closed or the device was lost. At the next `WEBGPU_FRAME_READY`, it makes them again. |
+An adapter can give the experimental features `RayQuery` and `CooperativeMatrix` of `wgpu.h`.
+wgpu-native v29.0.1.1 refuses a device that asks for one of them, because it does not enable the experimental features. Thus the module does not ask for them.
 
 ## The C types
 
 `include/webgpu_device.h` gives the C type of each type of the module, and its descriptor for Bridge.
+It includes `webgpu_contract.h`, which gives the C types of *The contract*.
+The header includes `bridge_schema.h` of Bridge. It makes each C type and its descriptor from one text, with the macros of that header.
 
-| Type of Bridge | C type | Descriptor |
-| --- | --- | --- |
-| `webgpu:webgpu_present_t` | `webgpu_present_t` | `webgpu_present_t_desc` |
-| `webgpu:webgpu_format_t` | `webgpu_format_t` | `webgpu_format_t_desc` |
-| `webgpu:webgpu_alpha_t` | `webgpu_alpha_t` | `webgpu_alpha_t_desc` |
-| `webgpu:webgpu_power_t` | `webgpu_power_t` | `webgpu_power_t_desc` |
-| `webgpu:webgpu_backend_t` | `webgpu_backend_t` | `webgpu_backend_t_desc` |
-| `webgpu:webgpu_feature_level_t` | `webgpu_feature_level_t` | `webgpu_feature_level_t_desc` |
-| `webgpu:webgpu_samples_t` | `webgpu_samples_t` | `webgpu_samples_t_desc` |
-| `webgpu:webgpu_depth_t` | `webgpu_depth_t` | `webgpu_depth_t_desc` |
-| `webgpu:webgpu_limits_t` | `webgpu_limits_t` | `webgpu_limits_t_desc` |
-| `webgpu:webgpu_features_t` | `webgpu_features_t` | `webgpu_features_t_desc` |
-| `webgpu:webgpu_surface_t` | `webgpu_surface_t` | `webgpu_surface_t_desc` |
-| `webgpu:webgpu_frame_state_t` | `webgpu_frame_state_t` | `webgpu_frame_state_t_desc` |
-| `webgpu:DeviceSettings` | `webgpu_device_settings_t` | `webgpu_device_settings_t_desc` |
-| `webgpu:Window` | `webgpu_window_t` | `webgpu_window_t_desc` |
-| `webgpu:Frame` | `webgpu_frame_t` | `webgpu_frame_t_desc` |
+| Type of Bridge | C type | Descriptor | Macro of the text |
+| --- | --- | --- | --- |
+| `webgpu:webgpu_present_t` | `webgpu_present_t` | `webgpu_present_t_desc` | `WEBGPU_PRESENT_VALUES` |
+| `webgpu:webgpu_format_t` | `webgpu_format_t` | `webgpu_format_t_desc` | `WEBGPU_FORMAT_VALUES` |
+| `webgpu:webgpu_alpha_t` | `webgpu_alpha_t` | `webgpu_alpha_t_desc` | `WEBGPU_ALPHA_VALUES` |
+| `webgpu:webgpu_power_t` | `webgpu_power_t` | `webgpu_power_t_desc` | `WEBGPU_POWER_VALUES` |
+| `webgpu:webgpu_backend_t` | `webgpu_backend_t` | `webgpu_backend_t_desc` | `WEBGPU_BACKEND_VALUES` |
+| `webgpu:webgpu_feature_level_t` | `webgpu_feature_level_t` | `webgpu_feature_level_t_desc` | `WEBGPU_FEATURE_LEVEL_VALUES` |
+| `webgpu:webgpu_samples_t` | `webgpu_samples_t` | `webgpu_samples_t_desc` | `WEBGPU_SAMPLES_VALUES` |
+| `webgpu:webgpu_depth_t` | `webgpu_depth_t` | `webgpu_depth_t_desc` | `WEBGPU_DEPTH_VALUES` |
+| `webgpu:webgpu_limits_t` | `webgpu_limits_t` | `webgpu_limits_t_desc` | `WEBGPU_LIMITS_VALUES` |
+| `webgpu:webgpu_features_t` | `webgpu_features_t` | `webgpu_features_t_desc` | `WEBGPU_FEATURES_VALUES` |
+| `webgpu:DeviceSettings` | `webgpu_device_settings_t` | `webgpu_device_settings_t_desc` | `WEBGPU_DEVICE_SETTINGS_FIELDS` |
+
+Each macro of the text gives the braces of its type and the text between them.
+A module in another language does not include the header. It states the descriptor of each type with these bytes, in the order of the table:
+
+```text
+uint32_t { WEBGPU_PRESENT_FIFO = 1, WEBGPU_PRESENT_FIFO_RELAXED = 2, WEBGPU_PRESENT_IMMEDIATE = 3, WEBGPU_PRESENT_MAILBOX = 4 }
+uint32_t { WEBGPU_FORMAT_PREFERRED = 1, WEBGPU_FORMAT_BGRA8_UNORM = 2, WEBGPU_FORMAT_BGRA8_UNORM_SRGB = 3, WEBGPU_FORMAT_RGBA8_UNORM = 4, WEBGPU_FORMAT_RGBA8_UNORM_SRGB = 5, WEBGPU_FORMAT_RGB10A2_UNORM = 6, WEBGPU_FORMAT_RGBA16_FLOAT = 7 }
+uint32_t { WEBGPU_ALPHA_AUTO = 1, WEBGPU_ALPHA_OPAQUE = 2, WEBGPU_ALPHA_PREMULTIPLIED = 3, WEBGPU_ALPHA_UNPREMULTIPLIED = 4, WEBGPU_ALPHA_INHERIT = 5 }
+uint32_t { WEBGPU_POWER_LOW_POWER = 1, WEBGPU_POWER_HIGH_PERFORMANCE = 2 }
+uint32_t { WEBGPU_BACKEND_ANY = 1, WEBGPU_BACKEND_D3D12 = 2, WEBGPU_BACKEND_METAL = 3, WEBGPU_BACKEND_VULKAN = 4, WEBGPU_BACKEND_OPENGL = 5, WEBGPU_BACKEND_OPENGLES = 6 }
+uint32_t { WEBGPU_FEATURE_LEVEL_COMPATIBILITY = 1, WEBGPU_FEATURE_LEVEL_CORE = 2 }
+uint32_t { WEBGPU_SAMPLES_1 = 1, WEBGPU_SAMPLES_2 = 2, WEBGPU_SAMPLES_4 = 4, WEBGPU_SAMPLES_8 = 8, WEBGPU_SAMPLES_16 = 16 }
+uint32_t { WEBGPU_DEPTH_NONE = 1, WEBGPU_DEPTH_16_UNORM = 2, WEBGPU_DEPTH_24_PLUS = 3, WEBGPU_DEPTH_24_PLUS_STENCIL_8 = 4, WEBGPU_DEPTH_32_FLOAT = 5, WEBGPU_DEPTH_32_FLOAT_STENCIL_8 = 6 }
+uint32_t { WEBGPU_LIMITS_ADAPTER = 1, WEBGPU_LIMITS_DEFAULT = 2 }
+uint32_t { WEBGPU_FEATURES_ADAPTER = 1, WEBGPU_FEATURES_DEFAULT = 2 }
+{ webgpu_present_t present; webgpu_format_t format; webgpu_alpha_t alpha; webgpu_power_t power; bool fallback; webgpu_backend_t backend; webgpu_feature_level_t feature_level; webgpu_samples_t samples; webgpu_depth_t depth; webgpu_limits_t limits; webgpu_features_t features; uint32_t error_room; }
+```
+
+## The declarations
+
+Each module that reads or writes a type of the module declares it in its `init`. A module in C gives the C type and the descriptor of the header.
+Bridge compares the descriptors byte for byte. It also refuses a second module that states another kind, storage layout or `on_destroy`.
+
+| Type of Bridge | Kind | Storage layout | `on_destroy` |
+| --- | --- | --- | --- |
+| `webgpu:webgpu_present_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `webgpu:webgpu_format_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `webgpu:webgpu_alpha_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `webgpu:webgpu_power_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `webgpu:webgpu_backend_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `webgpu:webgpu_feature_level_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `webgpu:webgpu_samples_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `webgpu:webgpu_depth_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `webgpu:webgpu_limits_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `webgpu:webgpu_features_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `webgpu:DeviceSettings` | `BRIDGE_STRUCT` | `BRIDGE_SINGLETON` | `BRIDGE_ON_DESTROY_REMOVE` |
+
+A module declares the 10 enums before `webgpu:DeviceSettings`, which names them. Bridge finds the type of a field only among the types that are already declared.
+The module states `BRIDGE_STRIP` as the `on_unload` of each type, so its unload destroys no entity. Bridge does not compare `on_unload`, so each module states its own.
+The module also declares the four types of *The contract*, as the document of `webgpu_contract.h` tells.
 
 ## The deployment
 
 - `phases` lists `frame` after the phases of the app, then the phases of the render modules, then `present`.
-- The app copies its window into `webgpu:Window` at each round, before `frame`, so it needs `write` with `webgpu:Window`.
-- A render module reads `webgpu:Frame`, so it needs `read` with `webgpu:Frame`.
+- The app copies its window into `webgpu:Window` at each round, before `frame`. Thus it needs `write` with `webgpu:Window`, and `read` with `webgpu:webgpu_surface_t`.
+- A render module reads `webgpu:Frame`. Thus it needs `read` with `webgpu:Frame` and `webgpu:webgpu_frame_state_t`.
+- The module is of the namespace `webgpu`, so it needs no grant.
 - A deployment gives the settings in `[module."webgpu:device@1.0.0".config]`.
 - A deployment holds one wgpu-native library, beside the WebGPU modules, so that each module loads that one library.
 - The wgpu-native library is no module, so `content.ignore` names it.
+- On `aarch64-windows-gnu`, the wgpu-native library needs the Microsoft Visual C++ Redistributable for arm64 on the machine: the readme of BL-WGPU-Native.
 - The backend of BB-Native has no capability of a limit, so `work_limit`, `memory_limit` and the three timeouts of the module are `"none"`.
 
 The readme of Bridge-Host tells each key of a deployment.
 
 ## Messages
 
+Each `<text>` is the text of wgpu-native, which can hold line ends. Then one line of the module takes more than one line of the output of the host.
+
 The module writes these lines at the level 3. Then the system gives 1, and tries again at its next run:
 
-- `no adapter: <reason>`: the request gives no adapter for the settings. `<reason>` is the text of wgpu-native.
-- `no device: <reason>`: the adapter gives no device. `<reason>` is the text of wgpu-native.
-- `no surface: <reason>`: the surface of the window cannot be made. `<reason>` is `the window has no handle of this system`, or `the adapter gives no format for the window`.
-- `no frame: the surface gives an error`: *The status of a frame*.
+- `no device: <reason>: <text>`: a request of *The make* gives no adapter or no device. `<reason>` is `no adapter` or `the adapter refuses the device`, and `<text>` is the text of wgpu-native.
+- `no surface: <reason>`: the module has no surface, or the surface gives no frame. `<reason>` is `the window has no handle of this system`, `the adapter gives no format for the window` or `the surface gives an error`.
 
 The module writes these lines at the level 3, and the system goes on:
 
@@ -347,10 +359,6 @@ The module writes these lines at the level 3, and the system goes on:
 - `webgpu error: <type>: <text>`: *The errors*.
 - `webgpu error: <count> texts did not fit in error_room`: *The errors*.
 
-The module writes these lines at the level 4, when the surface or the device does not give the value of a setting:
+The module writes this line at the level 4, when the surface or the device does not give the value of a setting:
 
-- `no present mode <mode>: the surface presents with FIFO`
-- `no format <format>: the frame uses <format>`
-- `no alpha mode <mode>: the surface uses <mode>`
-- `no <count> samples: the frame uses 4`
-- `no depth 32_FLOAT_STENCIL_8: the depth uses 24_PLUS_STENCIL_8`
+- `no <setting> <value>: the frame uses <value>`: `<setting>` is `present`, `format`, `alpha`, `samples` or `depth`. The first `<value>` is the name of the constant of the setting. The second one is the name of the constant that the frame uses in its place.

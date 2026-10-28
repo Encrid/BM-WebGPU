@@ -6,7 +6,8 @@ It includes `include/webgpu_device.h`, the headers `webgpu.h` and `wgpu.h` of BL
 ## The slots
 
 Bridge numbers the types of a module from 0, in the order of their declarations.
-`bridge_init` declares them in the order of `docs/extern/webgpu_device.h.md`, *The C types*: the 12 enums, then the 3 singletons.
+`bridge_init` declares the 10 enums of `docs/extern/webgpu_device.h.md`, *The C types*, in the order of that table.
+Then it declares `webgpu:webgpu_surface_t` and `webgpu:webgpu_frame_state_t` of the contract, and the 3 singletons.
 The header gives the slots of the singletons as `constexpr`: `SETTINGS` is 12, `WINDOW` is 13 and `FRAME` is 14.
 
 ## Types
@@ -30,7 +31,7 @@ The header gives the slots of the singletons as `constexpr`: `SETTINGS` is 12, `
 | `depth_format` | The `WGPUTextureFormat` of the depth texture, or 0. |
 | `width`, `height` | The size of the targets and of the configured surface. |
 | `max_side` | `maxTextureDimension2D` of the limits of the device. |
-| `next` | The next step of the make: `NEXT_ADAPTER` for step 1, `NEXT_DEVICE` for step 2, and `NEXT_KEEP` after them. |
+| `next` | The next step of the make: `NEXT_ADAPTER` for step 1, `NEXT_DEVICE` for step 2, and `NEXT_KEEP` after them. `NEXT_ADAPTER` is 0, so a `gpu` of zeros starts at step 1. |
 | `waiting` | `true` from a request to its callback. |
 | `failed` | `true` when a step of the make or a callback failed and wrote its line. |
 | `configure` | `true` when the surface needs a configure at the next run. |
@@ -61,7 +62,8 @@ https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/lib.rs#L494-L643 and ht
 
 ## Functions
 
-Each source writes its lines with `bridge_native_say` of BB-Native, at the level `BRIDGE_LOG_ERR` or `BRIDGE_LOG_WARN`.
+The module writes its lines with `bridge_native_say` of BB-Native, at the level `BRIDGE_LOG_ERR` or `BRIDGE_LOG_WARN`.
+The steps write the three families of lines through `src/device_lines.c`, and `device_drain_room` writes the lines of the room.
 `[test] writers` names `bridge_native_say`, so that the check of the messages reads each format: `docs/contributing/tests.md`, *The messages of the code*.
 The header gives no function of its own. It declares the functions that the sources share:
 
@@ -72,5 +74,6 @@ The header gives no function of its own. It declares the functions that the sour
 | `device_ask_adapter`, `device_ask_device` | `src/device_ask.c` |
 | `device_choose_modes` | `src/device_modes.c` |
 | `device_choose_targets`, `device_make_targets`, `device_release_targets` | `src/device_targets.c` |
-| `device_take_frame`, `device_release_frame` | `src/device_present.c` |
+| `device_take_frame`, `device_release_frame`, `device_is_lost` | `src/device_present.c` |
 | `device_keep_error`, `device_keep_lost`, `device_drain_room`, `device_size_room` | `src/device_errors.c` |
+| `device_say_no_device`, `device_say_no_surface`, `device_say_fallback` | `src/device_lines.c` |

@@ -44,7 +44,7 @@ Thus each writer gets its own bytes, from `at` to `at + need`, and `used` never 
 
 ## The reader
 
-`device_drain_room` runs at the start of each run of `frame`:
+`device_drain_room` runs at the start of each run of `frame`, and again when the run gives `DEVICE_GONE`:
 
 1. It writes a line at the level 3 for each text below `used`, with `bridge_native_say`.
 2. A text of `TEXT_LOST` gives `device lost: <reason>: <text>`, else `webgpu error: <type>: <text>`.
@@ -58,7 +58,7 @@ wgpu-native `v29.0.1.1` gives only the types `validation` and `out of memory`, a
 `frame` reads the room safely, because no writer runs during `frame`:
 
 - A writer runs only inside a call of WebGPU on an object of the device.
-- The module makes its own calls on the thread of `frame`, after the read, or in `present`.
+- The module makes its own calls on the thread of `frame`, after a read, or in `present`.
 - Each other call comes from a render module, which reads `webgpu:Frame`: `docs/extern/webgpu_device.h.md`, *The deployment*.
 - `frame` writes `webgpu:Frame`, so Bridge never runs a system that reads it at the same time: the section Conflicts of `bridge_abi.h`.
 - The phases run one after another, and the observers run at a barrier, after the systems of the phase.

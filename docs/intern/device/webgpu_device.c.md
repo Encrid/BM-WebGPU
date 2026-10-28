@@ -18,12 +18,13 @@ A `[[style.exception]]` of the project excuses this struct from the rule G4, wit
 
 `bridge_init` does these steps:
 
-1. `declare_enums` declares the 12 enums from a table of their names and their descriptors.
+1. `declare_enums` declares the 12 enums of `docs/intern/device_inside.h.md`, *The slots*, from a table of their names and their descriptors.
 2. It declares the singletons `webgpu:DeviceSettings`, `webgpu:Window` and `webgpu:Frame`.
 3. It attaches a `webgpu:Frame` with the state `WEBGPU_FRAME_NO_DEVICE`, and each other field at 0.
 4. It adds the system `frame` in the phase `frame`, and the system `present` in the phase `present`.
 
 Each enum is a `uint32_t`, so each declaration of the table has the size 4 and the alignment 4.
+Each declaration states the kind, the storage layout, `on_unload` and `on_destroy` of `docs/extern/webgpu_device.h.md`, *The declarations*.
 `frame` has three optional terms: it reads the settings and the window, and it writes the frame. `present` reads the frame as an optional term.
 `init` makes no object of WebGPU, because the settings come after it: `docs/extern/webgpu_device.h.md`, *The systems*.
 
@@ -40,7 +41,7 @@ The release blocks while the GPU ends its work: `docs/intern/device_make.c.md`, 
 | Function | Result |
 | --- | --- |
 | `bridge_init` | Declares the 15 types, attaches `webgpu:Frame`, and adds the 2 systems. Gives 0. |
-| `declare_enums` | Declares the 12 enums of the module. |
+| `declare_enums` | Declares the 12 enums that the module uses. |
 | `bridge_shutdown` | Releases each object of WebGPU, then frees the room. Gives 0. |
 | `bridge_reload` | Gives 1. |
 | `device_get_state` | Gives the state of the module. |

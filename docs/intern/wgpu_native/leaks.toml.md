@@ -53,4 +53,3 @@ The device of `WGPUDeviceLostCallback` belongs to wgpu-native, so no module coun
 
 - A module calls no `AddRef` function, because the count does not see a second reference.
 - The count does not see the adapters that `wgpuInstanceEnumerateAdapters` of `wgpu.h` writes into an array.
-- The two places `<n>` of a callback and `*<n>.<field>` come with the template in phase 4. Until then, the count does not see the adapter, the device and the texture of a frame.

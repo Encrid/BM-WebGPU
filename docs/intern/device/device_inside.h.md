@@ -37,7 +37,30 @@ The header gives the slots of the singletons as `constexpr`: `SETTINGS` is 12, `
 | `configure` | `true` when the surface needs a configure at the next run. |
 
 `docs/intern/device_errors.c.md`, *The room*, gives the fields of `room_t`.
+`docs/intern/device_errors.c.md`, *A writer*, gives the fields of `text_head_t`, the head of a text in the room.
 `docs/extern/webgpu_device.h.md`, *The make*, gives the steps that `next` names.
+
+`device_source_t` is the source of a surface, which `device_make_surface` gives to `device_set_source`: `docs/intern/device_source.c.md`.
+
+| Field | Content |
+| --- | --- |
+| `instance` | The descriptor of the instance. On Wayland, it chains `extras`. Else it is empty. |
+| `extras` | The `WGPUInstanceExtras` that give the display of a window of Wayland to the instance. |
+| `surface` | A union of the chained struct of each kind of window: `windows`, `metal`, `x11` and `wayland`. `chain` is the start of each one. |
+
+`device_request_t` holds the descriptor of the device and what the descriptor points to, until the request of `device_ask_device` ends: `docs/intern/device_ask.c.md`.
+
+| Field | Content |
+| --- | --- |
+| `shape` | The descriptor of the device. |
+| `adapter` | The features of the adapter, with `WEBGPU_FEATURES_ADAPTER`. Else it is empty. `device_ask_device` frees them after the request. |
+| `features` | The features that the device asks for. |
+| `count` | The count of the features that `device_choose_targets` gives. |
+| `limits` | The limits of the adapter. |
+
+`features` holds `MOST_FEATURES` items, which is 128.
+`webgpu.h` and `wgpu.h` of wgpu-native v29.0.1.1 name 81 features, and an adapter gives each feature one time.
+Thus the count of the features stays below `MOST_FEATURES`.
 
 A step of `frame` gives a value of `device_step_t`. `bridge_frame` turns it into the state of `webgpu:Frame`, the result of the system, and the fields that `write_frame` writes:
 
@@ -71,6 +94,7 @@ The header gives no function of its own. It declares the functions that the sour
 | --- | --- |
 | `device_get_state` | `src/webgpu_device.c` |
 | `device_make_next`, `device_make_surface`, `device_release` | `src/device_make.c` |
+| `device_set_source` | `src/device_source.c` |
 | `device_ask_adapter`, `device_ask_device` | `src/device_ask.c` |
 | `device_choose_modes` | `src/device_modes.c` |
 | `device_choose_targets`, `device_make_targets`, `device_release_targets` | `src/device_targets.c` |

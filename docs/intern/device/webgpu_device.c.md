@@ -4,7 +4,10 @@ This file holds the manifest of the module, its state, and its entries `init`, `
 
 ## The manifest
 
-The kind `native_module` gives the words of the manifest as the macro `MANIFEST`.
+The kind `wgpu_module` of `.toolchain/config/kinds.toml` is the kind `native_module` of `.toolchain/docs/presets.md`, with one change.
+It links wgpu-native by its bare name, in a step that runs in the folder of the library, as the readme of BL-WGPU-Native tells.
+Thus the module records only that name, and each WebGPU module of a deployment loads the one copy beside them.
+The kind gives the words of the manifest as the macro `MANIFEST`.
 The file puts that macro into the section of the target, with the line of `.toolchain/docs/presets.md`, *native_module*.
 
 ## The state
@@ -18,7 +21,7 @@ A `[[style.exception]]` of the project excuses this struct from the rule G4, wit
 
 `bridge_init` does these steps:
 
-1. `declare_enums` declares the 12 enums of `docs/intern/device_inside.h.md`, *The slots*, from a table of their names and their descriptors.
+1. `declare_enums` declares the 12 enums of `docs/intern/device_inside.h.md`, *The slots*, from the table `ENUMS` of their names and descriptors.
 2. It declares the singletons `webgpu:DeviceSettings`, `webgpu:Window` and `webgpu:Frame`.
 3. It attaches a `webgpu:Frame` with the state `WEBGPU_FRAME_NO_DEVICE`, and each other field at 0.
 4. It adds the system `frame` in the phase `frame`, and the system `present` in the phase `present`.

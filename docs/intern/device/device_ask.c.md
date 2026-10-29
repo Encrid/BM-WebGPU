@@ -25,8 +25,11 @@ The table holds no other value, because wgpu-native stops the process for a valu
 
 1. It chooses the modes of the surface: `docs/intern/device_modes.c.md`. If it cannot, it sets `failed`.
 2. It gives the room `error_room` bytes with `device_size_room`.
-3. `describe_device` fills the descriptor of the device, as the next table tells.
-4. It calls `wgpuAdapterRequestDevice`. Then it frees the features of the adapter, if it got them.
+3. It gets the features of `device_choose_targets`, the limits of the adapter, and with `WEBGPU_FEATURES_ADAPTER` the features of the adapter.
+4. `describe_device` copies `DEVICE_SHAPE` into the descriptor, then adds the features, the limits and the state, as the next table tells.
+5. It calls `wgpuAdapterRequestDevice`. Then it frees the features of the adapter, if it got them.
+
+`DEVICE_SHAPE` holds the two labels and the two callbacks of the next table. `device_request_t` holds the descriptor and the lists that it points to.
 
 | Field of `WGPUDeviceDescriptor` | Value |
 | --- | --- |
@@ -60,5 +63,5 @@ The leak count reads argument 2 of `take_adapter` and of `take_device` as a take
 | `device_ask_adapter` | Makes the surface, then asks for the adapter. Gives `DEVICE_MAKING`. |
 | `take_adapter` | Keeps the adapter, or writes its line and sets `failed`. |
 | `device_ask_device` | Chooses the modes, then asks for the device. Gives `DEVICE_MAKING`. |
-| `describe_device` | Fills the label, the features, the limits and the callbacks of the descriptor of the device. |
+| `describe_device` | Copies `DEVICE_SHAPE`, then fills the features, the limits and the state of the descriptor of the device. |
 | `take_device` | Keeps the device, or writes its line and sets `failed`. |

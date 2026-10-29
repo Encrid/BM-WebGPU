@@ -7,7 +7,7 @@ This file chooses the samples and the depth of the frame, and makes the two targ
 `device_choose_targets` runs before the request of the device. It gives the features that the targets need, for `WEBGPU_FEATURES_DEFAULT`:
 
 1. It keeps `samples`. `checked` is `true` for 1 and 4 samples: `docs/extern/webgpu_device.h.md`, *webgpu:webgpu_samples_t*.
-2. For 2, 8 and 16 samples, it adds `WGPUNativeFeature_TextureAdapterSpecificFormatFeatures` if the adapter has it.
+2. For 2, 8 and 16 samples, it adds `SAMPLES_FEATURE`, which is `WGPUNativeFeature_TextureAdapterSpecificFormatFeatures`, if the adapter has it.
 3. It keeps the `WGPUTextureFormat` of `depth`, from the table `DEPTHS`. `WEBGPU_DEPTH_NONE` gives 0.
 4. For `Depth32FloatStencil8`, it adds its feature if the adapter has it. Else it writes the line of `depth`, and uses `Depth24PlusStencil8`.
 

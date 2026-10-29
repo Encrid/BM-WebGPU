@@ -60,6 +60,7 @@ Then it gives the step of `device_make_targets`.
 ## webgpu:Frame
 
 `write_frame` writes the state and the fields of the step, from `gpu`: `docs/intern/device_inside.h.md`, *Types*.
+The tables `STATES`, `RESULTS` and `HAS_DEVICE` give the state, the result, and if the fields of the device are written, for each step.
 `target` is the view of `color` with more than 1 sample, else the view of `frame`.
 
 ## Functions

@@ -5,3 +5,36 @@ name = "BM-WebGPU-Device"
 timeout = 120
 copies = 1
 writers = ["bridge_native_say"]
+
+[check]
+refuse = ["{wgpu_native}/gaps.txt"]
+
+[[style.exception]]
+rule = "G4"
+path = "src/webgpu_device.c"
+why = "A native module gets only its API at each call, so the objects of WebGPU have no other place between two rounds than the one static device_t."
+
+[[style.exception]]
+rule = "F5"
+path = "src/device_ask.c:take_adapter"
+why = "wgpu-native calls it with the five parameters of WGPURequestAdapterCallback of webgpu.h."
+
+[[style.exception]]
+rule = "F5"
+path = "src/device_ask.c:take_device"
+why = "wgpu-native calls it with the five parameters of WGPURequestDeviceCallback of webgpu.h."
+
+[[style.exception]]
+rule = "F5"
+path = "src/device_targets.c:take_scope"
+why = "wgpu-native calls it with the five parameters of WGPUPopErrorScopeCallback of webgpu.h."
+
+[[style.exception]]
+rule = "F5"
+path = "src/device_*:device_keep_error"
+why = "wgpu-native calls it with the five parameters of WGPUUncapturedErrorCallback of webgpu.h."
+
+[[style.exception]]
+rule = "F5"
+path = "src/device_*:device_keep_lost"
+why = "wgpu-native calls it with the five parameters of WGPUDeviceLostCallback of webgpu.h."

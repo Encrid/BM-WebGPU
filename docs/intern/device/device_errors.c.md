@@ -32,7 +32,7 @@ FUNCTION keep_text(d : device_t, head : text_head_t, text : WGPUStringView) RETU
          CALL atomic_fetch_add(d.room.missed, 1)
          RETURN FALSE
       ENDIF
-   UNTIL atomic_compare_exchange_weak(d.room.used, at, at + need)
+   UNTIL atomic_compare_exchange_strong(d.room.used, at, at + need)
    CALL memcpy(d.room.bytes[at], head, TEXT_HEAD)
    CALL memcpy(d.room.bytes[at + TEXT_HEAD], text.data, head.len)
    RETURN TRUE
@@ -41,6 +41,7 @@ ENDFUNCTION
 
 When two threads write at once, both read `used`, and only one exchange succeeds. The other one gets the new `used` in `at`, and tries again after the first text.
 Thus each writer gets its own bytes, from `at` to `at + need`, and `used` never passes `size`.
+The exchange is strong, so it fails only when another writer changed `used`. A weak exchange can also fail with no other writer, on a processor such as aarch64.
 
 ## The reader
 
@@ -52,7 +53,9 @@ Thus each writer gets its own bytes, from `at` to `at + need`, and `used` never 
 4. It sets `used` and `missed` to 0, and gives the old value of `lost`.
 
 The text of each line goes into the scratch arena. `docs/extern/webgpu_device.h.md`, *The module*, gives the room that `scratch` needs for it.
+
 The tables `ERROR_NAMES` and `LOST_NAMES` give the name of each code. A code that a table does not hold gives `unknown`.
+Each table holds `NAME_COUNT` codes, from 0. A code of `NAME_COUNT` or more reads the code 0, which gives `unknown`.
 wgpu-native `v29.0.1.1` gives only the types `validation` and `out of memory`, and only the reason `destroyed`: https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/lib.rs#L511-L569.
 
 `frame` reads the room safely, because no writer runs during `frame`:

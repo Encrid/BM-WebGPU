@@ -5,6 +5,13 @@ probe_words = [
     "hot_reload=false", "config.scene=none", "config.module=none",
 ]
 
+[kinds.stand_in]
+output = "{name}{library}"
+steps = [
+    { run = ["{python}", "tests/stand_in/calls.py", "{work}.c", "{sources}", "{manifest}"] },
+    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "-shared", "{pic}", "{soname}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "{include}", "{work}.c", "{flags}", "-o", "{output}"] },
+]
+
 [[artifact]]
 name = "probe"
 kind = "wgpu_module"
@@ -33,12 +40,13 @@ manifest = [
 
 [[artifact]]
 name = "{wgpu_name}"
-kind = "library"
+kind = "stand_in"
 test = true
 sources = ["tests/stand_in/stand_in.c"]
 include = ["{wgpu_native}/include"]
 defines = ["_GNU_SOURCE"]
 flags = ["{dl}"]
+manifest = ["{wgpu_native}/include/webgpu/webgpu.h", "{wgpu_native}/include/webgpu/wgpu.h"]
 
 [[artifact]]
 name = "layout"

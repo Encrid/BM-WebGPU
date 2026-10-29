@@ -41,3 +41,10 @@ why = "wgpu-native calls it with the five parameters of WGPUUncapturedErrorCallb
 rule = "F5"
 path = "src/device_*:device_keep_lost"
 why = "wgpu-native calls it with the five parameters of WGPUDeviceLostCallback of webgpu.h."
+
+[[branches.exception]]
+path = "src/device_errors.c"
+line = 44
+col = 14
+side = "true"
+why = "The exchange fails only when a second writer changes used between the load and the exchange, and no case can place a thread there, on any target."

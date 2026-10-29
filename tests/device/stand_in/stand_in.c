@@ -204,6 +204,24 @@ static WGPUSupportedFeatures change_features(const WGPUSupportedFeatures *got)
     return ((WGPUSupportedFeatures){ count, items });
 }
 
+static WGPUPresentMode *copy_presents(const WGPUSurfaceCapabilities *got,
+    size_t *count)
+{
+    list_t kept = read_list("STAND_IN_PRESENTS");
+    WGPUPresentMode *modes = malloc((got->presentModeCount + 1)
+        * sizeof(*modes));
+
+    *count = 0;
+    for (size_t i = 0; modes != nullptr && i < got->presentModeCount; i++) {
+        if (kept.count > 0
+            && !has_item(&kept, (uint32_t)got->presentModes[i]))
+            continue;
+        modes[*count] = got->presentModes[i];
+        (*count)++;
+    }
+    return (modes);
+}
+
 static void keep_answer(enum answer_kind kind, uint32_t status, void *made,
     WGPUStringView message)
 {
@@ -396,8 +414,8 @@ WGPUStatus wgpuSurfaceGetCapabilities(WGPUSurface surface, WGPUAdapter adapter,
         capabilities->formatCount = most.items[0];
     capabilities->formats = copy_items(got.formats, capabilities->formatCount,
         sizeof(*got.formats));
-    capabilities->presentModes = copy_items(got.presentModes,
-        got.presentModeCount, sizeof(*got.presentModes));
+    capabilities->presentModes = copy_presents(&got,
+        &capabilities->presentModeCount);
     capabilities->alphaModes = copy_items(got.alphaModes, got.alphaModeCount,
         sizeof(*got.alphaModes));
     ((WGPUProcSurfaceCapabilitiesFreeMembers)find_real(
@@ -411,6 +429,18 @@ void wgpuSurfaceCapabilitiesFreeMembers(
     free((void *)surfaceCapabilities.formats);
     free((void *)surfaceCapabilities.presentModes);
     free((void *)surfaceCapabilities.alphaModes);
+}
+
+WGPUTexture wgpuDeviceCreateTexture(WGPUDevice device,
+    const WGPUTextureDescriptor *descriptor)
+{
+    list_t most = read_list("STAND_IN_SAMPLES");
+    WGPUTextureDescriptor shape = *descriptor;
+
+    if (most.count > 0 && shape.sampleCount > most.items[0])
+        shape.sampleCount = most.items[0];
+    return (((WGPUProcDeviceCreateTexture)find_real(
+        "wgpuDeviceCreateTexture"))(device, &shape));
 }
 
 WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance,

@@ -1,0 +1,321 @@
+[[case]]
+name = "a module of the namespace webgpu declares the four types with no grant"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+claims = { status = 0, line = ["loaded: webgpu:probe@1.0.0, native, m/probe{library}"] }
+
+[case.folders]
+"{case}/m" = ["probe"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["foreign"]
+
+[[case]]
+name = "a module declares an enum before the struct that names it"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+claims = { status = 0, line = ["loaded: webgpu:probe@1.0.0, native, m/probe{library}"] }
+
+[case.folders]
+"{case}/m" = ["probe"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["late"]
+
+[[case]]
+name = "the app loads with write on webgpu:Window and read on webgpu:webgpu_surface_t"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+claims = { status = 0, line = ["loaded: test:app@1.0.0, native, m/app{library}"] }
+
+[case.folders]
+"{case}/m" = ["app"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:app@1.0.0"]
+write = ["webgpu:Window"]
+read = ["webgpu:webgpu_surface_t"]
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:app@1.0.0"]
+write = []
+read = ["webgpu:Window", "webgpu:webgpu_surface_t"]
+'''
+
+[[case]]
+name = "the app needs read on webgpu:webgpu_surface_t"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:app@1.0.0' did not load: it may not declare 'webgpu:webgpu_surface_t': that is another namespace's, and no grant names it 0 0",
+    "not loaded: m/app{library}: test:app@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["app"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:app@1.0.0"]
+write = ["webgpu:Window"]
+read = []
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:app@1.0.0"]
+write = ["webgpu:Window"]
+read = ["webgpu:webgpu_surface_t"]
+'''
+
+[[case]]
+name = "the device module loads with its grants"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+claims = { status = 0, line = ["loaded: test:device@1.0.0, native, m/device{library}"] }
+
+[case.folders]
+"{case}/m" = ["device"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:device@1.0.0"]
+write = ["webgpu:Frame"]
+read = ["webgpu:Window", "webgpu:webgpu_surface_t", "webgpu:webgpu_frame_state_t"]
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:device@1.0.0"]
+write = []
+read = ["webgpu:Frame", "webgpu:Window", "webgpu:webgpu_surface_t", "webgpu:webgpu_frame_state_t"]
+'''
+
+[[case]]
+name = "the device module needs read on webgpu:Window"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:device@1.0.0' did not load: it may not declare 'webgpu:Window': that is another namespace's, and no grant names it 0 0",
+    "not loaded: m/device{library}: test:device@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["device"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:device@1.0.0"]
+write = ["webgpu:Frame"]
+read = ["webgpu:webgpu_surface_t", "webgpu:webgpu_frame_state_t"]
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:device@1.0.0"]
+write = ["webgpu:Frame"]
+read = ["webgpu:Window", "webgpu:webgpu_surface_t", "webgpu:webgpu_frame_state_t"]
+'''
+
+[[case]]
+name = "the device module needs read on webgpu:webgpu_surface_t"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:device@1.0.0' did not load: it may not declare 'webgpu:webgpu_surface_t': that is another namespace's, and no grant names it 0 0",
+    "not loaded: m/device{library}: test:device@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["device"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:device@1.0.0"]
+write = ["webgpu:Frame"]
+read = ["webgpu:Window", "webgpu:webgpu_frame_state_t"]
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:device@1.0.0"]
+write = ["webgpu:Frame"]
+read = ["webgpu:Window", "webgpu:webgpu_surface_t", "webgpu:webgpu_frame_state_t"]
+'''
+
+[[case]]
+name = "the device module needs read on webgpu:webgpu_frame_state_t"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:device@1.0.0' did not load: it may not declare 'webgpu:webgpu_frame_state_t': that is another namespace's, and no grant names it 0 0",
+    "not loaded: m/device{library}: test:device@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["device"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:device@1.0.0"]
+write = ["webgpu:Frame"]
+read = ["webgpu:Window", "webgpu:webgpu_surface_t"]
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:device@1.0.0"]
+write = ["webgpu:Frame"]
+read = ["webgpu:Window", "webgpu:webgpu_surface_t", "webgpu:webgpu_frame_state_t"]
+'''
+
+[[case]]
+name = "a render module loads with read on webgpu:Frame and webgpu:webgpu_frame_state_t"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+claims = { status = 0, line = ["loaded: test:render@1.0.0, native, m/render{library}"] }
+
+[case.folders]
+"{case}/m" = ["render"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:render@1.0.0"]
+read = ["webgpu:Frame", "webgpu:webgpu_frame_state_t"]
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:render@1.0.0"]
+read = ["webgpu:webgpu_frame_state_t"]
+'''
+
+[[case]]
+name = "a render module needs read on webgpu:webgpu_frame_state_t"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:render@1.0.0' did not load: it may not declare 'webgpu:webgpu_frame_state_t': that is another namespace's, and no grant names it 0 0",
+    "not loaded: m/render{library}: test:render@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["render"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:render@1.0.0"]
+read = ["webgpu:Frame"]
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/world.toml"]
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:render@1.0.0"]
+read = ["webgpu:Frame", "webgpu:webgpu_frame_state_t"]
+'''

@@ -126,7 +126,7 @@ line = ["record[6] test:probe@1.0.0/render: r1 reload 1 0"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -139,7 +139,7 @@ module = { path = "m/webgpu_device{library}" }
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]

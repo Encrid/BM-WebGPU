@@ -42,6 +42,10 @@ enum act : uint32_t {
     FEATURE,
     SETTINGS,
     RELOAD,
+    TELL,
+    NO_X11_DISPLAY,
+    NO_WL_DISPLAY,
+    NO_WL_SURFACE,
     END
 };
 
@@ -81,9 +85,17 @@ static const step_t STEPS[] = {
     { "close", 10, 10, END, 0, 0 },
     { "foreign", 1, LAST, FOREIGN, 0, 0 },
     { "zero", 1, LAST, ZERO, 0, 0 },
+    { "nodisplay", 1, LAST, NO_X11_DISPLAY, 0, 0 },
+    { "nowldisplay", 1, LAST, NO_WL_DISPLAY, 0, 0 },
+    { "nowlsurface", 1, LAST, NO_WL_SURFACE, 0, 0 },
     { "nokind", 1, LAST, KIND, 0, 0 },
     { "resize", 6, LAST, RESIZE, 80, SIDE },
     { "resize", 7, 7, END, 0, 0 },
+    { "heighten", 6, LAST, RESIZE, SIDE, 80 },
+    { "heighten", 7, 7, END, 0, 0 },
+    { "stale", 6, LAST, RESIZE, 80, SIDE },
+    { "stale", 6, LAST, SIZE, SIDE, SIDE },
+    { "stale", 8, 8, END, 0, 0 },
     { "flat", 6, 6, SIZE, 0, SIDE },
     { "flat", 7, 7, END, 0, 0 },
     { "tall", 6, 6, SIZE, SIDE, 0 },
@@ -94,6 +106,7 @@ static const step_t STEPS[] = {
     { "high", 7, 7, END, 0, 0 },
     { "hide", 5, 5, HIDE, 0, 0 },
     { "hide", 7, 7, SHOW, 0, 0 },
+    { "hide", 7, LAST, RESIZE, SIDE, SIDE },
     { "hide", 10, 10, END, 0, 0 },
     { "pause", 5, 5, SIZE, 0, SIDE },
     { "pause", 11, 11, END, 0, 0 },
@@ -116,6 +129,7 @@ static const step_t STEPS[] = {
     { "feature", 4, 4, FEATURE, 0, 0 },
     { "tune", 1, 1, SETTINGS, 0, 0 },
     { "tune", 2, 2, END, 0, 0 },
+    { "tell", 1, 1, TELL, 0, 0 },
     { "reload", 1, 1, RELOAD, 0, 0 },
     { "reload", 2, 2, END, 0, 0 }
 };
@@ -268,6 +282,12 @@ static void shape_by(const step_t *step, webgpu_window_t *w)
         w->x11_window = 0;
         w->wl_surface = 0;
     }
+    if (step->act == NO_X11_DISPLAY)
+        w->x11_display = 0;
+    if (step->act == NO_WL_DISPLAY)
+        w->wl_display = 0;
+    if (step->act == NO_WL_SURFACE)
+        w->wl_surface = 0;
 }
 
 static void shape_window(const test_scene_t *on, webgpu_window_t *w)
@@ -398,6 +418,8 @@ BRIDGE_NATIVE(drive)
     move_window(on);
     read_window(&want);
     shape_window(on, &want);
+    if (has_act(on, TELL))
+        say(api, "window", (uint32_t)want.surface, 0);
     if (w)
         *w = want;
     else

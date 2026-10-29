@@ -11,7 +11,7 @@ line = ["record[6] test:probe@1.0.0/drive: r1 before 3 0 0 0 0 0 0 0 0 0 0 0 0"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -38,7 +38,7 @@ line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -50,7 +50,7 @@ scene = "open"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -73,7 +73,7 @@ line = ["record[6] test:probe@1.0.0/render: r6 frame 1 27 47 1 80 64 1 1 1 1 1 0
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -85,7 +85,7 @@ scene = "resize"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -108,7 +108,7 @@ line = ["record[6] test:probe@1.0.0/render: r6 frame 2 27 47 1 64 64 1 1 0 0 0 0
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -120,7 +120,7 @@ scene = "flat"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -143,7 +143,7 @@ line = ["record[6] test:probe@1.0.0/render: r6 frame 2 27 47 1 64 64 1 1 0 0 0 0
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -155,7 +155,7 @@ scene = "tall"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -178,7 +178,7 @@ line = ["record[6] test:probe@1.0.0/render: r6 frame 2 27 47 1 64 64 1 1 0 0 0 0
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -192,7 +192,7 @@ limits = "WEBGPU_LIMITS_DEFAULT"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -217,7 +217,7 @@ line = ["record[6] test:probe@1.0.0/render: r6 frame 2 27 47 1 64 64 1 1 0 0 0 0
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -231,7 +231,7 @@ limits = "WEBGPU_LIMITS_DEFAULT"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -256,7 +256,7 @@ line = ["record[6] test:probe@1.0.0/render: r9 frame 1 27 47 1 64 64 1 1 1 1 1 0
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -268,7 +268,7 @@ scene = "hide"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -295,7 +295,7 @@ order = [
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -307,7 +307,7 @@ scene = "silent"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -315,4 +315,74 @@ ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
 native = "{bb_native}/bridge_native"
 [module."test:probe@1.0.0".config]
 scene = "pause"
+'''
+
+[[case]]
+name = "a new height of webgpu:Window gives a READY frame of that height in the same round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r6 frame 1 27 47 1 64 80 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "heighten"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "pause"
+'''
+
+[[case]]
+name = "a window of another size than webgpu:Window gives the frame at the size of webgpu:Window, also when the surface gives SuccessSuboptimal"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r7 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "stale"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "resize"
 '''

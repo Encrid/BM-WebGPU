@@ -12,7 +12,7 @@ line = ["record[6] test:probe@1.0.0/render: r3 frame 3 0 0 0 0 0 0 0 0 0 0 0 0"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -24,7 +24,7 @@ scene = "none"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -52,7 +52,7 @@ order = [
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -64,7 +64,7 @@ scene = "close"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -87,7 +87,7 @@ has = ["record[3] webgpu:device@1.0.0/frame: no surface: the window has no handl
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -99,7 +99,7 @@ scene = "foreign"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -122,7 +122,7 @@ has = ["record[3] webgpu:device@1.0.0/frame: no surface: the window has no handl
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -134,7 +134,7 @@ scene = "zero"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -157,7 +157,7 @@ has = ["record[3] webgpu:device@1.0.0/frame: no surface: the window has no handl
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -169,7 +169,7 @@ scene = "nokind"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -192,7 +192,7 @@ has = ["module 'webgpu:device@1.0.0' is stopped: its system 'frame' reached its 
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -204,7 +204,7 @@ scene = "foreign"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -213,3 +213,116 @@ native = "{bb_native}/bridge_native"
 [module."test:probe@1.0.0".config]
 scene = "open"
 '''
+
+[[case]]
+name = "the video driver wayland gives a window of Wayland, and its READY frame"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "wayland" }
+
+[case.claims]
+line = ["{wayland_window}", "{wayland_frame}"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "tell"
+'''
+
+[case.false]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[[case]]
+name = "an x11_display of 0 gives no surface on X11, and the frame on the other systems"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+has = ["{no_display_says}"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "nodisplay"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+'''
+
+[[case]]
+name = "a wl_display of 0 gives no surface"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "wayland" }
+
+[case.claims]
+has = ["{no_wayland_handle_says}"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "nowldisplay"
+'''
+
+[case.false]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[[case]]
+name = "a wl_surface of 0 gives no surface"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "wayland" }
+
+[case.claims]
+has = ["{no_wayland_handle_says}"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "nowlsurface"
+'''
+
+[case.false]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }

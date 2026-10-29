@@ -17,7 +17,7 @@ order = [
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -29,7 +29,7 @@ scene = "open"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -55,7 +55,7 @@ matches = ["no samples WEBGPU_SAMPLES_16: the frame uses WEBGPU_SAMPLES_4.*rende
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -69,7 +69,7 @@ samples = "WEBGPU_SAMPLES_16"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -92,7 +92,7 @@ line = ["record[3] webgpu:device@1.0.0/frame: no device: no adapter: Validation 
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -106,7 +106,7 @@ backend = "{foreign_backend}"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -136,7 +136,7 @@ order = [
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -150,7 +150,7 @@ backend = "{foreign_backend}"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]

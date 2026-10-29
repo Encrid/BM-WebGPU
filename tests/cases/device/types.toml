@@ -109,7 +109,7 @@ lacks = ["was refused"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/frame.toml"]
+presets = ["{root}/tests/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]

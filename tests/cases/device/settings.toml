@@ -850,3 +850,84 @@ native = "{bb_native}/bridge_native"
 [module."test:probe@1.0.0".config]
 scene = "none"
 '''
+
+[[case]]
+name = "a present mode that the surface does not give gives the line of present, and the frame uses WEBGPU_PRESENT_FIFO"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_PRESENTS = "1" }
+
+[case.claims]
+has = ["record[4] webgpu:device@1.0.0/frame: no present WEBGPU_PRESENT_MAILBOX: the frame uses WEBGPU_PRESENT_FIFO"]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+present = "WEBGPU_PRESENT_MAILBOX"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+present = "WEBGPU_PRESENT_FIFO"
+'''
+
+[[case]]
+name = "a check of 8 samples that gives no error keeps 8 samples for the frame"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_SAMPLES = "4" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r5 frame 1 27 47 8 64 64 1 1 1 2 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+samples = "WEBGPU_SAMPLES_8"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+samples = "WEBGPU_SAMPLES_4"
+'''

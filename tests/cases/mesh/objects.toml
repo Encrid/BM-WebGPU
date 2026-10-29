@@ -1,0 +1,796 @@
+[[case]]
+name = "a destroyed mesh stays a husk until the module releases its buffer"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r2 holds 3 buffers 1 textures 1 views 2 groups 2 samplers 0 0',
+    'record[6] webgpu:probe@1.0.0/drive: r3 drive item 1 is a husk 0 0',
+    'record[6] webgpu:probe@1.0.0/check: r3 holds 2 buffers 1 textures 1 views 2 groups 2 samplers 0 0',
+    'record[6] webgpu:probe@1.0.0/check: r3 check item 1 is gone 0 0',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "husk"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "meshstay"
+'''
+
+[[case]]
+name = "a destroyed texture stays a husk until the module releases its texture"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r2 holds 3 buffers 2 textures 2 views 3 groups 2 samplers 0 0',
+    'record[6] webgpu:probe@1.0.0/drive: r3 drive item 1 is a husk 0 0',
+    'record[6] webgpu:probe@1.0.0/check: r3 holds 3 buffers 1 textures 1 views 2 groups 2 samplers 0 0',
+    'record[6] webgpu:probe@1.0.0/check: r3 check item 1 is gone 0 0',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texhusk"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texstay"
+'''
+
+[[case]]
+name = "a detach of webgpu:Mesh releases the buffer of the mesh, and the entity stays"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/drive: r3 drive item 1 is alive 0 0',
+    'record[6] webgpu:probe@1.0.0/check: r3 holds 2 buffers 1 textures 1 views 2 groups 2 samplers 0 0',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "meshleave"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "meshstay"
+'''
+
+[[case]]
+name = "a detach of webgpu:Texture releases its texture, its view and its bind group"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r3 holds 3 buffers 1 textures 1 views 2 groups 2 samplers 0 0',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texleave"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texstay"
+'''
+
+[[case]]
+name = "a detach that finds no room waits for a later round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+lacks = [
+    'r6 check item 1 is a husk',
+    'r6 check item 3 is a husk',
+    'r6 check item 5 is a husk',
+]
+matches = ['check: r5 check item [135] is a husk']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0"]
+changes = 48
+[module."webgpu:probe@1.0.0".config]
+scene = "detachwait"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "detachwait"
+'''
+
+[[case]]
+name = "an item that uploads again before its detach applies takes the new objects at once"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['check: r5 pixel (10|32|54) 32 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0"]
+changes = 48
+[module."webgpu:probe@1.0.0".config]
+scene = "reupload"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "reupload"
+'''
+
+[[case]]
+name = "the first upload of a mesh takes two rounds"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r1 pixel 32 32 is 51 102 153 255',
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 255 0 0 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "firstmesh"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "latemesh"
+'''
+
+[[case]]
+name = "the draw of a new texture waits one round, and shows no white"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 51 102 153 255',
+    'record[6] webgpu:probe@1.0.0/check: r3 pixel 32 32 is 0 255 0 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "firsttexture"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "earlytexture"
+'''
+
+[[case]]
+name = "an attach that finds no room in changes waits for the next round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r3 pixel 16 32 is 255 0 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r3 pixel 48 32 is 255 0 0 255',
+]
+matches = ['check: r2 pixel (16|48) 32 is 51 102 153 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0"]
+changes = 48
+[module."webgpu:probe@1.0.0".config]
+scene = "attachwait"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "attachwait"
+'''
+
+[[case]]
+name = "a draw keeps the count, the layout and the primitive of the upload while gen stays"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r3 pixel 16 16 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "keepupload"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "keepuploadgen"
+'''
+
+[[case]]
+name = "a new gen uploads the data again, and releases the old buffer"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 255 0 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r3 pixel 32 32 is 0 255 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r3 holds 3 buffers 1 textures 1 views 2 groups 2 samplers 0 0',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "regen"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "same"
+'''
+
+[[case]]
+name = "new data with the same gen keeps the old upload"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r3 pixel 32 32 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "same"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "regen"
+'''
+
+[[case]]
+name = "a new gen of a texture uploads its pixels again"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r3 pixel 32 32 is 0 255 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texregen"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texsame"
+'''
+
+[[case]]
+name = "new pixels with the same gen keep the old texture"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r3 pixel 32 32 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texsame"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texregen"
+'''
+
+[[case]]
+name = "a destroy in the round of a lost device releases each object once"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r3 holds 0 buffers 0 textures 0 views 0 groups 0 samplers 0 0',
+    'record[6] webgpu:probe@1.0.0/check: r4 holds 2 buffers 1 textures 1 views 2 groups 2 samplers 0 0',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "lostdestroy"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "keptdestroy"
+'''
+
+[[case]]
+name = "a mesh that leaves before its first render needs nothing"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r3 holds 2 buffers 1 textures 1 views 2 groups 2 samplers 0 0',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "earlyleave"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "earlystay"
+'''
+
+[[case]]
+name = "a draw gets the white texture when its texture is 0"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 0 255 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texzero"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texred"
+'''
+
+[[case]]
+name = "a draw gets the white texture when its texture is gone"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 255 0 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r3 pixel 32 32 is 255 255 255 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texgone"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texkept"
+'''
+
+[[case]]
+name = "a draw gets the white texture when a rule leaves its texture out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 255 255 255 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texbad"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texkept"
+'''
+
+[[case]]
+name = "a detach of a texture that finds no room waits for a later round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['check: r5 check item [123] is a husk']
+lacks = [
+    'r6 check item 1 is a husk',
+    'r6 check item 2 is a husk',
+    'r6 check item 3 is a husk',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0"]
+changes = 56
+[module."webgpu:probe@1.0.0".config]
+scene = "texdetachwait"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texdetachwait"
+'''
+
+[[case]]
+name = "a lost device sweeps a detach that waits, also when it holds no device"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['check: r5 check item [135] is a husk']
+lacks = [
+    'r6 check item 1 is a husk',
+    'r6 check item 3 is a husk',
+    'r6 check item 5 is a husk',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0"]
+changes = 48
+[module."webgpu:probe@1.0.0".config]
+scene = "lostwait"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "lostwait"
+'''

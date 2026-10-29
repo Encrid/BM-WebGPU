@@ -1,0 +1,736 @@
+[[case]]
+name = "an item whose data lies above the persistent arena is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 1 is ([0-9]+) .*left out \1: its data lies outside the persistent arena']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "outside"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "whole"
+'''
+
+[[case]]
+name = "an item whose data lies below the persistent arena is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 1 is ([0-9]+) .*left out \1: its data lies outside the persistent arena']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "below"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "whole"
+'''
+
+[[case]]
+name = "an item whose place and length would wrap is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 1 is ([0-9]+) .*left out \1: its data lies outside the persistent arena']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "wrap"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "whole"
+'''
+
+[[case]]
+name = "an item whose length is not a multiple of its stride is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 1 is ([0-9]+) .*left out \1: its length is not a multiple of its stride']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "cut"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "whole"
+'''
+
+[[case]]
+name = "a texture whose length is not width times height times 4 is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 1 is ([0-9]+) .*left out \1: its length is not width times height times 4']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texshort"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texwhole"
+'''
+
+[[case]]
+name = "a draw with the mesh 0 is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 2 is ([0-9]+) .*left out \1: it names no mesh']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "nomesh"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "whole"
+'''
+
+[[case]]
+name = "a draw that names an index past entities is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 2 is ([0-9]+) .*left out \1: it names no mesh']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "pastmesh"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "whole"
+'''
+
+[[case]]
+name = "a draw that names a dead mesh is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 2 is ([0-9]+) .*left out \1: it names no mesh']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "deadmesh"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "whole"
+'''
+
+[[case]]
+name = "an item whose data has a length of 0 is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 1 is ([0-9]+) .*left out \1: its data has a length of 0']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "zerolength"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "whole"
+'''
+
+[[case]]
+name = "an item with a primitive above 2 is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 1 is ([0-9]+) .*left out \1: its primitive is above 2']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "primitive3"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "whole"
+'''
+
+[[case]]
+name = "an item with a layout above 7 is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 1 is ([0-9]+) .*left out \1: its layout is above 7']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "layout8"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "whole"
+'''
+
+[[case]]
+name = "a draw with a shading above 2 is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 2 is ([0-9]+) .*left out \1: its shading is above 2']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "shading3"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "whole"
+'''
+
+[[case]]
+name = "a texture with a filter above 1 is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 1 is ([0-9]+) .*left out \1: its filter is above 1']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "filter2"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texwhole"
+'''
+
+[[case]]
+name = "a texture wider than maxTextureDimension2D is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 1 is ([0-9]+) .*left out \1: it is wider or taller than maxTextureDimension2D']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "widetexture"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "fittexture"
+'''
+
+[[case]]
+name = "data larger than a buffer of the device is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 1 is ([0-9]+) .*left out \1: its data is larger than a buffer of the device']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "bigmesh"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "smallmesh"
+'''
+
+[[case]]
+name = "a batch whose length is not a multiple of its stride is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 1 is ([0-9]+) .*left out \1: its length is not a multiple of its stride']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "batchcut"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "batchwhole"
+'''
+
+[[case]]
+name = "a batch with a layout above 7 is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 1 is ([0-9]+) .*left out \1: its layout is above 7']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "batchlayout8"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "batchwhole"
+'''
+
+[[case]]
+name = "a batch with a primitive above 2 is left out"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 1 is ([0-9]+) .*left out \1: its primitive is above 2']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "batchprimitive3"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "batchwhole"
+'''
+
+[[case]]
+name = "the line left out names the first item that a rule leaves out in a round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 1 is ([0-9]+) .*left out \1: its length is not a multiple of its stride']
+matches_not = ['left out [0-9]+: its shading is above 2']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "twobad"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "shading3"
+'''
+
+[[case]]
+name = "an item that a rule left out draws once its data is whole, with the same gen"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r3 pixel 32 32 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "retry"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "retrynever"
+'''
+
+[[case]]
+name = "the line left out names a draw that a rule leaves out before a view"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['item 2 is ([0-9]+) .*left out \1: its shading is above 2']
+matches_not = ['left out [0-9]+: it has no part inside the frame']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "viewafterdraw"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "outview"
+'''

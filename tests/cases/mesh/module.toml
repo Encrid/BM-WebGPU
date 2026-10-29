@@ -1,0 +1,605 @@
+[[case]]
+name = "--show-config shows the words of the manifest and each default of the module"
+run = ["{bridge_host}/bridge-host{exe}", "--show-config", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+order = [
+    'module webgpu:mesh@1.0.0, native, m/webgpu_mesh{library}',
+    'config = "webgpu:MeshSettings"  its file',
+    'settings = "load blend clear_depth depth_compare cull clockwise repeat gpu_memory"  its file',
+    'pinned = false  its file',
+    'reloadable = false  its file',
+    'hot_reload = false  its file',
+    'scratch = 8192  its file',
+    'log_ring = 64  its file',
+    'spans = 65536  its file',
+    'spawns = "none"  its file',
+    'persistent = "none"  its file',
+    'changes = 65536  its file',
+    'config.load = "WEBGPU_LOAD_CLEAR"  its file',
+    'config.blend = true  its file',
+    'config.depth_compare = "WEBGPU_COMPARE_LESS_EQUAL"  its file',
+    'config.cull = "WEBGPU_CULL_NONE"  its file',
+    'config.clockwise = false  its file',
+    'config.repeat = true  its file',
+    'config.gpu_memory = 9223372036854775807  its file',
+]
+matches = ['(?m)^  config\.clear_depth = 1(\.0)?  its file$']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["{wgpu_native}/{wgpu_file}"]
+
+[[case]]
+name = "a key of the deployment replaces a default of the manifest"
+run = ["{bridge_host}/bridge-host{exe}", "--show-config", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+lacks = ['spans = 65536  its file']
+matches = ['(?m)^  spans = 131072  .*d\.toml:8$']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0"]
+spans = 131072
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "the host loads the module, which states abi 2"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['(?m)^loaded: webgpu:mesh@1\.0\.0, native, ']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["abi1", "{wgpu_native}/{wgpu_file}"]
+
+[[case]]
+name = "hot_reload true is refused, because the author states that the module cannot reload"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = ['hot_reload is stated, and its author states it is not reloadable']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0"]
+hot_reload = true
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "the entry reload gives 1"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/drive: r1 reload 1 0 0']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "reload"
+module = "{case}/m/webgpu_mesh{library}"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "reload"
+module = "{case}/m/none{library}"
+'''
+
+[[case]]
+name = "the module loads the wgpu-native library that sits beside it"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['(?m)^loaded: webgpu:mesh@1\.0\.0, native, ']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["webgpu_mesh"]
+
+[[case]]
+name = "the module draws with no SDL3 and no window"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 51 204 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "unlit"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "clear"
+'''
+
+[[case]]
+name = "the stop releases each GPU object of the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[6] webgpu:probe@1.0.0/check: r2 holds 4 buffers 2 textures 2 views 3 groups 2 samplers 0 0',
+    'end holds 0 buffers 0 textures 0 views 0 groups 0 samplers',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "stop"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "empty"
+'''
+
+[[case]]
+name = "a load that its settings refuse calls shutdown, which gives 0"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = ["its setting 'cull' is 9, which is no constant of the enum of the field it names"]
+lacks = ['its shutdown answered']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+cull = 9
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+cull = 3
+'''
+
+[[case]]
+name = "the default log_ring holds the two lines of one round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = [
+    'no room: .*no room: ',
+    'item 1 is ([0-9]+) .*left out \1: its length is not a multiple of its stride',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+gpu_memory = 28
+[module."webgpu:probe@1.0.0".config]
+scene = "cut"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0"]
+log_ring = 32
+[module."webgpu:mesh@1.0.0".config]
+gpu_memory = 28
+[module."webgpu:probe@1.0.0".config]
+scene = "cut"
+'''
+
+[[case]]
+name = "a conflict at the barrier names the observer webgpu:mesh:release_mesh"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = [
+    "module 'webgpu:watcher@1.0.0' did not load: 'webgpu:mesh:release_mesh' and 'webgpu:watcher:watch' both touch 'webgpu:Mesh' at the barrier, one of them writing it, and no pair orders them",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "watcher", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[order]
+before = [["webgpu:mesh:release_mesh", "webgpu:watcher:watch"]]
+'''
+
+[[case]]
+name = "a conflict at the barrier names the observer webgpu:mesh:release_texture"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = [
+    "module 'webgpu:twatcher@1.0.0' did not load: 'webgpu:mesh:release_texture' and 'webgpu:twatcher:watch' both touch 'webgpu:Texture' at the barrier, one of them writing it, and no pair orders them",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "twatcher", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[order]
+before = [["webgpu:mesh:release_texture", "webgpu:twatcher:watch"]]
+'''
+
+[[case]]
+name = "a conflict in the phase render names the system webgpu:mesh:keep_meshes"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = [
+    "module 'webgpu:watcher@1.0.0' did not load: 'webgpu:mesh:keep_meshes' and 'webgpu:watcher:write' both touch 'webgpu:Mesh' in phase 'render', one of them writing it, and no pair orders them",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "mwriter", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[order]
+before = [["webgpu:mesh:keep_meshes", "webgpu:watcher:write"]]
+'''
+
+[[case]]
+name = "a conflict in the phase render names the system webgpu:mesh:keep_textures"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = [
+    "module 'webgpu:watcher@1.0.0' did not load: 'webgpu:mesh:keep_textures' and 'webgpu:watcher:write' both touch 'webgpu:Texture' in phase 'render', one of them writing it, and no pair orders them",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "twriter", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[order]
+before = [["webgpu:mesh:keep_textures", "webgpu:watcher:write"]]
+'''
+
+[[case]]
+name = "a conflict in the phase render names the system webgpu:mesh:draws"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = [
+    "module 'webgpu:watcher@1.0.0' did not load: 'webgpu:mesh:draws' and 'webgpu:watcher:write' both touch 'webgpu:Draw' in phase 'render', one of them writing it, and no pair orders them",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "dwriter", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[order]
+before = [["webgpu:mesh:draws", "webgpu:watcher:write"]]
+'''
+
+[[case]]
+name = "a conflict in the phase render names the system webgpu:mesh:batches"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = [
+    "module 'webgpu:watcher@1.0.0' did not load: 'webgpu:mesh:batches' and 'webgpu:watcher:write' both touch 'webgpu:Batch' in phase 'render', one of them writing it, and no pair orders them",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "bwriter", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[order]
+before = [["webgpu:mesh:batches", "webgpu:watcher:write"]]
+'''
+
+[[case]]
+name = "a conflict in the phase render names the system webgpu:mesh:render"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = [
+    "module 'webgpu:watcher@1.0.0' did not load: 'webgpu:mesh:render' and 'webgpu:watcher:write' both touch 'webgpu:View' in phase 'render', one of them writing it, and no pair orders them",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "vwriter", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[order]
+before = [["webgpu:mesh:render", "webgpu:watcher:write"]]
+'''

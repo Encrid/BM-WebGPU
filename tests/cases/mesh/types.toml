@@ -1,0 +1,250 @@
+[[case]]
+name = "webgpu_mesh_settings_t has the size, the alignment and the offsets of its Usage"
+run = ["{out}/types{exe}", "settings"]
+
+[case.claims]
+status = 0
+order = [
+    'size 32',
+    'alignment 8',
+    'load 0',
+    'blend 4',
+    'clear_depth 8',
+    'depth_compare 12',
+    'cull 16',
+    'clockwise 20',
+    'repeat 21',
+    'gpu_memory 24',
+]
+
+[case.false]
+run = ["{out}/types{exe}", "scene"]
+
+[[case]]
+name = "webgpu_scene_t has the size, the alignment and the offsets of its Usage"
+run = ["{out}/types{exe}", "scene"]
+
+[case.claims]
+status = 0
+order = [
+    'size 52',
+    'alignment 4',
+    'clear 0',
+    'light 16',
+    'light_color 28',
+    'ambient 40',
+]
+
+[case.false]
+run = ["{out}/types{exe}", "view"]
+
+[[case]]
+name = "webgpu_view_t has the size, the alignment and the offsets of its Usage"
+run = ["{out}/types{exe}", "view"]
+
+[case.claims]
+status = 0
+order = [
+    'size 88',
+    'alignment 4',
+    'matrix 0',
+    'rect 64',
+    'mask 80',
+    'order 84',
+]
+
+[case.false]
+run = ["{out}/types{exe}", "mesh"]
+
+[[case]]
+name = "webgpu_mesh_t has the size, the alignment and the offsets of its Usage"
+run = ["{out}/types{exe}", "mesh"]
+
+[case.claims]
+status = 0
+order = [
+    'size 20',
+    'alignment 4',
+    'data 0',
+    'layout 8',
+    'primitive 12',
+    'gen 16',
+]
+
+[case.false]
+run = ["{out}/types{exe}", "texture"]
+
+[[case]]
+name = "webgpu_texture_t has the size, the alignment and the offsets of its Usage"
+run = ["{out}/types{exe}", "texture"]
+
+[case.claims]
+status = 0
+order = [
+    'size 24',
+    'alignment 4',
+    'data 0',
+    'width 8',
+    'height 12',
+    'gen 16',
+    'filter 20',
+]
+
+[case.false]
+run = ["{out}/types{exe}", "draw"]
+
+[[case]]
+name = "webgpu_draw_t has the size, the alignment and the offsets of its Usage"
+run = ["{out}/types{exe}", "draw"]
+
+[case.claims]
+status = 0
+order = [
+    'size 120',
+    'alignment 8',
+    'mesh 0',
+    'texture 8',
+    'model 16',
+    'color 80',
+    'shading 96',
+    'views 100',
+    'order 104',
+    'depth 108',
+    'bias 112',
+    'size 116',
+]
+
+[case.false]
+run = ["{out}/types{exe}", "batch"]
+
+[[case]]
+name = "webgpu_batch_t has the size, the alignment and the offsets of its Usage"
+run = ["{out}/types{exe}", "batch"]
+
+[case.claims]
+status = 0
+order = [
+    'size 32',
+    'alignment 4',
+    'data 0',
+    'layout 8',
+    'primitive 12',
+    'views 16',
+    'depth 20',
+    'order 24',
+    'size 28',
+]
+
+[case.false]
+run = ["{out}/types{exe}", "settings"]
+
+[[case]]
+name = "webgpu_load_t has 4 bytes, and each constant has its value"
+run = ["{out}/types{exe}", "load"]
+
+[case.claims]
+status = 0
+order = [
+    'size 4',
+    'alignment 4',
+    'WEBGPU_LOAD_CLEAR 1',
+    'WEBGPU_LOAD_KEEP 2',
+]
+
+[case.false]
+run = ["{out}/types{exe}", "compare"]
+
+[[case]]
+name = "webgpu_compare_t has 4 bytes, and each constant has its value"
+run = ["{out}/types{exe}", "compare"]
+
+[case.claims]
+status = 0
+order = [
+    'size 4',
+    'alignment 4',
+    'WEBGPU_COMPARE_NEVER 1',
+    'WEBGPU_COMPARE_LESS 2',
+    'WEBGPU_COMPARE_EQUAL 3',
+    'WEBGPU_COMPARE_LESS_EQUAL 4',
+    'WEBGPU_COMPARE_GREATER 5',
+    'WEBGPU_COMPARE_NOT_EQUAL 6',
+    'WEBGPU_COMPARE_GREATER_EQUAL 7',
+    'WEBGPU_COMPARE_ALWAYS 8',
+]
+
+[case.false]
+run = ["{out}/types{exe}", "cull"]
+
+[[case]]
+name = "webgpu_cull_t has 4 bytes, and each constant has its value"
+run = ["{out}/types{exe}", "cull"]
+
+[case.claims]
+status = 0
+order = [
+    'size 4',
+    'alignment 4',
+    'WEBGPU_CULL_NONE 1',
+    'WEBGPU_CULL_FRONT 2',
+    'WEBGPU_CULL_BACK 3',
+]
+
+[case.false]
+run = ["{out}/types{exe}", "load"]
+
+[[case]]
+name = "each descriptor holds the bytes of its Usage"
+run = ["{out}/types{exe}", "descriptors"]
+
+[case.claims]
+status = 0
+line = [
+    'uint32_t { WEBGPU_LOAD_CLEAR = 1, WEBGPU_LOAD_KEEP = 2 }',
+    'uint32_t { WEBGPU_COMPARE_NEVER = 1, WEBGPU_COMPARE_LESS = 2, WEBGPU_COMPARE_EQUAL = 3, WEBGPU_COMPARE_LESS_EQUAL = 4, WEBGPU_COMPARE_GREATER = 5, WEBGPU_COMPARE_NOT_EQUAL = 6, WEBGPU_COMPARE_GREATER_EQUAL = 7, WEBGPU_COMPARE_ALWAYS = 8 }',
+    'uint32_t { WEBGPU_CULL_NONE = 1, WEBGPU_CULL_FRONT = 2, WEBGPU_CULL_BACK = 3 }',
+    '{ webgpu_load_t load; bool blend; float clear_depth; webgpu_compare_t depth_compare; webgpu_cull_t cull; bool clockwise; bool repeat; uint64_t gpu_memory; }',
+    '{ float clear[4]; float light[3]; float light_color[3]; float ambient[3]; }',
+    '{ float matrix[16]; uint32_t rect[4]; uint32_t mask; int32_t order; }',
+    '{ bridge_text_t data; uint32_t layout; uint32_t primitive; uint32_t gen; }',
+    '{ bridge_text_t data; uint32_t width; uint32_t height; uint32_t gen; uint32_t filter; }',
+    '{ uint64_t mesh; uint64_t texture; float model[16]; float color[4]; uint32_t shading; uint32_t views; int32_t order; uint32_t depth; float bias; float size; }',
+    '{ bridge_text_t data; uint32_t layout; uint32_t primitive; uint32_t views; uint32_t depth; int32_t order; float size; }',
+]
+
+[case.false]
+run = ["{out}/types{exe}", "settings"]
+
+[[case]]
+name = "the header compiles with the headers of Bridge and nothing else"
+run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{language}", "-I", "include", "-I", "{bridge}/include", "-c", "tests/types/alone.c", "-o", "{case}/alone.o"]
+
+[case.claims]
+status = 0
+
+[case.false]
+run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{language}", "-I", "include", "-c", "tests/types/alone.c", "-o", "{case}/alone.o"]
+
+[[case]]
+name = "the module declares webgpu:Frame with the descriptor of webgpu_contract.h"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = ["type 'webgpu:Frame' has another component layout here"]
+
+[case.folders]
+"{case}/m" = ["fake", "webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]

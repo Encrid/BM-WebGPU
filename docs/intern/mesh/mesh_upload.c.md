@@ -5,7 +5,7 @@ It also counts the bytes of `gpu_memory`.
 
 ## Keep by gen
 
-`render` gives each row of `webgpu:Mesh` to `mesh_keep_mesh`, and each row of `webgpu:Texture` to `mesh_keep_texture`.
+`keep_meshes` gives each row of `webgpu:Mesh` to `mesh_keep_mesh`, and `keep_textures` gives each row of `webgpu:Texture` to `mesh_keep_texture`.
 Each one does these steps:
 
 1. It finds the GPU component of the entity with `mesh_find`.
@@ -22,16 +22,27 @@ Step 3 needs an object, so a component of zeros tries its item again at each rou
 
 ## The upload of a mesh
 
-`upload_mesh` refuses each mesh that a rule of `docs/extern/webgpu_mesh.h.md`, *The data rules*, leaves out.
-The largest buffer of the device is `maxBufferSize` of its limits.
+`upload_mesh` refuses each mesh that a rule of `docs/extern/webgpu_mesh.h.md`, *The data rules*, leaves out. It tests the rules in this order:
+
+1. `layout` is at most 7, so `STRIDES` gives the stride of its vertices.
+2. `primitive` is at most 2.
+3. `mesh_get_data` accepts the data, with the stride as the unit.
+4. The length of the data is at most `maxBufferSize` of the limits of the device.
+
+`upload_mesh` gives the first refusal to `mesh_say_left_out`, with the id of the mesh and the rule.
 Then `upload_mesh` takes the length of the data from `gpu_memory`, and `mesh_make_buffer` makes the buffer.
 The value also keeps `count`, `layout` and `primitive` from the upload. Thus each draw matches its buffer, also when the app changes these fields and keeps `gen`.
 
 ## The upload of a texture
 
-`upload_texture` refuses each texture that a rule of the same section leaves out.
-The largest texture of the device is `maxTextureDimension2D` of its limits, for the width and for the height.
-The bytes of the pixels are a product of 64 bits, so the product of `width` and `height` cannot wrap.
+`upload_texture` refuses each texture that a rule of the same section leaves out. It tests the rules in this order:
+
+1. `filter` is at most 1.
+2. `mesh_get_data` accepts the data, with the unit 1.
+3. The length of the data is `width` times `height` times 4. This product has 64 bits, so it cannot wrap.
+4. `width` and `height` are at most `maxTextureDimension2D` of the limits of the device.
+
+`upload_texture` gives the first refusal to `mesh_say_left_out`, as `upload_mesh` does.
 Then `upload_texture` takes these bytes from `gpu_memory`, and `mesh_make_texture` makes the objects.
 The value keeps the `bytes` of the texture, so a release gives back what the upload took.
 
@@ -40,10 +51,7 @@ The value keeps the `bytes` of the texture, so a release gives back what the upl
 `mesh_take_memory` adds bytes to `held` of the state, if `held` then stays at most `gpu_memory`. Else it gives false.
 The test does not add the two counts, so a large `gpu_memory` cannot wrap.
 
-A refusal writes the line of `docs/extern/webgpu_mesh.h.md`, *Messages*, if `said` of the state is not set, and then sets it. Each round clears `said` first.
-`bridge_native_say` of BB-Native writes the line at the level `BRIDGE_LOG_WARN`, and puts the two counts into its text.
-Its format is one string literal, with `%llu` for each count of 64 bits, and a cast of each count to `unsigned long long`.
-A macro such as `PRIu64` would cut the literal. The check of `.toolchain/docs/said.py.md`, *The format*, joins only the strings that follow each other.
+A refusal gives `held` and the bytes of the item to `mesh_say_no_room`: `docs/intern/mesh_lines.c.md`, *The lines*.
 
 `held` counts each buffer and each texture that the module holds: the buffer of each mesh, the texture of each texture, and the round buffer.
 It also counts the white texture and the buffer of the defaults. They are no items, so `mesh_make_device` adds their 28 bytes with no test.
@@ -57,4 +65,4 @@ Each release gives its bytes back.
 | `mesh_keep_texture` | Attaches the `webgpu:TextureGpu` of a new texture, or uploads a texture whose `gen` changed into its component. |
 | `upload_mesh` | Gives the value of a new buffer, or zeros with the `gen` when a rule refuses the mesh. |
 | `upload_texture` | Gives the value of a new texture, or zeros with the `gen` when a rule refuses the texture. |
-| `mesh_take_memory` | Takes bytes of `gpu_memory`. Gives false when they do not fit, and writes the line once in a round. |
+| `mesh_take_memory` | Takes bytes of `gpu_memory`. Gives false when they do not fit, and gives the line to `mesh_say_no_room`. |

@@ -5,6 +5,8 @@ The meshes of Bridge, drawn with WebGPU: the views, the meshes, the textures, th
 ## Install
 
 Python 3.11 or a later version.
+The tests also need a WebGPU adapter: a GPU, or a software adapter.
+On Linux, lavapipe of Mesa is one, from the packages `libvulkan1` and `mesa-vulkan-drivers`. On Windows, WARP is one.
 
 ## Usage
 
@@ -12,7 +14,7 @@ Python 3.11 or a later version.
 | --- | --- |
 | `python project.py fetch` | Downloads what the build needs. |
 | `python project.py build` | Builds the project. |
-| `python project.py pack` | Packs the build for a release. |
+| `python project.py pack` | Packs the module, its header and the licences for a release. |
 | `python project.py test` | Runs the tests. |
 | `python project.py test --break` | Runs the tests with their claims made false. Each test must fail. |
 | `python project.py test --branches` | Runs the tests on a build with probes. Each branch of the code must run. |
@@ -21,7 +23,7 @@ Python 3.11 or a later version.
 | `python project.py clean` | Removes what the build made. Keeps what `fetch` downloaded. |
 | `python project.py distclean` | Removes the folder `build`, also what `fetch` downloaded. |
 
-The module `webgpu:mesh@1.0.0` runs on Bridge-Host with BB-Native. `docs/extern/webgpu_mesh.h.md` tells its components, its system and its deployment.
+The module `webgpu:mesh@1.0.0` runs on Bridge-Host with BB-Native. `docs/extern/webgpu_mesh.h.md` tells its components, its systems and its deployment.
 
 ## Contributing
 

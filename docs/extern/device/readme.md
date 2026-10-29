@@ -12,7 +12,7 @@ Python 3.11 or a later version.
 | --- | --- |
 | `python project.py fetch` | Downloads what the build needs. |
 | `python project.py build` | Builds the project. |
-| `python project.py pack` | Packs the build for a release. |
+| `python project.py pack` | Packs the module, its header and the licences for a release. |
 | `python project.py test` | Runs the tests. |
 | `python project.py test --break` | Runs the tests with their claims made false. Each test must fail. |
 | `python project.py test --branches` | Runs the tests on a build with probes. Each branch of the code must run. |

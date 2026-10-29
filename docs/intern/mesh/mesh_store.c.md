@@ -45,7 +45,11 @@ Each caller gives the slot of that term, so each table of a span carries the com
 3. For a component of a table, it reads the cell of the table and the row of the entity.
 4. For a sparse set, it reads the cell of the entity in the index of the set.
 
-`kind` of the header gives the storage of each slot. A set whose kept cell is still 0 gives 0, for example before the first barrier.
+`kind` of the header gives the storage of each slot.
+Bridge writes the kept cell of each set at the barrier of the load, before the first system or observer runs.
+The sources are `bridge_load.c.md` of Bridge, in its step 12, and `storage_cells.c.md` of Bridge, in its section What it writes.
+Thus `mesh_find` reads the index of a set with no test of its kept cell. Only `bridge_shutdown` can run before that barrier: `docs/intern/webgpu_mesh.c.md`, *The stop*.
+
 A husk keeps its generation, so its id finds its kept components, and no other component.
 A value stays good until the next barrier, so no source keeps it longer.
 

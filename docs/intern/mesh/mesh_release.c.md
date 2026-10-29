@@ -19,7 +19,8 @@ Each object holds one reference of the module, and its call `Release` gives it b
 
 ## The observers
 
-`release_mesh` and `release_texture` give their slot and the slot of their component to `release_list`.
+`release_mesh` and `release_texture` give the slot of their component to `release_list`.
+`release_list` reads the list of the observer that runs by `system` of the header: `bridge_abi.h.md` of Bridge, in its section bridge_header_t.
 For each entity of the list, `release_list` finds the component with `mesh_find`, and gives it with the id to `mesh_release_gpu`.
 `release_list` sets the flag `left` of its set when a detach found no room. An entity with no component needs nothing.
 

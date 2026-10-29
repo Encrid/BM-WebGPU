@@ -22,6 +22,7 @@ The round buffer holds the data of a round for the shaders, in three parts. It i
 | The batches | The vertices of each batch, after those of the batch before it. |
 
 `mesh_put_round` gives the bytes of the round to `grow_round` when they pass the size of the buffer.
+A round with no view draws nothing, so it writes nothing and does not grow the buffer.
 `grow_round` takes the next power of 2 that holds them, so a slow growth makes few new buffers.
 `mesh_take_memory` takes the bytes of the growth. Then `grow_round` releases the old buffer and its bind group 0, and makes the new ones.
 

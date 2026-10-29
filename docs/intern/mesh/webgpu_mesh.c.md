@@ -4,8 +4,11 @@ This file holds the manifest of the module, and its entries `init`, `shutdown` a
 
 ## The manifest
 
-The kind `native_module` gives the words of the manifest as the macro `MANIFEST`.
+The kind `wgpu_module` of the project gives the words of the manifest as the macro `MANIFEST`.
 The file puts that macro into the section of the target, with the line that the preset of the module tells.
+`wgpu_module` is the kind `native_module` of the preset, with one change.
+The compiler runs in the folder of wgpu-native, and links the library by its bare name.
+Thus the module names the library with no path of the machine, as the readme of BL-WGPU-Native tells.
 
 ## The start
 
@@ -25,9 +28,14 @@ Bridge refuses a second declarer with another descriptor, kind, storage or `on_d
 
 ## The stop
 
-`bridge_shutdown` gives each of the two sets to `mesh_sweep` of `src/mesh_release.c`, with `all`.
+`bridge_shutdown` keeps its api in the state. When the state holds a device, it gives each of the two sets to `mesh_sweep` of `src/mesh_release.c`, with `all`.
 Then it calls `mesh_release_device` of `src/mesh_device.c` and `mesh_free_round` of `src/mesh_memory.c`. It gives 0.
 Thus it releases the objects of each GPU component before Bridge removes them: `docs/intern/mesh_release.c.md`, *Each object goes once*.
+
+With no device, no GPU component holds an object, because the loss of each device released them.
+A load that fails runs `shutdown` before its first barrier, for example when Bridge refuses the settings.
+Then Bridge has written no kept cell, so a sweep cannot read the index of a set.
+The source is `bridge_load.c.md` of Bridge, in its section A load that fails.
 
 `bridge_reload` gives 1. Bridge needs the entry, but never calls it, because the manifest states `reloadable=false`.
 

@@ -27,6 +27,9 @@ A mesh and the defaults get a vertex buffer, and the round buffer gets the usage
 `mesh_make_texture` makes a texture of `RGBA8Unorm` and its view, and writes the pixels row by row.
 It also makes the bind group 1 of the texture: its view, and the sampler of its `filter`.
 
+`mesh_make_group` makes a bind group of the layout of the group 0 or of the group 1, with the entries of the caller.
+`mesh_make_texture` makes the group 1 of a texture with it, and `grow_round` of `src/mesh_memory.c` the group 0 of the round buffer.
+
 ## The release
 
 `mesh_release_device` releases each pipeline, the layouts, the shader module, the samplers and the defaults. It gives the 24 bytes of the defaults back.
@@ -40,5 +43,6 @@ It releases only the objects that are not 0. Thus a round with no frame and no d
 | --- | --- |
 | `mesh_make_device` | Makes the objects that each pipeline of a device shares. |
 | `mesh_make_buffer` | Makes a buffer of a usage, and writes some bytes into it. |
+| `mesh_make_group` | Makes a bind group of the layout of the group 0 or 1, with its entries. |
 | `mesh_make_texture` | Makes a texture with its pixels, its view and its bind group. |
 | `mesh_release_device` | Releases the objects of the device, and forgets the device. |

@@ -8,16 +8,14 @@ It fills the block of each view, and the record of each item.
 `mesh_add_view` does these steps for each row of `webgpu:View`:
 
 1. A `rect` with a width of 0 becomes the whole frame.
-2. The viewport is the whole `rect`, also where it passes the frame on the right or at the bottom.
-3. The scissor is the part of `rect` inside the frame. Its sums have 64 bits.
-4. It applies the rules of `docs/extern/webgpu_mesh.h.md`, *webgpu:View*: first to the size of `rect`, then to the scissor.
-5. It fills the block: `matrix`, the light of the scene, and the width and the height of `rect`.
+2. It applies the rules of `docs/extern/webgpu_mesh.h.md`, *webgpu:View*: first to the size of `rect`, then to its place.
+3. It writes the view at the next place: its key, `mask`, `rect` and the index of its block.
+4. It fills the block: `matrix`, the scene of the round, and the width and the height of `rect`.
+5. It counts the view only when no rule leaves it out. Thus the next view takes the place of a view that is left out.
 
+A view has no part inside the frame when its height is 0, or when its x or y is not inside the frame.
 `mesh_add_view` gives a view that a rule leaves out to `mesh_say_left_out`, with the id of the view and the rule.
-
-wgpu-core 29.0.1 accepts a viewport that passes the frame, up to that size, but it needs the scissor inside the frame.
-Thus the projection of a view stays the same, and the pass draws only its part inside the frame.
-The source is https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-core/src/command/render.rs, lines 2545 to 2571 and 2597 to 2600.
+`draw_view` of `src/mesh_pass.c` gives the viewport and the scissor of each view to the pass: `docs/intern/mesh_pass.c.md`, *A view*.
 
 ## An item
 

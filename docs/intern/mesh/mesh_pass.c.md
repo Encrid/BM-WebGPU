@@ -1,6 +1,6 @@
 # src/mesh_pass.c
 
-This file encodes the render pass of a round, and draws each item of each view.
+This file encodes the render pass of a round, and draws each view.
 
 ## The pass
 
@@ -13,7 +13,10 @@ This file encodes the render pass of a round, and draws each item of each view.
 5. It submits the command buffer to `queue` of `webgpu:Frame`.
 6. It releases the pass, the command buffer and the encoder.
 
-`begin_pass` gives the pass these attachments:
+`mesh_encode` keeps the pass in a `mesh_pass_t`, with the frame and two offsets in the round buffer.
+The records start after the blocks of the views, and the batches after the records: `docs/intern/mesh_memory.c.md`, *The round buffer*.
+
+`begin_pass` gives the pass these attachments. `get_color_attachment` gives the color, and `get_depth_attachment` gives the depth and the stencil:
 
 | Attachment | Value |
 | --- | --- |
@@ -40,25 +43,15 @@ Thus `mesh_encode` always submits, and an error in the commands stops the proces
 ## A view
 
 `draw_view` sets the viewport and the scissor of the view, and binds the group 0 at the block of the view.
+The viewport is the whole `rect` of the view, also where it passes the frame on the right or at the bottom.
+The scissor is the part of `rect` inside the frame. Its sums have 64 bits, so they cannot wrap.
+
+wgpu-core 29.0.1 accepts a viewport that passes the frame, up to that size, but it needs the scissor inside the frame.
+Thus the projection of a view stays the same, and the pass draws only its part inside the frame.
+The source is https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-core/src/command/render.rs, lines 2545 to 2571 and 2597 to 2600.
+
 The dynamic offset of the group is the index of the block times `BLOCK`.
-Then `draw_view` gives each item that shares a bit with `mask` of the view to `draw_item`.
-
-## A draw
-
-`draw_item` binds the pipeline of the item, its group 1 and its vertex buffers, then it draws:
-
-| Shape | Vertex buffers | The draw |
-| --- | --- | --- |
-| Triangles, lines and points | The vertices at 0, the records of the round at 1, and the defaults at 2. | `count` vertices, one instance, and the record of the item as `firstInstance`. |
-| Wide points | The vertices at 0, the record of the item at 1, and the defaults at 2. | 6 vertices, and `count` instances. |
-| Wide lines | The vertices at 0, the record of the item at 1, the vertices from the second vertex at 2, and the defaults at 3. | 6 vertices, and `count` divided by 2 instances. |
-
-The defaults are bound only when the `layout` of the item lacks a part. Each binding takes the rest of its buffer, from its offset.
-`docs/intern/mesh_pipeline.c.md`, *The vertex buffers*, tells what each pipeline reads from them.
-A direct draw takes a `firstInstance` above 0 with no feature of the device: lines 2634 to 2666 of the same file of wgpu-core.
-
-`bind_buffer` keeps the buffer and the offset at each index, and makes no call that binds them again. `draw_item` does the same for the pipeline and the group 1.
-Thus a run of thin draws binds the records of the round once, and each draw then binds only its own vertices.
+Then `draw_view` gives each item that shares a bit with `mask` of the view to `mesh_draw_item`: `docs/intern/mesh_bind.c.md`, *A draw*.
 
 ## Functions
 
@@ -66,6 +59,6 @@ Thus a run of thin draws binds the records of the round once, and each draw then
 | --- | --- |
 | `mesh_encode` | Encodes the pass of the round, submits it, and releases its objects. |
 | `begin_pass` | Begins the render pass with the attachments of the frame and the settings. |
+| `get_color_attachment` | Gives the color attachment: the target, its resolve, and the load and the clear of the round. |
+| `get_depth_attachment` | Gives the attachment of the depth texture: its load, its clamped clear depth, and the stencil of its format. |
 | `draw_view` | Sets the viewport, the scissor and the block of a view, and draws its items. |
-| `draw_item` | Binds the pipeline, the group 1 and the vertex buffers of an item, and draws it. |
-| `bind_buffer` | Binds a vertex buffer at an index, unless that buffer and offset are bound there already. |

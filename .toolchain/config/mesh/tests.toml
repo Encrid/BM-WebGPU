@@ -11,11 +11,10 @@ watch_words = [
 
 [[artifact]]
 name = "probe"
-kind = "native_module"
+kind = "wgpu_module"
 test = true
 sources = ["tests/probe/*.c"]
 include = ["include", "{webgpu_contract}/include", "{wgpu_native}/include"]
-link = ["{wgpu_native}/{wgpu_file}"]
 flags = ["{rpath}", "{dl}"]
 manifest = ["webgpu:probe@1.0.0", "config=webgpu:ProbeScene", "{probe_words}"]
 

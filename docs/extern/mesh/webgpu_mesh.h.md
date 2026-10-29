@@ -269,19 +269,20 @@ Each rule that leaves out an item, a view or a round writes the line `left out` 
 `include/webgpu_mesh.h` gives the C type of each type of the module, and its descriptor for Bridge.
 It includes only headers of Bridge. It makes each C type and its descriptor from one text, with the macros of `bridge_schema.h`.
 
-| Type of Bridge | C type | Descriptor | Size | Alignment |
-| --- | --- | --- | --- | --- |
-| `webgpu:webgpu_load_t` | `webgpu_load_t` | `webgpu_load_t_desc` | 4 | 4 |
-| `webgpu:webgpu_compare_t` | `webgpu_compare_t` | `webgpu_compare_t_desc` | 4 | 4 |
-| `webgpu:webgpu_cull_t` | `webgpu_cull_t` | `webgpu_cull_t_desc` | 4 | 4 |
-| `webgpu:MeshSettings` | `webgpu_mesh_settings_t` | `webgpu_mesh_settings_t_desc` | 32 | 8 |
-| `webgpu:Scene` | `webgpu_scene_t` | `webgpu_scene_t_desc` | 52 | 4 |
-| `webgpu:View` | `webgpu_view_t` | `webgpu_view_t_desc` | 88 | 4 |
-| `webgpu:Mesh` | `webgpu_mesh_t` | `webgpu_mesh_t_desc` | 20 | 4 |
-| `webgpu:Texture` | `webgpu_texture_t` | `webgpu_texture_t_desc` | 24 | 4 |
-| `webgpu:Draw` | `webgpu_draw_t` | `webgpu_draw_t_desc` | 120 | 8 |
-| `webgpu:Batch` | `webgpu_batch_t` | `webgpu_batch_t_desc` | 32 | 4 |
+| Type of Bridge | C type | Descriptor | Macro of the text | Size | Alignment |
+| --- | --- | --- | --- | --- | --- |
+| `webgpu:webgpu_load_t` | `webgpu_load_t` | `webgpu_load_t_desc` | `WEBGPU_LOAD_VALUES` | 4 | 4 |
+| `webgpu:webgpu_compare_t` | `webgpu_compare_t` | `webgpu_compare_t_desc` | `WEBGPU_COMPARE_VALUES` | 4 | 4 |
+| `webgpu:webgpu_cull_t` | `webgpu_cull_t` | `webgpu_cull_t_desc` | `WEBGPU_CULL_VALUES` | 4 | 4 |
+| `webgpu:MeshSettings` | `webgpu_mesh_settings_t` | `webgpu_mesh_settings_t_desc` | `WEBGPU_MESH_SETTINGS_FIELDS` | 32 | 8 |
+| `webgpu:Scene` | `webgpu_scene_t` | `webgpu_scene_t_desc` | `WEBGPU_SCENE_FIELDS` | 52 | 4 |
+| `webgpu:View` | `webgpu_view_t` | `webgpu_view_t_desc` | `WEBGPU_VIEW_FIELDS` | 88 | 4 |
+| `webgpu:Mesh` | `webgpu_mesh_t` | `webgpu_mesh_t_desc` | `WEBGPU_MESH_FIELDS` | 20 | 4 |
+| `webgpu:Texture` | `webgpu_texture_t` | `webgpu_texture_t_desc` | `WEBGPU_TEXTURE_FIELDS` | 24 | 4 |
+| `webgpu:Draw` | `webgpu_draw_t` | `webgpu_draw_t_desc` | `WEBGPU_DRAW_FIELDS` | 120 | 8 |
+| `webgpu:Batch` | `webgpu_batch_t` | `webgpu_batch_t_desc` | `WEBGPU_BATCH_FIELDS` | 32 | 4 |
 
+Each macro of the text gives the braces of its type and the text between them.
 A module in another language does not include the header. It states the descriptor of each type with these bytes, in the order of the table:
 
 ```text

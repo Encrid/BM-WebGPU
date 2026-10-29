@@ -1,0 +1,20 @@
+[project]
+name = "webgpu_objects"
+
+[variables]
+give = "0"
+
+[test]
+timeout = 120
+copies = 1
+
+[leaks]
+with = ["../../../src/leaks.toml"]
+
+[[artifact]]
+name = "use"
+kind = "program"
+test = true
+sources = ["src/use.c", "tests/stub.c"]
+include = ["../../../build/third_party/wgpu_native/{target}/include"]
+defines = ["GIVE={give}"]

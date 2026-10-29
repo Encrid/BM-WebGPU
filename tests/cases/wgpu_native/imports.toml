@@ -1,0 +1,92 @@
+[[case]]
+name = "imports.py with no argument writes its usage, and gives 2"
+run = ["{python}", "tools/imports.py"]
+claims = { status = 2, line = ["usage: python tools/imports.py <library> [<needed> ...]"] }
+false = { run = ["{python}", "tools/imports.py", "{out}/other.dll"] }
+
+[[case]]
+name = "a library that imports only libraries of the system gives 0 and their count"
+run = ["{python}", "tools/imports.py", "{out}/other.dll"]
+claims = { status = 0, line = ["imports: {out}/other.dll: 4 libraries of the system"] }
+false = { run = ["{python}", "tools/imports.py", "{out}/user.dll"] }
+
+[[case]]
+name = "a library that imports another library gives 1 and names it"
+run = ["{python}", "tools/imports.py", "{out}/user.dll"]
+claims = { status = 1, line = ["imports: {out}/user.dll: other.dll is not a library of the system"] }
+false = { run = ["{python}", "tools/imports.py", "{out}/other.dll"] }
+
+[[case]]
+name = "a library named as a stated need counts, and is no library of the system"
+run = ["{python}", "tools/imports.py", "{out}/user.dll", "other.dll"]
+claims = { status = 0, line = ["imports: {out}/user.dll: other.dll is a stated need", "imports: {out}/user.dll: 4 libraries of the system"] }
+false = { run = ["{python}", "tools/imports.py", "{out}/user.dll"] }
+
+[[case]]
+name = "the name of a stated need counts in lower case"
+run = ["{python}", "tools/imports.py", "{out}/user.dll", "OTHER.DLL"]
+claims = { status = 0, line = ["imports: {out}/user.dll: other.dll is a stated need"] }
+false = { run = ["{python}", "tools/imports.py", "{out}/user.dll"] }
+
+[[case]]
+name = "the runtime of MSVC is not a library of the system"
+run = ["{python}", "tools/imports.py", "{out}/both.dll"]
+claims = { status = 1, line = ["imports: {out}/both.dll: vcruntime140.dll is not a library of the system"] }
+false = { run = ["{python}", "tools/imports.py", "{out}/other.dll"] }
+
+[[case]]
+name = "the lines of the other libraries come in the order of the tables"
+run = ["{python}", "tools/imports.py", "{out}/both.dll"]
+claims = { status = 1, matches = ['vcruntime140\.dll is not a library of the system.*other\.dll is not a library of the system'] }
+false = { run = ["{python}", "tools/imports.py", "{out}/both_swapped.dll"] }
+
+[[case]]
+name = "a library of the table of delayed imports counts"
+run = ["{python}", "tools/imports.py", "{out}/delayed.dll"]
+claims = { status = 1, line = ["imports: {out}/delayed.dll: other.dll is not a library of the system"] }
+false = { run = ["{python}", "tools/imports.py", "{out}/other.dll"] }
+
+[[case]]
+name = "a second reader, from the PE format of Microsoft, finds other.dll in the table of delayed imports of the fixture"
+run = ["{python}", "tests/imports/delay_names.py", "{out}/delayed.dll"]
+claims = { status = 0, line = ["other.dll"] }
+false = { run = ["{python}", "tests/imports/delay_names.py", "{out}/user.dll"] }
+
+[[case]]
+name = "a file that is no PE file gives no PE file, and 1"
+run = ["{python}", "tools/imports.py", "readme.md"]
+claims = { status = 1, line = ["imports: readme.md: no PE file"] }
+false = { run = ["{python}", "tools/imports.py", "{out}/other.dll"] }
+
+[[case]]
+name = "a path that names no file gives no PE file, and 1"
+run = ["{python}", "tools/imports.py", "{case}/none.dll"]
+claims = { status = 1, line = ["imports: {case}/none.dll: no PE file"] }
+false = { run = ["{python}", "tools/imports.py", "{out}/other.dll"] }
+
+[[case]]
+name = "the wgpu_native.dll of x86_64-windows-gnu needs only libraries of the system"
+run = ["{python}", "tools/imports.py", "{wgpu_windows_x86_64}/lib/wgpu_native.dll"]
+claims = { status = 0, line = ["imports: {wgpu_windows_x86_64}/lib/wgpu_native.dll: 20 libraries of the system"] }
+false = { run = ["{python}", "tools/imports.py", "{out}/user.dll"] }
+
+[[case]]
+name = "the wgpu_native.dll of aarch64-windows-gnu needs only libraries of the system and its stated need vcruntime140.dll"
+run = ["{python}", "tools/imports.py", "{wgpu_windows_aarch64}/lib/wgpu_native.dll", "vcruntime140.dll"]
+claims = { status = 0, line = [
+    "imports: {wgpu_windows_aarch64}/lib/wgpu_native.dll: vcruntime140.dll is a stated need",
+    "imports: {wgpu_windows_aarch64}/lib/wgpu_native.dll: 13 libraries of the system",
+] }
+false = { run = ["{python}", "tools/imports.py", "{wgpu_windows_aarch64}/lib/wgpu_native.dll"] }
+
+[[case]]
+name = "the wgpu_native.dll of aarch64-windows-gnu fails when vcruntime140.dll is not named"
+run = ["{python}", "tools/imports.py", "{wgpu_windows_aarch64}/lib/wgpu_native.dll"]
+claims = { status = 1, line = ["imports: {wgpu_windows_aarch64}/lib/wgpu_native.dll: vcruntime140.dll is not a library of the system"] }
+false = { run = ["{python}", "tools/imports.py", "{wgpu_windows_aarch64}/lib/wgpu_native.dll", "vcruntime140.dll"] }
+
+[[case]]
+name = "a PE file with its table of imports at an RVA that no section holds gives incorrect PE file, and 1"
+run = ["{python}", "tools/imports.py", "{out}/unmapped.dll"]
+claims = { status = 1, line = ["imports: {out}/unmapped.dll: incorrect PE file"] }
+false = { run = ["{python}", "tools/imports.py", "{out}/delayed.dll"] }

@@ -4,3 +4,6 @@ name = "BL-WGPU-Native"
 [test]
 timeout = 120
 copies = 1
+
+[ci]
+needs = ["vulkan"]

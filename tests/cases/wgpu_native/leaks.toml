@@ -1,0 +1,29 @@
+[[case]]
+name = "the pairs and the kinds of leaks.toml count each object that a module keeps"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/leaks/project", "--out", "{case}/out", "--leaks"]
+claims = { status = 1, line = [
+    "leaks: a module that takes each object keeps 1 wgpuCreateInstance",
+    "leaks: a module that takes each object keeps 1 wgpuInstanceCreateSurface",
+    "leaks: a module that takes each object keeps 1 wgpuDeviceGetQueue",
+    "leaks: a module that takes each object keeps 1 wgpuDeviceCreateBuffer",
+    "leaks: a module that takes each object keeps 1 wgpuTextureCreateView",
+    "leaks: a module that takes each object keeps 1 wgpuDeviceCreateSampler",
+    "leaks: a module that takes each object keeps 1 wgpuDeviceCreatePipelineLayout",
+    "leaks: a module that takes each object keeps 1 wgpuDeviceCreateRenderPipeline",
+    "leaks: a module that takes each object keeps 1 wgpuDeviceCreateComputePipeline",
+    "leaks: a module that takes each object keeps 1 wgpuDeviceCreateBindGroup",
+    "leaks: a module that takes each object keeps 1 wgpuDeviceCreateCommandEncoder",
+    "leaks: a module that takes each object keeps 1 wgpuCommandEncoderBeginRenderPass",
+    "leaks: a module that takes each object keeps 1 wgpuCommandEncoderBeginComputePass",
+    "leaks: a module that takes each object keeps 1 wgpuCommandEncoderFinish",
+    "leaks: a module that takes each object keeps 1 wgpuDeviceCreateQuerySet",
+    "leaks: a module that takes each object keeps 1 wgpuDeviceCreateRenderBundleEncoder",
+    "leaks: a module that takes each object keeps 1 wgpuRenderBundleEncoderFinish",
+    "leaks: a module that takes each object keeps 2 webgpu_texture",
+    "leaks: a module that takes each object keeps 3 webgpu_bind_group_layout",
+    "leaks: a module that takes each object keeps 3 webgpu_shader_module",
+    "leaks: a module that takes each object keeps 1 webgpu_capabilities",
+    "leaks: a module that takes each object keeps 2 webgpu_features",
+    "leaks: a module that takes each object keeps 1 webgpu_adapter_info",
+] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/leaks/project", "--out", "{case}/out", "--leaks", "--set", "give=1"] }

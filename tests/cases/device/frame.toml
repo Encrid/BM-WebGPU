@@ -353,12 +353,15 @@ scene = "pause"
 '''
 
 [[case]]
-name = "a window of another size than webgpu:Window gives the frame at the size of webgpu:Window, also when the surface gives SuccessSuboptimal"
+name = "a window of another size than webgpu:Window gives the frame at the size of webgpu:Window, also when the surface gives Outdated or SuccessSuboptimal"
 run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 
 [case.claims]
-line = ["record[6] test:probe@1.0.0/render: r7 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+line = [
+    "record[6] test:probe@1.0.0/render: r7 frame {stale_frame}",
+    "record[6] test:probe@1.0.0/render: r8 frame 1 27 47 1 64 64 1 1 1 1 1 0 0",
+]
 
 [case.folders]
 "{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]

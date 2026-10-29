@@ -95,7 +95,7 @@ static const step_t STEPS[] = {
     { "heighten", 7, 7, END, 0, 0 },
     { "stale", 6, LAST, RESIZE, 80, SIDE },
     { "stale", 6, LAST, SIZE, SIDE, SIDE },
-    { "stale", 8, 8, END, 0, 0 },
+    { "stale", 9, 9, END, 0, 0 },
     { "flat", 6, 6, SIZE, 0, SIDE },
     { "flat", 7, 7, END, 0, 0 },
     { "tall", 6, 6, SIZE, SIDE, 0 },

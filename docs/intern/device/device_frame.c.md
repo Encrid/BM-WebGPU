@@ -13,9 +13,7 @@ FUNCTION bridge_frame(api : bridge_api_t) RETURNS I32
    w <- bridge_native_get_single(api, WINDOW)
    d.api <- api
    step <- DEVICE_GONE
-   IF device_drain_room(d) OR NOT has_window(w) THEN
-      CALL device_release(d)
-   ELSE
+   IF NOT device_drain_room(d) AND has_window(w) THEN
       step <- device_make_next(d, bridge_native_get_single(api, SETTINGS), w)
    ENDIF
    IF step = DEVICE_READY THEN
@@ -23,6 +21,10 @@ FUNCTION bridge_frame(api : bridge_api_t) RETURNS I32
    ENDIF
    IF step = DEVICE_READY THEN
       step <- device_take_frame(d)
+   ENDIF
+   IF step = DEVICE_GONE THEN
+      CALL device_drain_room(d)
+      CALL device_release(d)
    ENDIF
    CALL write_frame(bridge_native_get_single(api, FRAME), d, step)
    RETURN RESULTS[step]
@@ -32,6 +34,9 @@ ENDFUNCTION
 `device_drain_room` is step 1. It gives `true` when the device was lost: `docs/intern/device_errors.c.md`.
 `has_window` makes the test of step 2.
 `device_make_next` takes the steps of the make, and gives `DEVICE_READY` after them: `docs/intern/device_make.c.md`.
+
+After the make, its check of the device is step 4, and it gives `DEVICE_GONE` for a lost device.
+The second drain writes the line of a loss that the check found. Thus the line and the state of the loss come in one run.
 
 ## The surface
 
@@ -55,6 +60,7 @@ Then it gives the step of `device_make_targets`.
 ## webgpu:Frame
 
 `write_frame` writes the state and the fields of the step, from `gpu`: `docs/intern/device_inside.h.md`, *Types*.
+The tables `STATES`, `RESULTS` and `HAS_DEVICE` give the state, the result, and if the fields of the device are written, for each step.
 `target` is the view of `color` with more than 1 sample, else the view of `frame`.
 
 ## Functions

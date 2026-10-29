@@ -1,0 +1,17 @@
+[[source]]
+name = "webgpu_contract"
+url = "https://github.com/Encrid/BL-WebGPU-Contract/releases/download/v0.1.0/BL-WebGPU-Contract-{target}.zip"
+sha256 = "{webgpu_contract_sha256}"
+into = "build/third_party/webgpu_contract/{target}"
+
+[[source]]
+name = "wgpu_native"
+url = "https://github.com/Encrid/BL-WGPU-Native/releases/download/v0.1.0/BL-WGPU-Native-{target}.zip"
+sha256 = "{wgpu_native_sha256}"
+into = "build/third_party/wgpu_native/{target}"
+
+[[source]]
+name = "sdl3"
+url = "https://github.com/Encrid/BL-SDL3/releases/download/v0.1.0/BL-SDL3-{target}.zip"
+sha256 = "{sdl3_sha256}"
+into = "build/third_party/sdl3/{target}"

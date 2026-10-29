@@ -58,29 +58,25 @@ FUNCTION keep_device(d : device_t, w : webgpu_window_t) RETURNS U32
    IF d.gpu.surface = 0 AND NOT device_make_surface(d, w) THEN
       RETURN DEVICE_NO_FRAME
    ENDIF
+   IF device_is_lost(d) THEN
+      RETURN DEVICE_GONE
+   ENDIF
    RETURN DEVICE_READY
 ENDFUNCTION
 ```
 
 Step 4 makes the targets at the size 1 by 1, in an error scope: `docs/intern/device_targets.c.md`, *The check of the samples*.
 After a lost surface, `keep_device` makes the surface again. If the window has no handle then, the system gives 1, and the device stays.
+Then `keep_device` checks the device, before each configure and each texture of the frame: `docs/intern/device_present.c.md`, *The check of the device*.
 
 ## The surface
 
-`device_make_surface` makes the instance if there is none. Then it makes the surface of the window, with the label `webgpu:device surface`, and sets `configure`.
-`set_source` fills the chained struct of the kind of the window. The build of each system compiles only its kinds:
-
-| System | Kind | Chained struct | Handles that the check reads |
-| --- | --- | --- | --- |
-| Windows | `WEBGPU_SURFACE_WINDOWS` | `WGPUSurfaceSourceWindowsHWND` | `hwnd` |
-| macOS | `WEBGPU_SURFACE_METAL` | `WGPUSurfaceSourceMetalLayer` | `layer` |
-| Linux | `WEBGPU_SURFACE_X11` | `WGPUSurfaceSourceXlibWindow` | `x11_display`, `x11_window` |
-| Linux | `WEBGPU_SURFACE_WAYLAND` | `WGPUSurfaceSourceWaylandSurface` | `wl_display`, `wl_surface` |
-
-wgpu-native stops the process for a kind that its build does not know, and it uses a handle with no check: https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/conv.rs#L1863-L1942.
-So the check comes before each call. A failed check writes the first reason of `no surface`: `docs/extern/webgpu_device.h.md`, *Messages*.
-Then `device_make_surface` gives false, and its caller acts on it.
-On Wayland, the instance gets the display of the window in `WGPUInstanceExtras`. The GLES backend needs it to present: https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/ffi/wgpu.h#L1102-L1112.
+`device_make_surface` first fills the source of the surface with `device_set_source`: `docs/intern/device_source.c.md`.
+When `device_set_source` gives false, it writes the first reason of `no surface` with `device_say_no_surface`: `docs/extern/webgpu_device.h.md`, *Messages*.
+Then it gives false, and its caller acts on it.
+Else it makes the instance if there is none, with the descriptor of the instance in the source.
+The window comes before the instance, because on Wayland that descriptor holds the display of the window.
+Then it makes the surface of the window, with the label `webgpu:device surface`, and sets `configure`.
 
 ## The release
 
@@ -94,7 +90,6 @@ The release of the last reference of the device waits until the GPU is idle. It 
 | Function | Result |
 | --- | --- |
 | `device_make_next` | Takes the next step of the make. Gives a `device_step_t`. |
-| `device_make_surface` | Makes the instance if there is none, then the surface. Gives false, after its line, for a window with no handle of this system. |
-| `set_source` | Fills the chained struct of the surface. Gives false for another kind, or for a handle at 0. |
-| `keep_device` | Takes steps 3 and 4 of the make, then makes a lost surface again. Gives `DEVICE_READY` after the make. |
+| `device_make_surface` | Fills the source, makes the instance if there is none, then makes the surface. Gives false, after its line, for a window with no handle of this system. |
+| `keep_device` | Takes steps 3 and 4 of the make, makes a lost surface again, and checks the device. Gives `DEVICE_GONE` for a lost device, and `DEVICE_READY` after the make. |
 | `device_release` | Releases each object, and sets `gpu` to 0. |

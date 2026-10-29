@@ -1,0 +1,123 @@
+[[case]]
+name = "webgpu_present_t, webgpu_format_t and webgpu_alpha_t have 4 bytes, and each constant has the value of its table"
+run = ["{out}/layout{exe}", "modes"]
+claims = { status = 0, order = [
+    "webgpu_present_t size 4 alignment 4", "WEBGPU_PRESENT_FIFO 1", "WEBGPU_PRESENT_FIFO_RELAXED 2",
+    "WEBGPU_PRESENT_IMMEDIATE 3", "WEBGPU_PRESENT_MAILBOX 4",
+    "webgpu_format_t size 4 alignment 4", "WEBGPU_FORMAT_PREFERRED 1", "WEBGPU_FORMAT_BGRA8_UNORM 2",
+    "WEBGPU_FORMAT_BGRA8_UNORM_SRGB 3", "WEBGPU_FORMAT_RGBA8_UNORM 4", "WEBGPU_FORMAT_RGBA8_UNORM_SRGB 5",
+    "WEBGPU_FORMAT_RGB10A2_UNORM 6", "WEBGPU_FORMAT_RGBA16_FLOAT 7",
+    "webgpu_alpha_t size 4 alignment 4", "WEBGPU_ALPHA_AUTO 1", "WEBGPU_ALPHA_OPAQUE 2",
+    "WEBGPU_ALPHA_PREMULTIPLIED 3", "WEBGPU_ALPHA_UNPREMULTIPLIED 4", "WEBGPU_ALPHA_INHERIT 5",
+] }
+false = { run = ["{out}/layout{exe}", "adapter"] }
+
+[[case]]
+name = "webgpu_power_t, webgpu_backend_t and webgpu_feature_level_t have 4 bytes, and each constant has the value of its table"
+run = ["{out}/layout{exe}", "adapter"]
+claims = { status = 0, order = [
+    "webgpu_power_t size 4 alignment 4", "WEBGPU_POWER_LOW_POWER 1", "WEBGPU_POWER_HIGH_PERFORMANCE 2",
+    "webgpu_backend_t size 4 alignment 4", "WEBGPU_BACKEND_ANY 1", "WEBGPU_BACKEND_D3D12 2",
+    "WEBGPU_BACKEND_METAL 3", "WEBGPU_BACKEND_VULKAN 4", "WEBGPU_BACKEND_OPENGL 5", "WEBGPU_BACKEND_OPENGLES 6",
+    "webgpu_feature_level_t size 4 alignment 4", "WEBGPU_FEATURE_LEVEL_COMPATIBILITY 1",
+    "WEBGPU_FEATURE_LEVEL_CORE 2",
+] }
+false = { run = ["{out}/layout{exe}", "modes"] }
+
+[[case]]
+name = "webgpu_samples_t and webgpu_depth_t have 4 bytes, and each constant has the value of its table"
+run = ["{out}/layout{exe}", "targets"]
+claims = { status = 0, order = [
+    "webgpu_samples_t size 4 alignment 4", "WEBGPU_SAMPLES_1 1", "WEBGPU_SAMPLES_2 2", "WEBGPU_SAMPLES_4 4",
+    "WEBGPU_SAMPLES_8 8", "WEBGPU_SAMPLES_16 16",
+    "webgpu_depth_t size 4 alignment 4", "WEBGPU_DEPTH_NONE 1", "WEBGPU_DEPTH_16_UNORM 2", "WEBGPU_DEPTH_24_PLUS 3",
+    "WEBGPU_DEPTH_24_PLUS_STENCIL_8 4", "WEBGPU_DEPTH_32_FLOAT 5", "WEBGPU_DEPTH_32_FLOAT_STENCIL_8 6",
+] }
+false = { run = ["{out}/layout{exe}", "device"] }
+
+[[case]]
+name = "webgpu_limits_t and webgpu_features_t have 4 bytes, and each constant has the value of its table"
+run = ["{out}/layout{exe}", "device"]
+claims = { status = 0, order = [
+    "webgpu_limits_t size 4 alignment 4", "WEBGPU_LIMITS_ADAPTER 1", "WEBGPU_LIMITS_DEFAULT 2",
+    "webgpu_features_t size 4 alignment 4", "WEBGPU_FEATURES_ADAPTER 1", "WEBGPU_FEATURES_DEFAULT 2",
+] }
+false = { run = ["{out}/layout{exe}", "targets"] }
+
+[[case]]
+name = "each field of webgpu_device_settings_t has the size of its C type"
+run = ["{out}/layout{exe}", "settings"]
+claims = { status = 0, order = [
+    "present 4", "format 4", "alpha 4", "power 4", "fallback 1", "backend 4", "feature_level 4", "samples 4",
+    "depth 4", "limits 4", "features 4", "error_room 4",
+] }
+false = { run = ["{out}/layout{exe}", "device"] }
+
+[[case]]
+name = "the header includes webgpu_contract.h, so a source with only the header has the types of the contract"
+run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{language}", "-I", "include", "-I", "{webgpu_contract}/include", "-I", "{bridge}/include", "-c", "tests/layout/alone.c", "-o", "{case}/alone.o"]
+claims = { status = 0 }
+false = { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{language}", "-I", "include", "-I", "{bridge}/include", "-c", "tests/layout/alone.c", "-o", "{case}/alone.o"] }
+
+[[case]]
+name = "each descriptor of the module holds the bytes of its Usage"
+run = ["{out}/layout{exe}", "descriptors"]
+claims = { status = 0, line = [
+    "uint32_t { WEBGPU_PRESENT_FIFO = 1, WEBGPU_PRESENT_FIFO_RELAXED = 2, WEBGPU_PRESENT_IMMEDIATE = 3, WEBGPU_PRESENT_MAILBOX = 4 }",
+    "uint32_t { WEBGPU_FORMAT_PREFERRED = 1, WEBGPU_FORMAT_BGRA8_UNORM = 2, WEBGPU_FORMAT_BGRA8_UNORM_SRGB = 3, WEBGPU_FORMAT_RGBA8_UNORM = 4, WEBGPU_FORMAT_RGBA8_UNORM_SRGB = 5, WEBGPU_FORMAT_RGB10A2_UNORM = 6, WEBGPU_FORMAT_RGBA16_FLOAT = 7 }",
+    "uint32_t { WEBGPU_ALPHA_AUTO = 1, WEBGPU_ALPHA_OPAQUE = 2, WEBGPU_ALPHA_PREMULTIPLIED = 3, WEBGPU_ALPHA_UNPREMULTIPLIED = 4, WEBGPU_ALPHA_INHERIT = 5 }",
+    "uint32_t { WEBGPU_POWER_LOW_POWER = 1, WEBGPU_POWER_HIGH_PERFORMANCE = 2 }",
+    "uint32_t { WEBGPU_BACKEND_ANY = 1, WEBGPU_BACKEND_D3D12 = 2, WEBGPU_BACKEND_METAL = 3, WEBGPU_BACKEND_VULKAN = 4, WEBGPU_BACKEND_OPENGL = 5, WEBGPU_BACKEND_OPENGLES = 6 }",
+    "uint32_t { WEBGPU_FEATURE_LEVEL_COMPATIBILITY = 1, WEBGPU_FEATURE_LEVEL_CORE = 2 }",
+    "uint32_t { WEBGPU_SAMPLES_1 = 1, WEBGPU_SAMPLES_2 = 2, WEBGPU_SAMPLES_4 = 4, WEBGPU_SAMPLES_8 = 8, WEBGPU_SAMPLES_16 = 16 }",
+    "uint32_t { WEBGPU_DEPTH_NONE = 1, WEBGPU_DEPTH_16_UNORM = 2, WEBGPU_DEPTH_24_PLUS = 3, WEBGPU_DEPTH_24_PLUS_STENCIL_8 = 4, WEBGPU_DEPTH_32_FLOAT = 5, WEBGPU_DEPTH_32_FLOAT_STENCIL_8 = 6 }",
+    "uint32_t { WEBGPU_LIMITS_ADAPTER = 1, WEBGPU_LIMITS_DEFAULT = 2 }",
+    "uint32_t { WEBGPU_FEATURES_ADAPTER = 1, WEBGPU_FEATURES_DEFAULT = 2 }",
+    "{ webgpu_present_t present; webgpu_format_t format; webgpu_alpha_t alpha; webgpu_power_t power; bool fallback; webgpu_backend_t backend; webgpu_feature_level_t feature_level; webgpu_samples_t samples; webgpu_depth_t depth; webgpu_limits_t limits; webgpu_features_t features; uint32_t error_room; }",
+] }
+false = { run = ["{out}/layout{exe}", "texts"] }
+
+[[case]]
+name = "each macro of a text gives the braces of its type and the text between them"
+run = ["{out}/layout{exe}", "texts"]
+claims = { status = 0, line = [
+    "{ WEBGPU_PRESENT_FIFO = 1, WEBGPU_PRESENT_FIFO_RELAXED = 2, WEBGPU_PRESENT_IMMEDIATE = 3, WEBGPU_PRESENT_MAILBOX = 4 }",
+    "{ WEBGPU_FORMAT_PREFERRED = 1, WEBGPU_FORMAT_BGRA8_UNORM = 2, WEBGPU_FORMAT_BGRA8_UNORM_SRGB = 3, WEBGPU_FORMAT_RGBA8_UNORM = 4, WEBGPU_FORMAT_RGBA8_UNORM_SRGB = 5, WEBGPU_FORMAT_RGB10A2_UNORM = 6, WEBGPU_FORMAT_RGBA16_FLOAT = 7 }",
+    "{ WEBGPU_ALPHA_AUTO = 1, WEBGPU_ALPHA_OPAQUE = 2, WEBGPU_ALPHA_PREMULTIPLIED = 3, WEBGPU_ALPHA_UNPREMULTIPLIED = 4, WEBGPU_ALPHA_INHERIT = 5 }",
+    "{ WEBGPU_POWER_LOW_POWER = 1, WEBGPU_POWER_HIGH_PERFORMANCE = 2 }",
+    "{ WEBGPU_BACKEND_ANY = 1, WEBGPU_BACKEND_D3D12 = 2, WEBGPU_BACKEND_METAL = 3, WEBGPU_BACKEND_VULKAN = 4, WEBGPU_BACKEND_OPENGL = 5, WEBGPU_BACKEND_OPENGLES = 6 }",
+    "{ WEBGPU_FEATURE_LEVEL_COMPATIBILITY = 1, WEBGPU_FEATURE_LEVEL_CORE = 2 }",
+    "{ WEBGPU_SAMPLES_1 = 1, WEBGPU_SAMPLES_2 = 2, WEBGPU_SAMPLES_4 = 4, WEBGPU_SAMPLES_8 = 8, WEBGPU_SAMPLES_16 = 16 }",
+    "{ WEBGPU_DEPTH_NONE = 1, WEBGPU_DEPTH_16_UNORM = 2, WEBGPU_DEPTH_24_PLUS = 3, WEBGPU_DEPTH_24_PLUS_STENCIL_8 = 4, WEBGPU_DEPTH_32_FLOAT = 5, WEBGPU_DEPTH_32_FLOAT_STENCIL_8 = 6 }",
+    "{ WEBGPU_LIMITS_ADAPTER = 1, WEBGPU_LIMITS_DEFAULT = 2 }",
+    "{ WEBGPU_FEATURES_ADAPTER = 1, WEBGPU_FEATURES_DEFAULT = 2 }",
+    "{ webgpu_present_t present; webgpu_format_t format; webgpu_alpha_t alpha; webgpu_power_t power; bool fallback; webgpu_backend_t backend; webgpu_feature_level_t feature_level; webgpu_samples_t samples; webgpu_depth_t depth; webgpu_limits_t limits; webgpu_features_t features; uint32_t error_room; }",
+] }
+false = { run = ["{out}/layout{exe}", "descriptors"] }
+
+[[case]]
+name = "a module that declares the types of the module as The declarations tells loads beside it, and another storage layout is refused"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+has = ["loaded: webgpu:device@1.0.0, native", "loaded: test:probe@1.0.0, native"]
+lacks = ["was refused"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[case.false.folders]
+"{case}/m" = ["webgpu_device", "other", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]

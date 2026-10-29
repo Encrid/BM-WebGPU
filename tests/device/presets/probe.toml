@@ -1,0 +1,12 @@
+presets = ["test.toml"]
+phases = ["drive", "frame", "render", "present", "check"]
+rounds = 16
+
+[module."test:probe@1.0.0"]
+read = [
+    "webgpu:webgpu_present_t", "webgpu:webgpu_format_t", "webgpu:webgpu_alpha_t", "webgpu:webgpu_power_t",
+    "webgpu:webgpu_backend_t", "webgpu:webgpu_feature_level_t", "webgpu:webgpu_samples_t", "webgpu:webgpu_depth_t",
+    "webgpu:webgpu_limits_t", "webgpu:webgpu_features_t", "webgpu:webgpu_surface_t", "webgpu:webgpu_frame_state_t",
+    "webgpu:Frame",
+]
+write = ["webgpu:Window", "webgpu:DeviceSettings"]

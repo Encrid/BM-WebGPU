@@ -1,0 +1,151 @@
+[[case]]
+name = "--show-config shows the words of the manifest and each default of the module and of its settings"
+run = ["{bridge_host}/bridge-host{exe}", "--show-config", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+order = [
+    "module webgpu:device@1.0.0, native, m/webgpu_device{library}",
+    'config = "webgpu:DeviceSettings"  its file',
+    'settings = "present format alpha power fallback backend feature_level samples depth limits features error_room"  its file',
+    "pinned = true  its file",
+    "reloadable = false  its file",
+    "hot_reload = false  its file",
+    "scratch = 16384  its file",
+    "log_ring = 2048  its file",
+    "spans = 4096  its file",
+    'spawns = "none"  its file',
+    'persistent = "none"  its file',
+    "changes = 88  its file",
+    'config.present = "WEBGPU_PRESENT_FIFO"  its file',
+    'config.format = "WEBGPU_FORMAT_PREFERRED"  its file',
+    'config.alpha = "WEBGPU_ALPHA_AUTO"  its file',
+    'config.power = "WEBGPU_POWER_HIGH_PERFORMANCE"  its file',
+    "config.fallback = false  its file",
+    'config.backend = "WEBGPU_BACKEND_ANY"  its file',
+    'config.feature_level = "WEBGPU_FEATURE_LEVEL_CORE"  its file',
+    'config.samples = "WEBGPU_SAMPLES_1"  its file',
+    'config.depth = "WEBGPU_DEPTH_24_PLUS_STENCIL_8"  its file',
+    'config.limits = "WEBGPU_LIMITS_ADAPTER"  its file',
+    'config.features = "WEBGPU_FEATURES_ADAPTER"  its file',
+    "config.error_room = 8192  its file",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["{wgpu_native}/{wgpu_file}"]
+
+[[case]]
+name = "a key of the deployment replaces a default of the manifest"
+run = ["{bridge_host}/bridge-host{exe}", "--show-config", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ["  scratch = 32768  d.toml:10"]
+lacks = ["scratch = 16384  its file"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0"]
+scratch = 32768
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "the module loads with the wgpu-native library beside it, and with no SDL3"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ["loaded: webgpu:device@1.0.0, native, m/webgpu_device{library}"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["webgpu_device"]
+
+[[case]]
+name = "reload of the module gives 1"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r1 reload 1 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "reload"
+module = { path = "m/webgpu_device{library}" }
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+module = { path = "m/webgpu_device{library}" }
+'''

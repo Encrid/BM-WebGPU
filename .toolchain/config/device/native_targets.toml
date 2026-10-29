@@ -1,29 +1,35 @@
 [targets.x86_64-windows-gnu]
 section = ".bridge"
-bridge_sha256 = "e5d942e037e2f3abaea964653a79360cf36984516f7c6d54cdd905027a032c59"
-bb_native_sha256 = "88b5358fb740308783596cf61e6141e8598d54a5745ed9864b5345a7bb7877db"
+bridge_sha256 = "73a3646301d3e974094417700f58d5126e20b5f32760516dd6c7f7c3e1bc9284"
+bb_native_sha256 = "a3effe99f7cca37197f34d2f0702242e2bbae0b81471f40f73445f78b855f0ae"
+bridge_host_sha256 = "fd718c482cb2ccb7a5c59bbfbe7a2165871c72c18866a6eafb242ab5d34f4be8"
 
 [targets.x86_64-linux-gnu]
 section = ".bridge"
-bridge_sha256 = "bed00dc8a6430193eecb93aacb3a5f9cf6aa866d206f4f123d0ee7e389de460f"
-bb_native_sha256 = "71fe4dbcbb763569742accf4c9c76a19fbe2c89f39ae5103c58527472feec240"
+bridge_sha256 = "a994eceddc6e5191b3f518763494d8c3c80c8030444a91d56585fe722026baf2"
+bb_native_sha256 = "19ae67c7abd3c0aebee16a1bf4506400ac5236d97e7b24cf6292bc7840e140d2"
+bridge_host_sha256 = "bcb4bf698491fab21069dcb1f43384b1506306732395132bb0cb9be6bd03725d"
 
 [targets.aarch64-macos]
 section = "__TEXT,.bridge"
-bridge_sha256 = "9c05f8c2fdd455e706c5e20d2cb4e2f1cac2934b4cbf94d1797bfa5355ed6cee"
-bb_native_sha256 = "65ba2dede6bbe454a262eb2f14549d13dc5918ea6af52fce4856312028d2eace"
+bridge_sha256 = "55f1016694953a315c2dc625c8af7e2ea8dde8f3b13cf7fa9186dc62506643dc"
+bb_native_sha256 = "0bdafa527617b52b0cc2f088302c2a9dcaa58a1d697cef80b4fdafc21a5001f0"
+bridge_host_sha256 = "ad7c91906d4390fa91d9ab3b9b2bf5c0a63dda3cd5a48dc1d90abbc1b3610a81"
 
 [targets.aarch64-linux-gnu]
 section = ".bridge"
-bridge_sha256 = "e84b2634d37a040c793e584f4cc7ffeb5c05e3303be9f809868ac93b636091e0"
-bb_native_sha256 = "57f784546c4f3015f8f76a1d25948990c817c644658c8de7866c31f1aca73956"
+bridge_sha256 = "f0749aca8cd35f48a9724ab0ad356f5727e0790d537c2fe19d250e64d1172bab"
+bb_native_sha256 = "97e0cb622c1b3c3f24c359cee1f42ab3b3a55724023f344c642c96833222269c"
+bridge_host_sha256 = "3628fac15fc682ec1562b85742aff75bde7cbf08adb77fbb23a500451a783383"
 
 [targets.x86_64-macos]
 section = "__TEXT,.bridge"
-bridge_sha256 = "1f8b465aa8fb0b187f96723e7b20b41e104c96d18e88497d98af5d7e66a6e3b1"
-bb_native_sha256 = "653bdf08779efcd6045bfc3236e7c2c526354e91223e55ec10be423224990d9e"
+bridge_sha256 = "696b517ffe65f6dd9aa0acc91a18fe30dec7313d9de08e30e13fbbcddd360abb"
+bb_native_sha256 = "f2ce5829097a54b938c4bae1d4a235627cea7999cb6ac85493604006aeb86ac7"
+bridge_host_sha256 = "30b4afb82114f5a5dcb15406c52f8e7a2957ef1a38dd03c9f183b5259b40eae9"
 
 [targets.aarch64-windows-gnu]
 section = ".bridge"
-bridge_sha256 = "9f83bceacfe849e9e58eef1f98b754ba9718af21f5d4cd0742d095aa50581f43"
-bb_native_sha256 = "c78172b8673a8c355bcaa9ac0b8753fda688df74a5756f2c438a96f8439524fc"
+bridge_sha256 = "419d0567d13ac0c57f61102166aaa2d5dfb93841d3911a9453d7d85bd2c5f252"
+bb_native_sha256 = "cbf0a4042162c38f33599dcf695e12bff23baad4fe3c082a2c40c4278ab64328"
+bridge_host_sha256 = "385320c1bee702f9284494d5100038aa507f477d729d02a651b5bdfa5d022453"

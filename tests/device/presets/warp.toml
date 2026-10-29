@@ -1,0 +1,4 @@
+presets = ["frame.toml"]
+
+[module."webgpu:device@1.0.0".config]
+fallback = true

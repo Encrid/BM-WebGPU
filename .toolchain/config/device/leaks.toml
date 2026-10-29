@@ -1,0 +1,10 @@
+[leaks]
+with = ["{wgpu_native}/leaks.toml"]
+
+[leaks.kinds.webgpu_adapter]
+takes = { take_adapter = "2" }
+gives = { wgpuAdapterRelease = "1" }
+
+[leaks.kinds.webgpu_device]
+takes = { take_device = "2" }
+gives = { wgpuDeviceRelease = "1" }

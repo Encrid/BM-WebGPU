@@ -1,0 +1,152 @@
+[variables]
+probe_words = [
+    "abi=2", "config=test:Scene", "settings=scene module", "pinned=true", "reloadable=false",
+    "scratch=16384", "log_ring=2048", "spans=4096", "spawns=none", "changes=96", "persistent=none",
+    "hot_reload=false", "config.scene=none", "config.module=none",
+]
+
+[kinds.stand_in]
+output = "{name}{library}"
+steps = [
+    { run = ["{python}", "tests/stand_in/calls.py", "{work}.c", "{sources}", "{manifest}"] },
+    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "-shared", "{pic}", "{soname}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "{include}", "{work}.c", "{flags}", "-o", "{output}"] },
+]
+
+[[artifact]]
+name = "probe"
+kind = "wgpu_module"
+test = true
+sources = ["tests/probe/probe.c"]
+include = ["include", "{webgpu_contract}/include", "{wgpu_native}/include", "{sdl3}/include"]
+flags = ["{sdl3}/SDL3{library}", "{rpath}"]
+manifest = ["test:probe@1.0.0", "{probe_words}"]
+
+[[artifact.variants]]
+name = "other"
+defines = ["OTHER_STORAGE"]
+manifest = ["test:probe@1.0.0", "{probe_words}"]
+
+[[artifact]]
+name = "importer"
+kind = "wgpu_module"
+test = true
+sources = ["tests/stand_in/importer.c"]
+include = ["{wgpu_native}/include"]
+flags = ["{rpath}"]
+manifest = [
+    "test:importer@1.0.0", "abi=2", "config=none", "pinned=false", "reloadable=false", "scratch=4096",
+    "log_ring=64", "spans=1024", "spawns=none", "changes=none", "persistent=none", "hot_reload=false",
+]
+
+[[artifact]]
+name = "{wgpu_name}"
+kind = "stand_in"
+test = true
+sources = ["tests/stand_in/stand_in.c"]
+include = ["{wgpu_native}/include"]
+defines = ["_GNU_SOURCE"]
+flags = ["{dl}"]
+manifest = ["{wgpu_native}/include/webgpu/webgpu.h", "{wgpu_native}/include/webgpu/wgpu.h"]
+
+[[artifact]]
+name = "layout"
+kind = "program"
+test = true
+sources = ["tests/layout/layout.c"]
+include = ["include", "{webgpu_contract}/include", "{bridge}/include"]
+
+[targets.x86_64-windows-gnu]
+wgpu_name = "wgpu_native"
+dl = []
+frame_preset = "warp.toml"
+video_driver = "windows"
+foreign_backend = "WEBGPU_BACKEND_METAL"
+native_backend = "WEBGPU_BACKEND_D3D12"
+mailbox_frame = "render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
+given_samples = "WEBGPU_SAMPLES_8"
+given_frame = "record[6] test:probe@1.0.0/render: r5 frame 1 27 47 8 64 64 1 1 1 2 1 0 0"
+stale_frame = "1 27 47 1 64 64 1 1 1 1 1 0 0"
+wayland_window = "record[3] -/-: module 'test:probe@1.0.0' did not load: its init answered 1 0 0"
+wayland_frame = "not loaded: m/probe{library}: test:probe@1.0.0 was refused"
+no_display_says = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
+no_wayland_handle_says = "record[3] -/-: module 'test:probe@1.0.0' did not load: its init answered 1 0 0"
+
+[targets.aarch64-windows-gnu]
+wgpu_name = "wgpu_native"
+dl = []
+frame_preset = "warp.toml"
+video_driver = "windows"
+foreign_backend = "WEBGPU_BACKEND_METAL"
+native_backend = "WEBGPU_BACKEND_D3D12"
+mailbox_frame = "render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
+given_samples = "WEBGPU_SAMPLES_8"
+given_frame = "record[6] test:probe@1.0.0/render: r5 frame 1 27 47 8 64 64 1 1 1 2 1 0 0"
+stale_frame = "1 27 47 1 64 64 1 1 1 1 1 0 0"
+wayland_window = "record[3] -/-: module 'test:probe@1.0.0' did not load: its init answered 1 0 0"
+wayland_frame = "not loaded: m/probe{library}: test:probe@1.0.0 was refused"
+no_display_says = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
+no_wayland_handle_says = "record[3] -/-: module 'test:probe@1.0.0' did not load: its init answered 1 0 0"
+
+[targets.x86_64-linux-gnu]
+wgpu_name = "libwgpu_native"
+dl = ["-ldl"]
+frame_preset = "frame.toml"
+video_driver = "x11"
+foreign_backend = "WEBGPU_BACKEND_METAL"
+native_backend = "WEBGPU_BACKEND_VULKAN"
+mailbox_frame = "render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
+given_samples = "WEBGPU_SAMPLES_4"
+given_frame = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 4 64 64 1 1 1 2 1 0 0"
+stale_frame = "2 27 47 1 64 64 1 1 0 0 0 0 0"
+wayland_window = "record[6] test:probe@1.0.0/drive: r1 window 5 0"
+wayland_frame = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
+no_display_says = "record[3] webgpu:device@1.0.0/frame: no surface: the window has no handle of this system"
+no_wayland_handle_says = "record[3] webgpu:device@1.0.0/frame: no surface: the window has no handle of this system"
+
+[targets.aarch64-linux-gnu]
+wgpu_name = "libwgpu_native"
+dl = ["-ldl"]
+frame_preset = "frame.toml"
+video_driver = "x11"
+foreign_backend = "WEBGPU_BACKEND_METAL"
+native_backend = "WEBGPU_BACKEND_VULKAN"
+mailbox_frame = "render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
+given_samples = "WEBGPU_SAMPLES_4"
+given_frame = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 4 64 64 1 1 1 2 1 0 0"
+stale_frame = "2 27 47 1 64 64 1 1 0 0 0 0 0"
+wayland_window = "record[6] test:probe@1.0.0/drive: r1 window 5 0"
+wayland_frame = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
+no_display_says = "record[3] webgpu:device@1.0.0/frame: no surface: the window has no handle of this system"
+no_wayland_handle_says = "record[3] webgpu:device@1.0.0/frame: no surface: the window has no handle of this system"
+
+[targets.x86_64-macos]
+wgpu_name = "libwgpu_native"
+dl = []
+frame_preset = "frame.toml"
+video_driver = "cocoa"
+foreign_backend = "WEBGPU_BACKEND_D3D12"
+native_backend = "WEBGPU_BACKEND_METAL"
+mailbox_frame = "no present WEBGPU_PRESENT_MAILBOX: the frame uses WEBGPU_PRESENT_FIFO.*render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
+given_samples = "WEBGPU_SAMPLES_4"
+given_frame = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 4 64 64 1 1 1 2 1 0 0"
+stale_frame = "1 27 47 1 64 64 1 1 1 1 1 0 0"
+wayland_window = "record[3] -/-: module 'test:probe@1.0.0' did not load: its init answered 1 0 0"
+wayland_frame = "not loaded: m/probe{library}: test:probe@1.0.0 was refused"
+no_display_says = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
+no_wayland_handle_says = "record[3] -/-: module 'test:probe@1.0.0' did not load: its init answered 1 0 0"
+
+[targets.aarch64-macos]
+wgpu_name = "libwgpu_native"
+dl = []
+frame_preset = "frame.toml"
+video_driver = "cocoa"
+foreign_backend = "WEBGPU_BACKEND_D3D12"
+native_backend = "WEBGPU_BACKEND_METAL"
+mailbox_frame = "no present WEBGPU_PRESENT_MAILBOX: the frame uses WEBGPU_PRESENT_FIFO.*render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
+given_samples = "WEBGPU_SAMPLES_4"
+given_frame = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 4 64 64 1 1 1 2 1 0 0"
+stale_frame = "1 27 47 1 64 64 1 1 1 1 1 0 0"
+wayland_window = "record[3] -/-: module 'test:probe@1.0.0' did not load: its init answered 1 0 0"
+wayland_frame = "not loaded: m/probe{library}: test:probe@1.0.0 was refused"
+no_display_says = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
+no_wayland_handle_says = "record[3] -/-: module 'test:probe@1.0.0' did not load: its init answered 1 0 0"

@@ -61,6 +61,7 @@ The header gives the slots of the singletons as `constexpr`: `SETTINGS` is 12, `
 `features` holds `MOST_FEATURES` items, which is 128.
 `webgpu.h` and `wgpu.h` of wgpu-native v29.0.1.1 name 81 features, and an adapter gives each feature one time.
 Thus the count of the features stays below `MOST_FEATURES`.
+`describe_device` also stops at `MOST_FEATURES`, so an adapter that gives more features gets a device with the first 128 that the module asks for.
 
 A step of `frame` gives a value of `device_step_t`. `bridge_frame` turns it into the state of `webgpu:Frame`, the result of the system, and the fields that `write_frame` writes:
 

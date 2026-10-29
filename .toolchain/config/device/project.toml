@@ -6,6 +6,9 @@ timeout = 120
 copies = 1
 writers = ["bridge_native_say"]
 
+[ci]
+needs = ["display", "vulkan"]
+
 [check]
 refuse = ["{wgpu_native}/gaps.txt"]
 

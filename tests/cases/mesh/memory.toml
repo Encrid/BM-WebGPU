@@ -5,7 +5,7 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 [case.claims]
 status = 0
 line = [
-    'record[4] webgpu:mesh@1.0.0/render: no room: 612 bytes of gpu_memory are taken, and the item needs 72 more 70 0',
+    'record[4] webgpu:mesh@1.0.0/keep_meshes: no room: 612 bytes of gpu_memory are taken, and the item needs 72 more 70 0',
     'record[6] webgpu:probe@1.0.0/check: r4 pixel 16 32 is 255 0 0 255',
     'record[6] webgpu:probe@1.0.0/check: r4 pixel 48 32 is 51 102 153 255',
 ]
@@ -46,7 +46,7 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 [case.claims]
 status = 0
 line = [
-    'record[4] webgpu:mesh@1.0.0/render: no room: 284 bytes of gpu_memory are taken, and the item needs 72 more 70 0',
+    'record[4] webgpu:mesh@1.0.0/keep_meshes: no room: 284 bytes of gpu_memory are taken, and the item needs 72 more 70 0',
 ]
 matches_not = ['no room: .*no room: ']
 

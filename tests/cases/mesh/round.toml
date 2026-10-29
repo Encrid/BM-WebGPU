@@ -680,7 +680,7 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 [case.claims]
 status = 0
 line = [
-    'record[4] webgpu:mesh@1.0.0/render: no room: 284 bytes of gpu_memory are taken, and the item needs 72 more 70 0',
+    'record[4] webgpu:mesh@1.0.0/keep_meshes: no room: 284 bytes of gpu_memory are taken, and the item needs 72 more 70 0',
 ]
 
 [case.folders]

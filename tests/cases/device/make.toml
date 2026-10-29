@@ -161,3 +161,92 @@ scene = "none"
 [module."webgpu:device@1.0.0".config]
 backend = "{foreign_backend}"
 '''
+
+[[case]]
+name = "a request that answers at a later run holds the make until the answer comes, and the frame comes later"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_LATE = "1" }
+
+[case.claims]
+line = [
+    "record[6] test:probe@1.0.0/render: r5 frame 2 0 0 0 0 0 0 0 0 0 0 0 0",
+    "record[6] test:probe@1.0.0/render: r6 frame 1 27 47 1 64 64 1 1 1 1 1 0 0",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "wait"
+'''
+
+[case.false]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[[case]]
+name = "a refusal that answers at a later run releases each object at that run, and the next run takes step 1 again"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_LATE = "1" }
+
+[case.claims]
+matches = [
+    'r1 frame 2 0 0 0 0 0 0 0 0 0 0 0 0\s+record\[6\] test:probe@1\.0\.0/render: r2 frame 2 0 0 0 0 0 0 0 0 0 0 0 0',
+    'no device: no adapter: Validation Error.*no device: no adapter: Validation Error',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "wait"
+[module."webgpu:device@1.0.0".config]
+backend = "{foreign_backend}"
+'''
+
+[case.false]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[[case]]
+name = "a refused device gives no device: the adapter refuses the device"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_NO_DEVICE = "1" }
+
+[case.claims]
+has = ["record[3] webgpu:device@1.0.0/frame: no device: the adapter refuses the device: stand-in"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[case.false]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }

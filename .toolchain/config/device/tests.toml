@@ -20,6 +20,27 @@ defines = ["OTHER_STORAGE"]
 manifest = ["test:probe@1.0.0", "{probe_words}"]
 
 [[artifact]]
+name = "importer"
+kind = "wgpu_module"
+test = true
+sources = ["tests/stand_in/importer.c"]
+include = ["{wgpu_native}/include"]
+flags = ["{rpath}"]
+manifest = [
+    "test:importer@1.0.0", "abi=2", "config=none", "pinned=false", "reloadable=false", "scratch=4096",
+    "log_ring=64", "spans=1024", "spawns=none", "changes=none", "persistent=none", "hot_reload=false",
+]
+
+[[artifact]]
+name = "{wgpu_name}"
+kind = "library"
+test = true
+sources = ["tests/stand_in/stand_in.c"]
+include = ["{wgpu_native}/include"]
+defines = ["_GNU_SOURCE"]
+flags = ["{dl}"]
+
+[[artifact]]
 name = "layout"
 kind = "program"
 test = true
@@ -27,6 +48,8 @@ sources = ["tests/layout/layout.c"]
 include = ["include", "{webgpu_contract}/include", "{bridge}/include"]
 
 [targets.x86_64-windows-gnu]
+wgpu_name = "wgpu_native"
+dl = []
 frame_preset = "warp.toml"
 video_driver = "windows"
 foreign_backend = "WEBGPU_BACKEND_METAL"
@@ -41,6 +64,8 @@ no_display_says = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1
 no_wayland_handle_says = "record[3] -/-: module 'test:probe@1.0.0' did not load: its init answered 1 0 0"
 
 [targets.aarch64-windows-gnu]
+wgpu_name = "wgpu_native"
+dl = []
 frame_preset = "warp.toml"
 video_driver = "windows"
 foreign_backend = "WEBGPU_BACKEND_METAL"
@@ -55,6 +80,8 @@ no_display_says = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1
 no_wayland_handle_says = "record[3] -/-: module 'test:probe@1.0.0' did not load: its init answered 1 0 0"
 
 [targets.x86_64-linux-gnu]
+wgpu_name = "libwgpu_native"
+dl = ["-ldl"]
 frame_preset = "frame.toml"
 video_driver = "x11"
 foreign_backend = "WEBGPU_BACKEND_METAL"
@@ -69,6 +96,8 @@ no_display_says = "record[3] webgpu:device@1.0.0/frame: no surface: the window h
 no_wayland_handle_says = "record[3] webgpu:device@1.0.0/frame: no surface: the window has no handle of this system"
 
 [targets.aarch64-linux-gnu]
+wgpu_name = "libwgpu_native"
+dl = ["-ldl"]
 frame_preset = "frame.toml"
 video_driver = "x11"
 foreign_backend = "WEBGPU_BACKEND_METAL"
@@ -83,6 +112,8 @@ no_display_says = "record[3] webgpu:device@1.0.0/frame: no surface: the window h
 no_wayland_handle_says = "record[3] webgpu:device@1.0.0/frame: no surface: the window has no handle of this system"
 
 [targets.x86_64-macos]
+wgpu_name = "libwgpu_native"
+dl = []
 frame_preset = "frame.toml"
 video_driver = "cocoa"
 foreign_backend = "WEBGPU_BACKEND_D3D12"
@@ -97,6 +128,8 @@ no_display_says = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1
 no_wayland_handle_says = "record[3] -/-: module 'test:probe@1.0.0' did not load: its init answered 1 0 0"
 
 [targets.aarch64-macos]
+wgpu_name = "libwgpu_native"
+dl = []
 frame_preset = "frame.toml"
 video_driver = "cocoa"
 foreign_backend = "WEBGPU_BACKEND_D3D12"

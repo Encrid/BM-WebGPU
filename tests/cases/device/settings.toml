@@ -501,7 +501,7 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 
 [case.claims]
-line = ["record[6] test:probe@1.0.0/render: r4 frame 1 {preferred_format} 47 1 64 64 1 1 1 1 1 0 0"]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 28 47 1 64 64 1 1 1 1 1 0 0"]
 lacks = ["no format"]
 
 [case.folders]

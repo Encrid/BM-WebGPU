@@ -88,7 +88,7 @@ static void show_point(const bridge_api_t *api, const gpu_image_t *image,
     snprintf(text, sizeof(text), "stencil %u %u is %u", x, y,
         image->stencil[y * SIZE + x]);
     if (p->gpu.frame.read_depth && p->scene->prefill
-        && depth == WGPUTextureFormat_Depth24PlusStencil8)
+        && depth != WGPUTextureFormat_Depth32Float)
         probe_say(api, text, 0, 0);
 }
 

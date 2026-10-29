@@ -10,6 +10,10 @@
 
 constexpr int TRIES = 100;
 
+static const WGPUFeatureName FEATURES[1] = {
+    WGPUFeatureName_Depth32FloatStencil8
+};
+
 typedef struct {
     bool answered;
     WGPUAdapter adapter;
@@ -74,11 +78,13 @@ static WGPUDevice ask_device(const gpu_t *gpu, bool small)
     limits.maxTextureDimension2D = SIZE;
     limits.maxBufferSize = ROW * BAND;
     desc.label = gpu_text("probe");
+    desc.requiredFeatureCount = wgpuAdapterHasFeature(gpu->adapter,
+        FEATURES[0]) ? 1 : 0;
+    desc.requiredFeatures = FEATURES;
     desc.requiredLimits = small ? &limits : nullptr;
     desc.deviceLostCallbackInfo = (WGPUDeviceLostCallbackInfo){
         .mode = WGPUCallbackMode_AllowSpontaneous, .callback = lose };
-    desc.uncapturedErrorCallbackInfo = (WGPUUncapturedErrorCallbackInfo){
-        .callback = say_error };
+    desc.uncapturedErrorCallbackInfo.callback = say_error;
     wgpuAdapterRequestDevice(gpu->adapter, &desc,
         (WGPURequestDeviceCallbackInfo){
         .mode = WGPUCallbackMode_AllowProcessEvents,

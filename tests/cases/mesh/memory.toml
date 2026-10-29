@@ -40,6 +40,47 @@ scene = "noroom"
 '''
 
 [[case]]
+name = "past gpu_memory the module leaves out a new texture, and its draw gets the white texture"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[4] webgpu:mesh@1.0.0/keep_textures: no room: 732 bytes of gpu_memory are taken, and the item needs 4 more 69 0',
+    'record[6] webgpu:probe@1.0.0/check: r4 pixel 16 32 is 255 0 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r4 pixel 48 32 is 255 255 255 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+gpu_memory = 734
+[module."webgpu:probe@1.0.0".config]
+scene = "texnoroom"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texnoroom"
+'''
+
+[[case]]
 name = "the line of gpu_memory comes at most once in a round"
 run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 

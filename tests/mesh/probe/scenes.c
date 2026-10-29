@@ -364,6 +364,18 @@ static const item_t NO_ROOM_KEPT[] = {
     { .kind = DRAW, .mesh = 3, .color = RED, .views = 1, .from = 3 }
 };
 
+static const item_t TEXTURE_NO_ROOM[] = {
+    { .kind = VIEW, .mask = 1 },
+    { .kind = MESH, .at = { 0, 0, 32, 64 }, .z = 0.5f },
+    { .kind = DRAW, .mesh = 1, .color = RED, .views = 1 },
+    { .kind = TEXTURE, .size = { 1, 1 }, .texels = { { 0, 255, 0, 255 } },
+        .from = 3 },
+    { .kind = MESH, .at = { 32, 0, 64, 64 }, .z = 0.5f, .layout = 2,
+        .uv = { 0, 0, 1, 1 } },
+    { .kind = DRAW, .mesh = 4, .texture = 3, .color = WHITE, .shading = 2,
+        .views = 1, .from = 3 }
+};
+
 static const item_t MANY_VIEWS[] = {
     { .kind = VIEW, .mask = 1, .repeat = 16 },
     { .kind = MESH, .at = { 0, 0, 64, 64 }, .z = 0.5f },
@@ -506,6 +518,16 @@ static const item_t FAR_VIEW[] = {
 
 static const item_t NEAR_VIEW[] = {
     { .kind = VIEW, .mask = 1, .rect = { 0, 0, 32, 64 }, .show = true },
+    { .kind = BATCH, .at = { 0, 0, 64, 64 }, .z = 0.5f, .views = 1 }
+};
+
+static const item_t BELOW_VIEW[] = {
+    { .kind = VIEW, .mask = 1, .rect = { 0, 64, 64, 64 }, .show = true },
+    { .kind = BATCH, .at = { 0, 0, 64, 64 }, .z = 0.5f, .views = 1 }
+};
+
+static const item_t FLAT_VIEW[] = {
+    { .kind = VIEW, .mask = 1, .rect = { 0, 0, 64, 0 }, .show = true },
     { .kind = BATCH, .at = { 0, 0, 64, 64 }, .z = 0.5f, .views = 1 }
 };
 
@@ -1053,6 +1075,18 @@ static const item_t BATCH_WHOLE[] = {
         .show = true }
 };
 
+static const item_t BATCH_LAYOUT_8[] = {
+    { .kind = VIEW, .mask = 1 },
+    { .kind = BATCH, .at = { 0, 0, 64, 64 }, .z = 0.5f, .layout = 8,
+        .views = 1, .show = true }
+};
+
+static const item_t BATCH_PRIMITIVE_3[] = {
+    { .kind = VIEW, .mask = 1 },
+    { .kind = BATCH, .at = { 0, 0, 64, 64 }, .z = 0.5f, .primitive = 3,
+        .views = 1, .show = true }
+};
+
 static const item_t RETRY[] = {
     { .kind = VIEW, .mask = 1 },
     { .kind = MESH, .at = { 0, 0, 64, 64 }, .z = 0.5f, .bad = CUT,
@@ -1157,6 +1191,8 @@ static const gpu_spec_t MULTI = { WGPUTextureFormat_RGBA8Unorm, 4,
 static const gpu_spec_t SWAPPED = { WGPUTextureFormat_BGRA8Unorm, 1, 0 };
 static const gpu_spec_t SRGB = { WGPUTextureFormat_RGBA8UnormSrgb, 1,
     WGPUTextureFormat_Depth24PlusStencil8 };
+static const gpu_spec_t STENCIL32 = { WGPUTextureFormat_RGBA8Unorm, 1,
+    WGPUTextureFormat_Depth32FloatStencil8 };
 
 static const scene_t SCENES[] = {
     { .name = "unlit", .rounds = 2, .spec = PLAIN, .items = UNLIT,
@@ -1313,6 +1349,9 @@ static const scene_t SCENES[] = {
     { .name = "noroomkept", .rounds = 5, .spec = PLAIN,
         .items = NO_ROOM_KEPT, .item_count = COUNT(NO_ROOM_KEPT),
         .points = { { 16, 32 }, { 48, 32 } }, .point_count = 2 },
+    { .name = "texnoroom", .rounds = 4, .spec = PLAIN,
+        .items = TEXTURE_NO_ROOM, .item_count = COUNT(TEXTURE_NO_ROOM),
+        .points = { { 16, 32 }, { 48, 32 } }, .point_count = 2 },
     { .name = "twomeshes", .rounds = 2, .spec = PLAIN, .items = TWO_MESHES,
         .item_count = COUNT(TWO_MESHES),
         .points = { { 16, 32 }, { 48, 32 } }, .point_count = 2 },
@@ -1336,6 +1375,10 @@ static const scene_t SCENES[] = {
         .item_count = COUNT(DEPTH_KEEP), .points = { { 32, 32 } },
         .point_count = 1 },
     { .name = "stencil", .rounds = 1, .spec = PLAIN, .prefill = true,
+        .prefill_depth = 1.0f, .prefill_stencil = 5, .items = VIEW_ONLY,
+        .item_count = COUNT(VIEW_ONLY), .points = { { 32, 32 } },
+        .point_count = 1 },
+    { .name = "stencil32", .rounds = 1, .spec = STENCIL32, .prefill = true,
         .prefill_depth = 1.0f, .prefill_stencil = 5, .items = VIEW_ONLY,
         .item_count = COUNT(VIEW_ONLY), .points = { { 32, 32 } },
         .point_count = 1 },
@@ -1425,6 +1468,12 @@ static const scene_t SCENES[] = {
         .point_count = 1 },
     { .name = "nearview", .rounds = 1, .spec = PLAIN, .items = NEAR_VIEW,
         .item_count = COUNT(NEAR_VIEW), .points = { { 16, 32 } },
+        .point_count = 1 },
+    { .name = "belowview", .rounds = 1, .spec = PLAIN, .items = BELOW_VIEW,
+        .item_count = COUNT(BELOW_VIEW), .points = { { 40, 32 } },
+        .point_count = 1 },
+    { .name = "flatview", .rounds = 1, .spec = PLAIN, .items = FLAT_VIEW,
+        .item_count = COUNT(FLAT_VIEW), .points = { { 40, 32 } },
         .point_count = 1 },
     { .name = "lines", .rounds = 1, .spec = PLAIN, .items = LINES,
         .item_count = COUNT(LINES), .points = { { 16, 31 }, { 33, 31 },
@@ -1640,6 +1689,10 @@ static const scene_t SCENES[] = {
     { .name = "batchwhole", .rounds = 1, .spec = PLAIN, .items = BATCH_WHOLE,
         .item_count = COUNT(BATCH_WHOLE), .points = { { 32, 32 } },
         .point_count = 1 },
+    { .name = "batchlayout8", .rounds = 1, .spec = PLAIN,
+        .items = BATCH_LAYOUT_8, .item_count = COUNT(BATCH_LAYOUT_8) },
+    { .name = "batchprimitive3", .rounds = 1, .spec = PLAIN,
+        .items = BATCH_PRIMITIVE_3, .item_count = COUNT(BATCH_PRIMITIVE_3) },
     { .name = "retry", .rounds = 3, .spec = PLAIN, .items = RETRY,
         .item_count = COUNT(RETRY), .points = { { 32, 32 } },
         .point_count = 1 },

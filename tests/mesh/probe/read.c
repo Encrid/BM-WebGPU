@@ -64,7 +64,8 @@ bool gpu_reads_depth(const gpu_spec_t *spec)
 {
     return (spec->samples == 1
         && (spec->depth == WGPUTextureFormat_Depth32Float
-        || spec->depth == WGPUTextureFormat_Depth24PlusStencil8));
+        || spec->depth == WGPUTextureFormat_Depth24PlusStencil8
+        || spec->depth == WGPUTextureFormat_Depth32FloatStencil8));
 }
 
 void gpu_read(gpu_t *gpu, gpu_image_t *image)

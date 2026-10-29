@@ -62,6 +62,7 @@ constexpr uint32_t SIDE = 64;
 constexpr uint32_t WIDE = 8193;
 constexpr uint32_t LAST = 99;
 constexpr uint32_t ROUNDS = 6;
+constexpr Uint64 SHOW_MS = 3000;
 #ifdef OTHER_STORAGE
 constexpr enum bridge_storage SETTINGS_STORAGE = BRIDGE_TABLE;
 #else
@@ -247,6 +248,24 @@ static void read_window(webgpu_window_t *w)
     w->surface = get_kind(w);
 }
 
+static void wait_shown(void)
+{
+    SDL_Event got = {};
+    Uint64 end = SDL_GetTicks() + SHOW_MS;
+
+    for (Uint64 now = SDL_GetTicks(); now < end; now = SDL_GetTicks())
+        if (SDL_WaitEventTimeout(&got, (Sint32)(end - now))
+            && got.type == SDL_EVENT_WINDOW_EXPOSED)
+            return;
+}
+
+static void show_window(void)
+{
+    SDL_FlushEvent(SDL_EVENT_WINDOW_EXPOSED);
+    SDL_ShowWindow(window);
+    wait_shown();
+}
+
 static void move_window(const test_scene_t *on)
 {
     SDL_PumpEvents();
@@ -260,7 +279,7 @@ static void move_window(const test_scene_t *on)
         if (STEPS[i].act == HIDE)
             SDL_HideWindow(window);
         if (STEPS[i].act == SHOW)
-            SDL_ShowWindow(window);
+            show_window();
     }
     SDL_SyncWindow(window);
     SDL_PumpEvents();
@@ -457,6 +476,8 @@ static bool open_window(void)
     window = SDL_CreateWindow("probe", (int)SIDE, (int)SIDE, FLAGS);
     if (window && (FLAGS & SDL_WINDOW_METAL) != 0)
         view = SDL_Metal_CreateView(window);
+    if (window)
+        wait_shown();
     return (window != nullptr);
 }
 

@@ -10,6 +10,9 @@ writers = ["bridge_native_say"]
 lacks = "probe error:"
 exempt = ["errors"]
 
+[ci]
+needs = ["vulkan"]
+
 [check]
 refuse = ["{wgpu_native}/gaps.txt"]
 

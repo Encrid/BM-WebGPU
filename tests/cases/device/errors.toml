@@ -11,11 +11,11 @@ order = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -27,7 +27,7 @@ scene = "destroy"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -49,11 +49,11 @@ order = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -65,7 +65,7 @@ scene = "retune"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -86,11 +86,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[3] webgpu:device@1.0.0/frame: webgpu error: validation: Validation Error"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -102,7 +102,7 @@ scene = "invalid"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -121,11 +121,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 has = ["with 'webgpu:device frame' label"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -137,7 +137,7 @@ scene = "invalid"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -156,11 +156,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 has = ["record[3] webgpu:device@1.0.0/frame: webgpu error: 1 texts did not fit in error_room"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -174,7 +174,7 @@ error_room = 1
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -193,12 +193,12 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_ERROR = "99" }
 has = ["record[3] webgpu:device@1.0.0/frame: webgpu error: unknown: stand-in"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
-"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]

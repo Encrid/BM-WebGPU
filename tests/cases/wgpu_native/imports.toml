@@ -48,9 +48,9 @@ false = { run = ["{python}", "tools/imports.py", "{out}/other.dll"] }
 
 [[case]]
 name = "a second reader, from the PE format of Microsoft, finds other.dll in the table of delayed imports of the fixture"
-run = ["{python}", "tests/imports/delay_names.py", "{out}/delayed.dll"]
+run = ["{python}", "tests/wgpu_native/imports/delay_names.py", "{out}/delayed.dll"]
 claims = { status = 0, line = ["other.dll"] }
-false = { run = ["{python}", "tests/imports/delay_names.py", "{out}/user.dll"] }
+false = { run = ["{python}", "tests/wgpu_native/imports/delay_names.py", "{out}/user.dll"] }
 
 [[case]]
 name = "a file that is no PE file gives no PE file, and 1"

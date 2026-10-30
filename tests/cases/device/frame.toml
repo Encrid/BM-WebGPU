@@ -7,11 +7,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[6] test:probe@1.0.0/drive: r1 before 3 0 0 0 0 0 0 0 0 0 0 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -22,7 +22,7 @@ scene = "open"
 '''
 
 [case.false.folders]
-"{case}/m" = ["probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [[case]]
 name = "a READY frame gives the device, the queue, the views, the format, the samples and the size"
@@ -34,11 +34,11 @@ status = 0
 line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -50,7 +50,7 @@ scene = "open"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -69,11 +69,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[6] test:probe@1.0.0/render: r6 frame 1 27 47 1 80 64 1 1 1 1 1 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -85,7 +85,7 @@ scene = "resize"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -104,11 +104,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[6] test:probe@1.0.0/render: r6 frame 2 27 47 1 64 64 1 1 0 0 0 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -120,7 +120,7 @@ scene = "flat"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -139,11 +139,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[6] test:probe@1.0.0/render: r6 frame 2 27 47 1 64 64 1 1 0 0 0 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -155,7 +155,7 @@ scene = "tall"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -174,11 +174,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[6] test:probe@1.0.0/render: r6 frame 2 27 47 1 64 64 1 1 0 0 0 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -192,7 +192,7 @@ limits = "WEBGPU_LIMITS_DEFAULT"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -213,11 +213,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[6] test:probe@1.0.0/render: r6 frame 2 27 47 1 64 64 1 1 0 0 0 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -231,7 +231,7 @@ limits = "WEBGPU_LIMITS_DEFAULT"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -252,11 +252,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[6] test:probe@1.0.0/render: r9 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -268,7 +268,7 @@ scene = "hide"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -291,11 +291,11 @@ order = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -307,7 +307,7 @@ scene = "silent"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -326,11 +326,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[6] test:probe@1.0.0/render: r6 frame 1 27 47 1 64 80 1 1 1 1 1 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -342,7 +342,7 @@ scene = "heighten"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -364,11 +364,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -380,7 +380,7 @@ scene = "stale"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -405,12 +405,12 @@ line = [
 env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
-"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -435,12 +435,12 @@ line = [
 env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
-"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -465,12 +465,12 @@ line = [
 env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
-"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -493,12 +493,12 @@ line = ["record[6] test:probe@1.0.0/render: r5 frame 2 27 47 1 64 64 1 1 0 0 0 0
 env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
-"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -523,12 +523,12 @@ line = [
 env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
-"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -551,12 +551,12 @@ line = ["record[6] test:probe@1.0.0/render: r4 frame 2 27 47 1 64 64 1 1 0 0 0 0
 env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
-"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -581,12 +581,12 @@ line = [
 env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_TEXTURE = "1 4" }
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
-"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]

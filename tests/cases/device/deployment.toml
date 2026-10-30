@@ -7,11 +7,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[6] test:probe@1.0.0/render: r6 frame 1 27 47 1 80 64 1 1 1 1 1 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -23,7 +23,7 @@ scene = "resize"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 phases = ["frame", "drive", "render", "present", "check"]
 [content]
 paths = ["m"]
@@ -43,15 +43,15 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 status = 1
 line = [
     "record[3] -/-: module 'test:probe@1.0.0' did not load: it may not declare 'webgpu:Window': that is another namespace's, and no grant names it 0 0",
-    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+    "not loaded: m/device_probe{library}: test:probe@1.0.0 was refused",
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -65,7 +65,7 @@ scene = "open"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -84,15 +84,15 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 status = 1
 line = [
     "record[3] -/-: module 'test:probe@1.0.0' did not load: it may not declare 'webgpu:webgpu_surface_t': that is another namespace's, and no grant names it 0 0",
-    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+    "not loaded: m/device_probe{library}: test:probe@1.0.0 was refused",
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -112,7 +112,7 @@ scene = "open"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -131,15 +131,15 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 status = 1
 line = [
     "record[3] -/-: module 'test:probe@1.0.0' did not load: it may not declare 'webgpu:Frame': that is another namespace's, and no grant names it 0 0",
-    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+    "not loaded: m/device_probe{library}: test:probe@1.0.0 was refused",
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -159,7 +159,7 @@ scene = "open"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -178,15 +178,15 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 status = 1
 line = [
     "record[3] -/-: module 'test:probe@1.0.0' did not load: it may not declare 'webgpu:webgpu_frame_state_t': that is another namespace's, and no grant names it 0 0",
-    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+    "not loaded: m/device_probe{library}: test:probe@1.0.0 was refused",
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -206,7 +206,7 @@ scene = "open"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -226,7 +226,7 @@ line = ["loaded: webgpu:device@1.0.0, native, m/webgpu_device{library}"]
 lacks = ["no grant names it"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -244,7 +244,7 @@ write = []
 '''
 
 [case.false.folders]
-"{case}/m" = ["{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["{wgpu_file}"]
 
 [[case]]
 name = "the wgpu-native library is no module, so a deployment that does not ignore it gets not a module"
@@ -254,7 +254,7 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 has = ["not a module: m/{wgpu_file}: no manifest"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -291,7 +291,7 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''

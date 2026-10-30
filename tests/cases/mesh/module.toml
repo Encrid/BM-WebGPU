@@ -28,11 +28,11 @@ order = [
 matches = ['(?m)^  config\.clear_depth = 1(\.0)?  its file$']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -41,7 +41,7 @@ native = "{bb_native}/bridge_native"
 '''
 
 [case.false.folders]
-"{case}/m" = ["{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["{wgpu_file}"]
 
 [[case]]
 name = "a key of the deployment replaces a default of the manifest"
@@ -53,11 +53,11 @@ lacks = ['spans = 65536  its file']
 matches = ['(?m)^  spans = 131072  .*d\.toml:8$']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -69,7 +69,7 @@ spans = 131072
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -86,11 +86,11 @@ status = 0
 matches = ['(?m)^loaded: webgpu:mesh@1\.0\.0, native, ']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -100,7 +100,7 @@ native = "{bb_native}/bridge_native"
 '''
 
 [case.false.folders]
-"{case}/m" = ["abi1", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["abi1", "{wgpu_file}"]
 
 [[case]]
 name = "hot_reload true is refused, because the author states that the module cannot reload"
@@ -110,11 +110,11 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 has = ['hot_reload is stated, and its author states it is not reloadable']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -127,7 +127,7 @@ hot_reload = true
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -145,11 +145,11 @@ status = 0
 line = ['record[6] webgpu:probe@1.0.0/drive: r1 reload 1 0 0']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -162,7 +162,7 @@ module = "{case}/m/webgpu_mesh{library}"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -182,11 +182,11 @@ status = 0
 matches = ['(?m)^loaded: webgpu:mesh@1\.0\.0, native, ']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -207,11 +207,11 @@ status = 0
 line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 51 204 0 255']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -223,7 +223,7 @@ scene = "unlit"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -245,11 +245,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -261,7 +261,7 @@ scene = "stop"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -280,11 +280,11 @@ has = ["its setting 'cull' is 9, which is no constant of the enum of the field i
 lacks = ['its shutdown answered']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -297,7 +297,7 @@ cull = 9
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -320,11 +320,11 @@ matches = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -338,7 +338,7 @@ scene = "cut"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -362,11 +362,11 @@ has = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "watcher", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "watcher", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -377,7 +377,7 @@ native = "{bb_native}/bridge_native"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -398,11 +398,11 @@ has = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "twatcher", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "twatcher", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -413,7 +413,7 @@ native = "{bb_native}/bridge_native"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -434,11 +434,11 @@ has = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "mwriter", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mwriter", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -449,7 +449,7 @@ native = "{bb_native}/bridge_native"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -470,11 +470,11 @@ has = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "twriter", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "twriter", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -485,7 +485,7 @@ native = "{bb_native}/bridge_native"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -506,11 +506,11 @@ has = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "dwriter", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "dwriter", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -521,7 +521,7 @@ native = "{bb_native}/bridge_native"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -542,11 +542,11 @@ has = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "bwriter", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "bwriter", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -557,7 +557,7 @@ native = "{bb_native}/bridge_native"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -578,11 +578,11 @@ has = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "vwriter", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "vwriter", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -593,7 +593,7 @@ native = "{bb_native}/bridge_native"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]

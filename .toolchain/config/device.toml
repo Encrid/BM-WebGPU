@@ -15,9 +15,10 @@ into = "include"
 
 [[source]]
 name = "sdl3"
-url = "https://github.com/Encrid/BL-SDL3/releases/download/v0.1.0/BL-SDL3-{target}.zip"
-sha256 = "{sdl3_sha256}"
-into = "build/third_party/sdl3/{target}"
+url = "https://github.com/Encrid/BM-SDL3/releases/download/sdl3-v0.2.0/BL-SDL3.zip"
+sha256 = "268ff2e0c7e1e17d7a1a639c8418ecc5b80ab0cfc167086072a2e3ef5cc0fdde"
+into = "build/third_party/sdl3"
+top = "{target}"
 
 [leaks.kinds.webgpu_adapter]
 takes = { take_adapter = "2" }
@@ -113,7 +114,6 @@ sources = ["tests/device/layout/layout.c"]
 include = ["include/device", "include/contract", "{bridge}/include"]
 
 [targets.x86_64-windows-gnu]
-sdl3_sha256 = "0cdf47d323a2cb97c237f036f472e14e7bb9eeec14ff73f2e9defa4f6b86cb63"
 wgpu_name = "wgpu_native"
 frame_preset = "warp.toml"
 video_driver = "windows"
@@ -133,7 +133,6 @@ missing_dxc_says = "no device: no adapter: Validation Error.*dx12 drivers/librar
 visual_says = '\A(?!.*no alpha).*render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0'
 
 [targets.aarch64-windows-gnu]
-sdl3_sha256 = "fbdd47b4def19fbdc821b6aa70c8f9b7d138e5797a45f2d59035f16cebd3fdd6"
 wgpu_name = "wgpu_native"
 frame_preset = "warp.toml"
 video_driver = "windows"
@@ -153,7 +152,6 @@ missing_dxc_says = "no device: no adapter: Validation Error.*dx12 drivers/librar
 visual_says = '\A(?!.*no alpha).*render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0'
 
 [targets.x86_64-linux-gnu]
-sdl3_sha256 = "3c95d1a7824d77ea59a594f20a34d65f9a474294edcec6c516a0dc855edc0311"
 wgpu_name = "libwgpu_native"
 frame_preset = "frame.toml"
 video_driver = "x11"
@@ -173,7 +171,6 @@ missing_dxc_says = "render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
 visual_says = 'no alpha WEBGPU_ALPHA_PREMULTIPLIED: the frame uses WEBGPU_ALPHA_AUTO.*render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0'
 
 [targets.aarch64-linux-gnu]
-sdl3_sha256 = "45eb853ac3c81a2960dfb18cf3a501ac778e5523fdc14cc0372e82cfd1cdfea9"
 wgpu_name = "libwgpu_native"
 frame_preset = "frame.toml"
 video_driver = "x11"
@@ -193,7 +190,6 @@ missing_dxc_says = "render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
 visual_says = 'no alpha WEBGPU_ALPHA_PREMULTIPLIED: the frame uses WEBGPU_ALPHA_AUTO.*render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0'
 
 [targets.x86_64-macos]
-sdl3_sha256 = "dcd5c341454f29b6e0fbcaced495fdf226baf077294c53ef0a889451ae404156"
 wgpu_name = "libwgpu_native"
 frame_preset = "frame.toml"
 video_driver = "cocoa"
@@ -213,7 +209,6 @@ missing_dxc_says = "render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
 visual_says = 'no alpha WEBGPU_ALPHA_PREMULTIPLIED: the frame uses WEBGPU_ALPHA_AUTO.*render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0'
 
 [targets.aarch64-macos]
-sdl3_sha256 = "2e8db93bdfcb320c6298e61c7becc59de335a9ea43cf6f3c9de5eb8bda3964dc"
 wgpu_name = "libwgpu_native"
 frame_preset = "frame.toml"
 video_driver = "cocoa"

@@ -1,14 +1,14 @@
 [[case]]
 name = "a module of the namespace webgpu declares the four types with no grant"
 run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
-claims = { status = 0, line = ["loaded: webgpu:probe@1.0.0, native, m/probe{library}"] }
+claims = { status = 0, line = ["loaded: webgpu:probe@1.0.0, native, m/contract_probe{library}"] }
 
 [case.folders]
-"{case}/m" = ["probe"]
+"{case}/m" = ["contract_probe"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -16,19 +16,19 @@ native = "{bb_native}/bridge_native"
 '''
 
 [case.false.folders]
-"{case}/m" = ["foreign"]
+"{case}/m" = ["contract_foreign"]
 
 [[case]]
 name = "a module declares an enum before the struct that names it"
 run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
-claims = { status = 0, line = ["loaded: webgpu:probe@1.0.0, native, m/probe{library}"] }
+claims = { status = 0, line = ["loaded: webgpu:probe@1.0.0, native, m/contract_probe{library}"] }
 
 [case.folders]
-"{case}/m" = ["probe"]
+"{case}/m" = ["contract_probe"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -41,14 +41,14 @@ native = "{bb_native}/bridge_native"
 [[case]]
 name = "the app loads with write on webgpu:Window and read on webgpu:webgpu_surface_t"
 run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
-claims = { status = 0, line = ["loaded: test:app@1.0.0, native, m/app{library}"] }
+claims = { status = 0, line = ["loaded: test:app@1.0.0, native, m/contract_app{library}"] }
 
 [case.folders]
-"{case}/m" = ["app"]
+"{case}/m" = ["contract_app"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -60,7 +60,7 @@ read = ["webgpu:webgpu_surface_t"]
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -78,15 +78,15 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 status = 1
 line = [
     "record[3] -/-: module 'test:app@1.0.0' did not load: it may not declare 'webgpu:webgpu_surface_t': that is another namespace's, and no grant names it 0 0",
-    "not loaded: m/app{library}: test:app@1.0.0 was refused",
+    "not loaded: m/contract_app{library}: test:app@1.0.0 was refused",
 ]
 
 [case.folders]
-"{case}/m" = ["app"]
+"{case}/m" = ["contract_app"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -98,7 +98,7 @@ read = []
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -118,7 +118,7 @@ claims = { status = 0, line = ["loaded: test:device@1.0.0, native, m/device{libr
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -130,7 +130,7 @@ read = ["webgpu:Window", "webgpu:webgpu_surface_t", "webgpu:webgpu_frame_state_t
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -156,7 +156,7 @@ line = [
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -168,7 +168,7 @@ read = ["webgpu:webgpu_surface_t", "webgpu:webgpu_frame_state_t"]
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -194,7 +194,7 @@ line = [
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -206,7 +206,7 @@ read = ["webgpu:Window", "webgpu:webgpu_frame_state_t"]
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -232,7 +232,7 @@ line = [
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -244,7 +244,7 @@ read = ["webgpu:Window", "webgpu:webgpu_surface_t"]
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -264,7 +264,7 @@ claims = { status = 0, line = ["loaded: test:render@1.0.0, native, m/render{libr
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -275,7 +275,7 @@ read = ["webgpu:Frame", "webgpu:webgpu_frame_state_t"]
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -300,7 +300,7 @@ line = [
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]
@@ -311,7 +311,7 @@ read = ["webgpu:Frame"]
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/world.toml"]
+presets = ["{root}/tests/contract/presets/check.toml"]
 [content]
 paths = ["m"]
 [backend]

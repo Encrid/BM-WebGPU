@@ -7,11 +7,11 @@ has = ['Error in wgpuQueueSubmit: Validation Error']
 matches = ['probe error: 2 .*webgpu:mesh']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -23,7 +23,7 @@ scene = "errors"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]

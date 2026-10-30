@@ -12,11 +12,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -28,7 +28,7 @@ scene = "husk"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -52,11 +52,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -68,7 +68,7 @@ scene = "texhusk"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -90,11 +90,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -106,7 +106,7 @@ scene = "meshleave"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -127,11 +127,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -143,7 +143,7 @@ scene = "texleave"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -167,11 +167,11 @@ lacks = [
 matches = ['check: r5 check item [135] is a husk']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -185,7 +185,7 @@ scene = "detachwait"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -204,11 +204,11 @@ status = 0
 matches = ['check: r5 pixel (10|32|54) 32 is 255 0 0 255']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -222,7 +222,7 @@ scene = "reupload"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -244,11 +244,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -260,7 +260,7 @@ scene = "firstmesh"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -282,11 +282,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -298,7 +298,7 @@ scene = "firsttexture"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -321,11 +321,11 @@ line = [
 matches = ['check: r2 pixel (16|48) 32 is 51 102 153 255']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -339,7 +339,7 @@ scene = "attachwait"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -358,11 +358,11 @@ status = 0
 line = ['record[6] webgpu:probe@1.0.0/check: r3 pixel 16 16 is 255 0 0 255']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -374,7 +374,7 @@ scene = "keepupload"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -397,11 +397,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -413,7 +413,7 @@ scene = "regen"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -432,11 +432,11 @@ status = 0
 line = ['record[6] webgpu:probe@1.0.0/check: r3 pixel 32 32 is 255 0 0 255']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -448,7 +448,7 @@ scene = "same"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -467,11 +467,11 @@ status = 0
 line = ['record[6] webgpu:probe@1.0.0/check: r3 pixel 32 32 is 0 255 0 255']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -483,7 +483,7 @@ scene = "texregen"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -502,11 +502,11 @@ status = 0
 line = ['record[6] webgpu:probe@1.0.0/check: r3 pixel 32 32 is 255 0 0 255']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -518,7 +518,7 @@ scene = "texsame"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -540,11 +540,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -556,7 +556,7 @@ scene = "lostdestroy"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -577,11 +577,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -593,7 +593,7 @@ scene = "earlyleave"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -612,11 +612,11 @@ status = 0
 line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 0 255 0 255']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -628,7 +628,7 @@ scene = "texzero"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -650,11 +650,11 @@ line = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -666,7 +666,7 @@ scene = "texgone"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -685,11 +685,11 @@ status = 0
 line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 255 255 255 255']
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -701,7 +701,7 @@ scene = "texbad"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -725,11 +725,11 @@ lacks = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -743,7 +743,7 @@ scene = "texdetachwait"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -767,11 +767,11 @@ lacks = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]
@@ -785,7 +785,7 @@ scene = "lostwait"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 [content]
 paths = ["m"]
 ignore = ["m/{wgpu_file}"]

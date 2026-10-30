@@ -1,3 +1,6 @@
-presets = ["test.toml"]
+presets = ["../../presets/test.toml"]
 phases = ["drive", "render", "check"]
 rounds = 8
+
+[budget]
+sparse_sets = 2

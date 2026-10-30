@@ -14,10 +14,16 @@
     #include "bridge_native.h"
     #include "webgpu_device.h"
 
-constexpr uint32_t SETTINGS = 12;
-constexpr uint32_t WINDOW = 13;
-constexpr uint32_t FRAME = 14;
+constexpr uint32_t SETTINGS = 18;
+constexpr uint32_t WINDOW = 19;
+constexpr uint32_t FRAME = 20;
 constexpr size_t MOST_FEATURES = 128;
+
+typedef struct {
+    const char *name;
+    const char *desc;
+    enum bridge_kind kind;
+} declared_type_t;
 
 typedef enum device_step : uint32_t {
     DEVICE_READY = 0,
@@ -119,8 +125,11 @@ typedef struct {
 device_t *device_get_state(void);
 device_step_t device_make_next(device_t *d, const webgpu_device_settings_t *s,
     const webgpu_window_t *w);
-bool device_make_surface(device_t *d, const webgpu_window_t *w);
+bool device_make_surface(device_t *d, const webgpu_device_settings_t *s,
+    const webgpu_window_t *w);
 bool device_set_source(device_source_t *s, const webgpu_window_t *w);
+void device_set_instance(device_source_t *src,
+    const webgpu_device_settings_t *s);
 void device_release(device_t *d);
 device_step_t device_ask_adapter(device_t *d,
     const webgpu_device_settings_t *s, const webgpu_window_t *w);

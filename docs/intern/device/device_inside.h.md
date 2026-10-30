@@ -97,6 +97,7 @@ The header gives no function of its own. It declares the functions that the sour
 | `device_get_state` | `src/webgpu_device.c` |
 | `device_make_next`, `device_make_surface`, `device_release` | `src/device_make.c` |
 | `device_set_source` | `src/device_source.c` |
+| `device_set_instance` | `src/device_instance.c` |
 | `device_ask_adapter`, `device_ask_device` | `src/device_ask.c` |
 | `device_choose_modes` | `src/device_modes.c` |
 | `device_choose_targets`, `device_make_targets`, `device_release_targets` | `src/device_targets.c` |

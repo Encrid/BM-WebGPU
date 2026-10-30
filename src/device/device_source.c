@@ -40,11 +40,8 @@ static bool set_wayland_source(device_source_t *s, const webgpu_window_t *w)
     s->surface.wayland = (WGPUSurfaceSourceWaylandSurface){
         { nullptr, WGPUSType_SurfaceSourceWaylandSurface },
         (void *)(uintptr_t)w->wl_display, (void *)(uintptr_t)w->wl_surface };
-    s->extras.chain.sType = (WGPUSType)WGPUSType_InstanceExtras;
-    s->extras.flags = WGPUInstanceFlag_Default;
     s->extras.displayHandle.type = WGPUNativeDisplayHandleType_Wayland;
     s->extras.displayHandle.data.wayland.display = s->surface.wayland.display;
-    s->instance.nextInChain = &s->extras.chain;
     return (w->wl_display != 0 && w->wl_surface != 0);
 }
 

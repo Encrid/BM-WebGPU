@@ -1,0 +1,322 @@
+[[case]]
+name = "frame after the phase of the app takes the size that the app writes in the same round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r6 frame 1 27 47 1 80 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "resize"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+phases = ["frame", "drive", "render", "present", "check"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "resize"
+'''
+
+[[case]]
+name = "the app needs write with webgpu:Window"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:probe@1.0.0' did not load: it may not declare 'webgpu:Window': that is another namespace's, and no grant names it 0 0",
+    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0"]
+write = ["webgpu:DeviceSettings"]
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "the app needs read with webgpu:webgpu_surface_t"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:probe@1.0.0' did not load: it may not declare 'webgpu:webgpu_surface_t': that is another namespace's, and no grant names it 0 0",
+    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0"]
+read = [
+    "webgpu:webgpu_present_t", "webgpu:webgpu_format_t", "webgpu:webgpu_alpha_t", "webgpu:webgpu_power_t",
+    "webgpu:webgpu_backend_t", "webgpu:webgpu_feature_level_t", "webgpu:webgpu_samples_t", "webgpu:webgpu_depth_t",
+    "webgpu:webgpu_limits_t", "webgpu:webgpu_features_t", "webgpu:webgpu_instance_backends_t",
+    "webgpu:webgpu_instance_flags_t", "webgpu:webgpu_d3d12_compiler_t", "webgpu:webgpu_d3d12_swapchain_t",
+    "webgpu:webgpu_gles_version_t", "webgpu:webgpu_gl_fence_t", "webgpu:webgpu_frame_state_t", "webgpu:Frame",
+]
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "a render module needs read with webgpu:Frame"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:probe@1.0.0' did not load: it may not declare 'webgpu:Frame': that is another namespace's, and no grant names it 0 0",
+    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0"]
+read = [
+    "webgpu:webgpu_present_t", "webgpu:webgpu_format_t", "webgpu:webgpu_alpha_t", "webgpu:webgpu_power_t",
+    "webgpu:webgpu_backend_t", "webgpu:webgpu_feature_level_t", "webgpu:webgpu_samples_t", "webgpu:webgpu_depth_t",
+    "webgpu:webgpu_limits_t", "webgpu:webgpu_features_t", "webgpu:webgpu_instance_backends_t",
+    "webgpu:webgpu_instance_flags_t", "webgpu:webgpu_d3d12_compiler_t", "webgpu:webgpu_d3d12_swapchain_t",
+    "webgpu:webgpu_gles_version_t", "webgpu:webgpu_gl_fence_t", "webgpu:webgpu_surface_t", "webgpu:webgpu_frame_state_t",
+]
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "a render module needs read with webgpu:webgpu_frame_state_t"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'test:probe@1.0.0' did not load: it may not declare 'webgpu:webgpu_frame_state_t': that is another namespace's, and no grant names it 0 0",
+    "not loaded: m/probe{library}: test:probe@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0"]
+read = [
+    "webgpu:webgpu_present_t", "webgpu:webgpu_format_t", "webgpu:webgpu_alpha_t", "webgpu:webgpu_power_t",
+    "webgpu:webgpu_backend_t", "webgpu:webgpu_feature_level_t", "webgpu:webgpu_samples_t", "webgpu:webgpu_depth_t",
+    "webgpu:webgpu_limits_t", "webgpu:webgpu_features_t", "webgpu:webgpu_instance_backends_t",
+    "webgpu:webgpu_instance_flags_t", "webgpu:webgpu_d3d12_compiler_t", "webgpu:webgpu_d3d12_swapchain_t",
+    "webgpu:webgpu_gles_version_t", "webgpu:webgpu_gl_fence_t", "webgpu:webgpu_surface_t", "webgpu:Frame",
+]
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "the module of the namespace webgpu loads with no grant"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ["loaded: webgpu:device@1.0.0, native, m/webgpu_device{library}"]
+lacks = ["no grant names it"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0"]
+read = []
+write = []
+'''
+
+[case.false.folders]
+"{case}/m" = ["{wgpu_native}/{wgpu_file}"]
+
+[[case]]
+name = "the wgpu-native library is no module, so a deployment that does not ignore it gets not a module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = ["not a module: m/{wgpu_file}: no manifest"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "the backend of BB-Native refuses a limit of the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 1
+line = [
+    "record[3] -/-: module 'webgpu:device@1.0.0' is refused: it states work_limit, which backend 'native' cannot keep 0 0",
+    "not loaded: m/webgpu_device{library}: webgpu:device@1.0.0 was refused",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0"]
+work_limit = 1000
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0"]
+work_limit = "none"
+'''

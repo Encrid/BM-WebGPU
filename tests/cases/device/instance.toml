@@ -1,0 +1,781 @@
+[[case]]
+name = "the defaults give the instance each backend, the flags of the build, AUTO, HWND, dxcompiler.dll and no threshold"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_TELL = "1" }
+
+[case.claims]
+line = ["stand-in: instance backends 0 flags 16777216 compiler 0 path 'dxcompiler.dll' swapchain 1 gles 0 fence 0 creation -1 loss -1 display 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+d3d12_compiler = "WEBGPU_D3D12_COMPILER_FXC"
+'''
+
+[[case]]
+name = "each setting of the instance gives its value to the extras of the instance"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_TELL = "1" }
+
+[case.claims]
+line = ["stand-in: instance backends 15 flags 1 compiler 1 path 'C:/dxc/dxcompiler.dll' swapchain 2 gles 2 fence 1 creation 90 loss 95 display 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+instance_backends = 15
+instance_flags = 1
+d3d12_compiler = "WEBGPU_D3D12_COMPILER_FXC"
+d3d12_swapchain = "WEBGPU_D3D12_SWAPCHAIN_VISUAL"
+gles_version = "WEBGPU_GLES_VERSION_3_1"
+gl_fence = "WEBGPU_GL_FENCE_AUTO_FINISH"
+creation_threshold = 90
+loss_threshold = 95
+dxc_path = "C:/dxc/dxcompiler.dll"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "a dxc_path of 1024 bytes with no zero, which a system writes, gives the extras the 1024 bytes"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_TELL = "1" }
+
+[case.claims]
+has = ["path 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' swapchain"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "longpath"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "d3d12_compiler WEBGPU_D3D12_COMPILER_FXC gives the frame"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+d3d12_compiler = "WEBGPU_D3D12_COMPILER_FXC"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+[module."webgpu:device@1.0.0".config]
+d3d12_compiler = "WEBGPU_D3D12_COMPILER_FXC"
+'''
+
+[[case]]
+name = "d3d12_compiler WEBGPU_D3D12_COMPILER_DXC with a dxc_path of no library starts no D3D12, and changes nothing on the other systems"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+matches = ["{missing_dxc_says}"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+d3d12_compiler = "WEBGPU_D3D12_COMPILER_DXC"
+dxc_path = { path = "none.dll" }
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+[module."webgpu:device@1.0.0".config]
+d3d12_compiler = "WEBGPU_D3D12_COMPILER_DXC"
+dxc_path = { path = "none.dll" }
+'''
+
+[[case]]
+name = "d3d12_swapchain WEBGPU_D3D12_SWAPCHAIN_VISUAL gives the alpha WEBGPU_ALPHA_PREMULTIPLIED on D3D12, and changes nothing on the other systems"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+matches = ["{visual_says}"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+d3d12_swapchain = "WEBGPU_D3D12_SWAPCHAIN_VISUAL"
+alpha = "WEBGPU_ALPHA_PREMULTIPLIED"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+[module."webgpu:device@1.0.0".config]
+d3d12_swapchain = "WEBGPU_D3D12_SWAPCHAIN_VISUAL"
+alpha = "WEBGPU_ALPHA_PREMULTIPLIED"
+'''
+
+[[case]]
+name = "instance_backends of the backend of the system gives the frame"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+instance_backends = {native_instance_backend}
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+instance_backends = {foreign_instance_backend}
+'''
+
+[[case]]
+name = "instance_backends of no backend of the system makes no surface, and gives no device: no adapter"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[3] webgpu:device@1.0.0/frame: no device: no adapter: Validation Error"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+instance_backends = {foreign_instance_backend}
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+instance_backends = {native_instance_backend}
+'''
+
+[[case]]
+name = "instance_flags WEBGPU_INSTANCE_FLAG_EMPTY gives the frame"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+instance_flags = 0
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+[module."webgpu:device@1.0.0".config]
+instance_flags = 0
+'''
+
+[[case]]
+name = "gles_version WEBGPU_GLES_VERSION_3_0 and gl_fence WEBGPU_GL_FENCE_AUTO_FINISH give the frame"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+gles_version = "WEBGPU_GLES_VERSION_3_0"
+gl_fence = "WEBGPU_GL_FENCE_AUTO_FINISH"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+[module."webgpu:device@1.0.0".config]
+gles_version = "WEBGPU_GLES_VERSION_3_0"
+gl_fence = "WEBGPU_GL_FENCE_AUTO_FINISH"
+'''
+
+[[case]]
+name = "creation_threshold and loss_threshold of 100 give the frame"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+creation_threshold = 100
+loss_threshold = 100
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+[module."webgpu:device@1.0.0".config]
+creation_threshold = 100
+loss_threshold = 100
+'''
+
+[[case]]
+name = "a bit of instance_backends that no constant has does not load the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'instance_backends' is 16, which has a bit that no constant of the bitmask of the field it names has 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+instance_backends = 16
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+instance_backends = 15
+'''
+
+[[case]]
+name = "a bit of instance_flags that no constant has does not load the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'instance_flags' is 128, which has a bit that no constant of the bitmask of the field it names has 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+instance_flags = 128
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+instance_flags = 134217855
+'''
+
+[[case]]
+name = "a d3d12_compiler that is no constant does not load the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'd3d12_compiler' is 4, which is no constant of the enum of the field it names 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+d3d12_compiler = 4
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+d3d12_compiler = 3
+'''
+
+[[case]]
+name = "a d3d12_swapchain that is no constant does not load the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'd3d12_swapchain' is 3, which is no constant of the enum of the field it names 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+d3d12_swapchain = 3
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+d3d12_swapchain = 2
+'''
+
+[[case]]
+name = "a gles_version that is no constant does not load the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'gles_version' is 5, which is no constant of the enum of the field it names 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+gles_version = 5
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+gles_version = 4
+'''
+
+[[case]]
+name = "a gl_fence that is no constant does not load the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'gl_fence' is 3, which is no constant of the enum of the field it names 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+gl_fence = 3
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+gl_fence = 2
+'''
+
+[[case]]
+name = "a creation_threshold of 256 does not load the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'creation_threshold' is 256, which the field it names cannot hold 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+creation_threshold = 256
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+creation_threshold = 255
+'''
+
+[[case]]
+name = "a loss_threshold of 256 does not load the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'loss_threshold' is 256, which the field it names cannot hold 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+loss_threshold = 256
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+loss_threshold = 255
+'''
+
+[[case]]
+name = "a dxc_path of 1024 bytes does not load the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'dxc_path' is 1024 bytes of text, and the field it names holds 1024 with the zero that ends it 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+dxc_path = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["frame", "present"]
+rounds = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:device@1.0.0".config]
+dxc_path = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+'''

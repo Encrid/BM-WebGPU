@@ -1,0 +1,44 @@
+[[case]]
+name = "a module takes the stand-in of wgpu-native beside it, and the stand-in passes each call to the library in real"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+claims = { line = ["record[6] test:importer@1.0.0/-: instance 1 10 0"] }
+false = { folders = { "{case}/m/real" = [] } }
+
+[case.folders]
+"{case}/m" = ["importer", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["run"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "a variable of the case makes the stand-in give no instance"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { STAND_IN_NO_INSTANCE = "1" }
+claims = { line = ["record[6] test:importer@1.0.0/-: instance 0 10 0"] }
+false = { env = {} }
+
+[case.folders]
+"{case}/m" = ["importer", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/test.toml"]
+phases = ["run"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''

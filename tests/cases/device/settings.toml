@@ -1,0 +1,933 @@
+[[case]]
+name = "a deployment states a constant of a setting by its name"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r1 settings 4 1"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "tune"
+[module."webgpu:device@1.0.0".config]
+present = "WEBGPU_PRESENT_MAILBOX"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "tune"
+[module."webgpu:device@1.0.0".config]
+present = "WEBGPU_PRESENT_FIFO"
+'''
+
+[[case]]
+name = "a deployment states a constant of a setting by its value"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r1 settings 4 1"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "tune"
+[module."webgpu:device@1.0.0".config]
+present = 4
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "tune"
+[module."webgpu:device@1.0.0".config]
+present = 1
+'''
+
+[[case]]
+name = "an alpha mode that the surface lacks gives no alpha with the name of the mode that the frame uses"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+has = ["record[4] webgpu:device@1.0.0/frame: no alpha WEBGPU_ALPHA_PREMULTIPLIED: the frame uses WEBGPU_ALPHA_AUTO"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+alpha = "WEBGPU_ALPHA_PREMULTIPLIED"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "a present mode that the surface can lack still gives the frame"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+present = "WEBGPU_PRESENT_FIFO_RELAXED"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+[module."webgpu:device@1.0.0".config]
+present = "WEBGPU_PRESENT_FIFO_RELAXED"
+'''
+
+[[case]]
+name = "a format that the surface can lack still gives the frame, in that format or in the first format of the surface"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+matches = ["render: r4 frame 1 [0-9]+ 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+format = "WEBGPU_FORMAT_RGBA8_UNORM"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+[module."webgpu:device@1.0.0".config]
+format = "WEBGPU_FORMAT_RGBA8_UNORM"
+'''
+
+[[case]]
+name = "with 4 samples, target is the multisample texture and not the frame"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 4 64 64 1 1 1 2 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+samples = "WEBGPU_SAMPLES_4"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "depth WEBGPU_DEPTH_NONE gives no depth texture"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 0 1 64 64 1 1 1 1 0 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+depth = "WEBGPU_DEPTH_NONE"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "depth WEBGPU_DEPTH_32_FLOAT_STENCIL_8 gives a depth texture of Depth32FloatStencil8"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 49 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+depth = "WEBGPU_DEPTH_32_FLOAT_STENCIL_8"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[[case]]
+name = "the backend of the system gives a device"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+backend = "{native_backend}"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+backend = "{foreign_backend}"
+'''
+
+[[case]]
+name = "power WEBGPU_POWER_LOW_POWER and feature_level WEBGPU_FEATURE_LEVEL_COMPATIBILITY still give a device"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+power = "WEBGPU_POWER_LOW_POWER"
+feature_level = "WEBGPU_FEATURE_LEVEL_COMPATIBILITY"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+[module."webgpu:device@1.0.0".config]
+power = "WEBGPU_POWER_LOW_POWER"
+feature_level = "WEBGPU_FEATURE_LEVEL_COMPATIBILITY"
+'''
+
+[[case]]
+name = "fallback true gives a fallback adapter, or no device: no adapter on a system that has none"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+matches = ["render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0|no device: no adapter: Validation Error"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+fallback = true
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+[module."webgpu:device@1.0.0".config]
+fallback = true
+'''
+
+[[case]]
+name = "features WEBGPU_FEATURES_DEFAULT asks for no feature that samples and depth do not need"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 feature 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "feature"
+[module."webgpu:device@1.0.0".config]
+features = "WEBGPU_FEATURES_DEFAULT"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "feature"
+'''
+
+[[case]]
+name = "features WEBGPU_FEATURES_ADAPTER asks for the features of the adapter, and the device comes"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 feature 1 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "feature"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "feature"
+[module."webgpu:device@1.0.0".config]
+features = "WEBGPU_FEATURES_DEFAULT"
+'''
+
+[[case]]
+name = "format WEBGPU_FORMAT_PREFERRED gives the first format of the surface, with no line"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 28 47 1 64 64 1 1 1 1 1 0 0"]
+lacks = ["no format"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+format = "WEBGPU_FORMAT_PREFERRED"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+[module."webgpu:device@1.0.0".config]
+format = "WEBGPU_FORMAT_PREFERRED"
+'''
+
+[[case]]
+name = "an alpha mode that the surface gives is the alpha of the frame, with no line"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+lacks = ["no alpha"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+alpha = "WEBGPU_ALPHA_OPAQUE"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+alpha = "WEBGPU_ALPHA_PREMULTIPLIED"
+'''
+
+[[case]]
+name = "present WEBGPU_PRESENT_MAILBOX gives the frame, with the line of present where the surface lacks it"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+matches = ["{mailbox_frame}"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+present = "WEBGPU_PRESENT_MAILBOX"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+[module."webgpu:device@1.0.0".config]
+present = "WEBGPU_PRESENT_MAILBOX"
+'''
+
+[[case]]
+name = "a count of samples that the device gives is the count of the frame"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[case.claims]
+line = ["{given_frame}"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+samples = "{given_samples}"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+[module."webgpu:device@1.0.0".config]
+samples = "{given_samples}"
+'''
+
+[[case]]
+name = "a surface with no format gives no surface: the adapter gives no format for the window"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_FORMATS = "0" }
+
+[case.claims]
+has = ["record[3] webgpu:device@1.0.0/frame: no surface: the adapter gives no format for the window"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[case.false]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[[case]]
+name = "a format that the surface does not give gives the line of format, and the first format of the surface"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_FORMATS = "1" }
+
+[case.claims]
+has = ["record[4] webgpu:device@1.0.0/frame: no format WEBGPU_FORMAT_BGRA8_UNORM: the frame uses WEBGPU_FORMAT_PREFERRED"]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 28 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[case.false]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[[case]]
+name = "an adapter that lacks Depth32FloatStencil8 gives the line of depth, and the depth Depth24PlusStencil8"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_LACKS = "0x3" }
+
+[case.claims]
+has = ["record[4] webgpu:device@1.0.0/frame: no depth WEBGPU_DEPTH_32_FLOAT_STENCIL_8: the frame uses WEBGPU_DEPTH_24_PLUS_STENCIL_8"]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+depth = "WEBGPU_DEPTH_32_FLOAT_STENCIL_8"
+'''
+
+[case.false]
+env = { SDL_VIDEO_DRIVER = "{video_driver}" }
+
+[[case]]
+name = "an adapter that lacks TextureAdapterSpecificFormatFeatures gives 4 samples for 8, with the line of samples"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_LACKS = "0x30002" }
+
+[case.claims]
+has = ["record[4] webgpu:device@1.0.0/frame: no samples WEBGPU_SAMPLES_8: the frame uses WEBGPU_SAMPLES_4"]
+line = ["record[6] test:probe@1.0.0/render: r5 frame 1 27 47 4 64 64 1 1 1 2 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+samples = "WEBGPU_SAMPLES_8"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+samples = "WEBGPU_SAMPLES_4"
+'''
+
+[[case]]
+name = "the device leaves out the experimental features RayQuery and CooperativeMatrix of the adapter, and comes"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_FEATURES = "0x3001C 0x3003B" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+'''
+
+[[case]]
+name = "an adapter with more than 128 features gives a device with the first 128 that the module asks for"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_COPIES = "130" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "none"
+'''
+
+[[case]]
+name = "a present mode that the surface does not give gives the line of present, and the frame uses WEBGPU_PRESENT_FIFO"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_PRESENTS = "1" }
+
+[case.claims]
+has = ["record[4] webgpu:device@1.0.0/frame: no present WEBGPU_PRESENT_MAILBOX: the frame uses WEBGPU_PRESENT_FIFO"]
+line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+present = "WEBGPU_PRESENT_MAILBOX"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+present = "WEBGPU_PRESENT_FIFO"
+'''
+
+[[case]]
+name = "a check of 8 samples that gives no error keeps 8 samples for the frame"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_SAMPLES = "4" }
+
+[case.claims]
+line = ["record[6] test:probe@1.0.0/render: r5 frame 1 27 47 8 64 64 1 1 1 2 1 0 0"]
+
+[case.folders]
+"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+samples = "WEBGPU_SAMPLES_8"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/{frame_preset}"]
+[content]
+paths = ["m"]
+ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:probe@1.0.0".config]
+scene = "open"
+[module."webgpu:device@1.0.0".config]
+samples = "WEBGPU_SAMPLES_4"
+'''

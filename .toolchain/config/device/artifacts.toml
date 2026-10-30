@@ -1,0 +1,21 @@
+[[artifact]]
+name = "webgpu_device"
+kind = "wgpu_module"
+sources = ["src/*.c"]
+include = ["include", "{webgpu_contract}/include", "{wgpu_native}/include"]
+flags = ["{rpath}"]
+manifest = [
+    "webgpu:device@1.0.0", "abi=2", "config=webgpu:DeviceSettings",
+    "settings=present format alpha power fallback backend feature_level samples depth limits features error_room instance_backends instance_flags d3d12_compiler d3d12_swapchain gles_version gl_fence creation_threshold loss_threshold dxc_path",
+    "pinned=true", "reloadable=false", "hot_reload=false", "scratch=16384", "log_ring=2048", "spans=4096",
+    "spawns=none", "persistent=none", "changes=88",
+    "config.present=WEBGPU_PRESENT_FIFO", "config.format=WEBGPU_FORMAT_PREFERRED", "config.alpha=WEBGPU_ALPHA_AUTO",
+    "config.power=WEBGPU_POWER_HIGH_PERFORMANCE", "config.fallback=false", "config.backend=WEBGPU_BACKEND_ANY",
+    "config.feature_level=WEBGPU_FEATURE_LEVEL_CORE", "config.samples=WEBGPU_SAMPLES_1",
+    "config.depth=WEBGPU_DEPTH_24_PLUS_STENCIL_8", "config.limits=WEBGPU_LIMITS_ADAPTER",
+    "config.features=WEBGPU_FEATURES_ADAPTER", "config.error_room=8192",
+    "config.instance_backends=0", "config.instance_flags=16777216", "config.d3d12_compiler=WEBGPU_D3D12_COMPILER_AUTO",
+    "config.d3d12_swapchain=WEBGPU_D3D12_SWAPCHAIN_HWND", "config.gles_version=WEBGPU_GLES_VERSION_AUTO",
+    "config.gl_fence=WEBGPU_GL_FENCE_NORMAL", "config.creation_threshold=0", "config.loss_threshold=0",
+    "config.dxc_path=dxcompiler.dll",
+]

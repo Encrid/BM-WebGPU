@@ -1,6 +1,0 @@
-[project]
-name = "BL-WebGPU-Contract"
-
-[test]
-timeout = 120
-copies = 1

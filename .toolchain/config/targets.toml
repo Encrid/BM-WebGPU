@@ -1,0 +1,17 @@
+[targets.x86_64-windows-gnu]
+dl = []
+
+[targets.aarch64-windows-gnu]
+dl = []
+
+[targets.x86_64-linux-gnu]
+dl = ["-ldl"]
+
+[targets.aarch64-linux-gnu]
+dl = ["-ldl"]
+
+[targets.x86_64-macos]
+dl = []
+
+[targets.aarch64-macos]
+dl = []

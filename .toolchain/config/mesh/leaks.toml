@@ -1,2 +1,0 @@
-[leaks]
-with = ["{wgpu_native}/leaks.toml"]

@@ -1,0 +1,87 @@
+[project]
+name = "BM-WebGPU"
+
+[test]
+timeout = 120
+copies = 1
+writers = ["bridge_native_say"]
+
+[[test.rule]]
+lacks = "probe error:"
+exempt = ["mesh/errors"]
+
+[ci]
+needs = ["display", "vulkan"]
+
+[check]
+refuse = ["src/wgpu_native/gaps.txt"]
+
+[[style.exception]]
+rule = "G4"
+path = "src/device/webgpu_device.c"
+why = "A native module gets only its API at each call, so the objects of WebGPU have no other place between two rounds than the one static device_t."
+
+[[style.exception]]
+rule = "F5"
+path = "src/device/device_ask.c:take_adapter"
+why = "wgpu-native calls it with the five parameters of WGPURequestAdapterCallback of webgpu.h."
+
+[[style.exception]]
+rule = "F5"
+path = "src/device/device_ask.c:take_device"
+why = "wgpu-native calls it with the five parameters of WGPURequestDeviceCallback of webgpu.h."
+
+[[style.exception]]
+rule = "F5"
+path = "src/device/device_targets.c:take_scope"
+why = "wgpu-native calls it with the five parameters of WGPUPopErrorScopeCallback of webgpu.h."
+
+[[style.exception]]
+rule = "F5"
+path = "src/device/device_*:device_keep_error"
+why = "wgpu-native calls it with the five parameters of WGPUUncapturedErrorCallback of webgpu.h."
+
+[[style.exception]]
+rule = "F5"
+path = "src/device/device_*:device_keep_lost"
+why = "wgpu-native calls it with the five parameters of WGPUDeviceLostCallback of webgpu.h."
+
+[[style.exception]]
+rule = "G4"
+path = "src/mesh/mesh_store.c"
+why = "A native module gets only its API at each call, so its state has no other place between two rounds."
+
+[[branches.exception]]
+path = "src/device/device_errors.c"
+line = 44
+col = 14
+side = "true"
+why = "The exchange fails only when a second writer changes used between the load and the exchange, and no case can place a thread there, on any target."
+
+[[branches.exception]]
+path = "src/mesh/mesh_memory.c"
+line = 25
+col = 9
+side = "true"
+why = "realloc gives null only when the process has no memory for the arrays of a round. No case runs the process out of memory, and the backend of BB-Native has no memory limit."
+
+[[branches.exception]]
+path = "src/mesh/mesh_memory.c"
+line = 29
+col = 9
+side = "true"
+why = "realloc gives null only when the process has no memory for the arrays of a round. No case runs the process out of memory, and the backend of BB-Native has no memory limit."
+
+[[branches.exception]]
+path = "src/mesh/mesh_render.c"
+line = 29
+col = 9
+side = "true"
+why = "mesh_reserve_round gives false only when realloc gives null. No case runs the process out of memory, and the backend of BB-Native has no memory limit."
+
+[[branches.exception]]
+path = "src/mesh/mesh_render.c"
+line = 57
+col = 9
+side = "true"
+why = "mesh_reserve_round gives false only when realloc gives null. No case runs the process out of memory, and the backend of BB-Native has no memory limit."

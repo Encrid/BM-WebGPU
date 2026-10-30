@@ -1,0 +1,62 @@
+[parts.contract]
+name = "BL-WebGPU-Contract"
+uses = []
+third_party = []
+
+[parts.contract.package]
+proof = "tests/contract/package/proof.c"
+include = ["{bridge}/include"]
+
+[compose.contract]
+part = "contract"
+from = "include/contract"
+headers = ["*.h"]
+into = "include"
+
+[variables]
+contract_probe_words = [
+    "abi=2", "config=none", "pinned=false", "reloadable=false", "scratch=4096", "log_ring=512",
+    "spans=1024", "spawns=none", "changes=256", "persistent=none", "hot_reload=false",
+]
+
+[[artifact]]
+name = "contract_layout"
+kind = "program"
+part = "contract"
+test = true
+sources = ["tests/contract/layout/layout.c"]
+include = ["include/contract", "{bridge}/include"]
+
+[[artifact]]
+name = "contract_probe"
+kind = "native_module"
+part = "contract"
+test = true
+sources = ["tests/contract/probe/probe.c"]
+include = ["include/contract"]
+defines = ["ROLE_ALL"]
+manifest = ["webgpu:probe@1.0.0", "{contract_probe_words}"]
+
+[[artifact.variants]]
+name = "contract_foreign"
+manifest = ["test:probe@1.0.0", "{contract_probe_words}"]
+
+[[artifact.variants]]
+name = "late"
+defines = ["ROLE_LATE"]
+manifest = ["webgpu:late@1.0.0", "{contract_probe_words}"]
+
+[[artifact.variants]]
+name = "contract_app"
+defines = ["ROLE_APP"]
+manifest = ["test:app@1.0.0", "{contract_probe_words}"]
+
+[[artifact.variants]]
+name = "device"
+defines = ["ROLE_DEVICE"]
+manifest = ["test:device@1.0.0", "{contract_probe_words}"]
+
+[[artifact.variants]]
+name = "render"
+defines = ["ROLE_RENDER"]
+manifest = ["test:render@1.0.0", "{contract_probe_words}"]

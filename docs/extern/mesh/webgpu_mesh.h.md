@@ -1,6 +1,6 @@
-# include/webgpu_mesh.h
+# include/mesh/webgpu_mesh.h
 
-`include/webgpu_mesh.h` is the header of the module `webgpu:mesh@1.0.0`, a renderer of Bridge that draws with WebGPU.
+`include/mesh/webgpu_mesh.h` is the header of the module `webgpu:mesh@1.0.0`, a renderer of Bridge that draws with WebGPU.
 The module draws what its components describe: views and meshes, with textures, draws and batches.
 It draws into the frame that the device module writes, for example `webgpu:device`. It does not cover the shaders of an app, or text.
 
@@ -15,21 +15,19 @@ It draws into the frame that the device module writes, for example `webgpu:devic
 | `pinned` | `false`, because WebGPU encodes and submits passes on any thread, and the module does not touch the surface. |
 | `reloadable` | `false`, because its pipelines and samplers live in its own memory, and a reload would lose them. |
 
-The manifest also gives a default for each of these keys of the module. A deployment that states one of them replaces its default.
+The manifest gives the defaults of this table. `readme.md`, *The modules*, tells how a deployment replaces them.
 
 | Key | Default | Reason |
 | --- | --- | --- |
-| `scratch` | `8192` | The declarations of the fourteen types of `init`: its twelve, and `webgpu:webgpu_frame_state_t` and `webgpu:Frame` of BL-WebGPU-Contract. At a run of a system, the texts of its lines. |
+| `scratch` | `8192` | The declarations of the fourteen types of `init`: its twelve, and `webgpu:webgpu_frame_state_t` and `webgpu:Frame` of the part `contract`. At a run of a system, the texts of its lines. |
 | `log_ring` | `64` | Room for 2 records of 32 bytes: a round writes each line of *Messages* at most once. |
 | `spans` | `65536` | A cell for each of the fourteen types in each table, the spans of its five systems, and the lists of its two observers. A list holds 16 bytes for each mesh and each texture that leaves at one barrier. |
 | `spawns` | `"none"` | The module makes no entity. |
 | `changes` | `65536` | The attaches and the detaches of `webgpu:MeshGpu` and `webgpu:TextureGpu` in one round: *The GPU objects*. |
-| `persistent` | `"none"` | The module keeps no data in the arena. |
+| `persistent` | `"none"` | The arena holds no data of the module. |
 | `hot_reload` | `false` | The module cannot reload. |
 
-The header `bridge.h` of Bridge tells the room that `spans` needs in a world with many tables.
-
-The file of the module is `webgpu_mesh`, with the suffix of a library. It runs on the backend of BB-Native, and loads the wgpu-native library of BL-WGPU-Native, which sits beside it.
+The file of the module is `webgpu_mesh`, with the suffix of a library. It runs as `readme.md`, *The modules*, tells.
 It needs no SDL3: it reads the device and the frame from `webgpu:Frame`.
 
 ## The systems
@@ -84,12 +82,12 @@ The first upload of an item takes two rounds. In the first round, `keep_meshes` 
 Thus an attach that Bridge does not apply loses no GPU object. A draw whose mesh or texture waits draws from that next round.
 An attach that finds no room in `changes` waits for the next round, so its item draws one round later.
 
-The two components are the module's own, so their C types are in its private header, not in `include/webgpu_mesh.h`.
+The two components are the module's own, so their C types are in its private header, not in `include/mesh/webgpu_mesh.h`.
 The full names of the observers for `[order]` are `webgpu:mesh:release_mesh` and `webgpu:mesh:release_texture`.
 
 ## webgpu:MeshSettings
 
-`webgpu:MeshSettings` is the singleton of the settings. Bridge writes it from the deployment, or from the defaults of the manifest.
+`webgpu:MeshSettings` is the singleton of the settings. `readme.md`, *The modules*, tells how Bridge fills it.
 
 | Field | C type | Offset | Value |
 | --- | --- | --- | --- |
@@ -112,8 +110,6 @@ The buffer of a round counts too: 256 bytes for each view, 92 for each draw and 
 Its size is the smallest power of 2 that holds these bytes. If it cannot grow, that round draws no view.
 
 With no depth texture in `webgpu:Frame`, `depth`, `depth_compare` and `clear_depth` do nothing. An example is `WEBGPU_DEPTH_NONE` of `webgpu:device`.
-
-Each enum of the settings is of `uint32_t`. A deployment states a constant by its name or by its value.
 
 ### webgpu:webgpu_load_t
 
@@ -266,8 +262,8 @@ Each rule that leaves out an item, a view or a round writes the line `left out` 
 
 ## The C types
 
-`include/webgpu_mesh.h` gives the C type of each type of the module, and its descriptor for Bridge.
-It includes only headers of Bridge. It makes each C type and its descriptor from one text, with the macros of `bridge_schema.h`.
+Each type of the module has its C type and its descriptor in `include/mesh/webgpu_mesh.h`, as `docs/extern/contract/webgpu_contract.h.md`, *The C types*, tells.
+The header includes only headers of Bridge.
 
 | Type of Bridge | C type | Descriptor | Macro of the text | Size | Alignment |
 | --- | --- | --- | --- | --- | --- |
@@ -282,8 +278,7 @@ It includes only headers of Bridge. It makes each C type and its descriptor from
 | `webgpu:Draw` | `webgpu_draw_t` | `webgpu_draw_t_desc` | `WEBGPU_DRAW_FIELDS` | 120 | 8 |
 | `webgpu:Batch` | `webgpu_batch_t` | `webgpu_batch_t_desc` | `WEBGPU_BATCH_FIELDS` | 32 | 4 |
 
-Each macro of the text gives the braces of its type and the text between them.
-A module in another language does not include the header. It states the descriptor of each type with these bytes, in the order of the table:
+In the order of the table, the descriptors hold these bytes:
 
 ```text
 uint32_t { WEBGPU_LOAD_CLEAR = 1, WEBGPU_LOAD_KEEP = 2 }
@@ -298,8 +293,8 @@ uint32_t { WEBGPU_CULL_NONE = 1, WEBGPU_CULL_FRONT = 2, WEBGPU_CULL_BACK = 3 }
 { bridge_text_t data; uint32_t layout; uint32_t primitive; uint32_t views; uint32_t depth; int32_t order; float size; }
 ```
 
-`webgpu:webgpu_frame_state_t` and `webgpu:Frame` are the types of BL-WebGPU-Contract. Its header `webgpu_contract.h` gives their C types and descriptors.
-The document of that header tells their fields and their constants.
+`webgpu:webgpu_frame_state_t` and `webgpu:Frame` are the types of the part `contract`. Its header `include/contract/webgpu_contract.h` gives their C types and descriptors.
+`docs/extern/contract/webgpu_contract.h.md` tells their fields and their constants.
 
 ## The deployment
 
@@ -314,15 +309,13 @@ The document of that header tells their fields and their constants.
 - The world needs `[budget] types` for the fourteen types of the module, and `[budget] systems` for its five systems and its two observers.
 - Bridge stops the module when the list of an observer does not fit in `spans`. Thus a deployment sizes `spans` for the most items that one barrier removes.
 - A deployment gives the settings in `[module."webgpu:mesh@1.0.0".config]`.
-- The wgpu-native library of BL-WGPU-Native sits beside the module, and `content.ignore` names it.
-- On aarch64-windows-gnu, the machine needs the Microsoft Visual C++ Redistributable for arm64. The readme of BL-WGPU-Native tells why.
-- The backend of BB-Native has no capability of a limit, so `work_limit`, `memory_limit` and the three timeouts of the module are `"none"`.
-
-The readme of Bridge-Host tells each key of a deployment.
+- The wgpu-native library sits beside the module, and `content.ignore` names it.
+- `readme.md`, *wgpu_native*, tells the need of the library on aarch64-windows-gnu.
+- The module has no limit and no timeout: `readme.md`, *The modules*.
 
 ## Messages
 
-The module writes these lines at the level 4. A round writes each line at most once.
+Each of these lines has the level 4, and a round writes it at most once.
 
 - `no room: <bytes> bytes of gpu_memory are taken, and the item needs <bytes> more`: the item does not fit in `gpu_memory`, and the module leaves it out.
 - `left out <entity>: <rule>`: a rule leaves out the item or the view of the entity. For a round that the module leaves out, the entity is 0.

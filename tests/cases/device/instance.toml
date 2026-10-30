@@ -7,12 +7,12 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_TELL = "1" }
 line = ["stand-in: instance backends 0 flags 16777216 compiler 0 path 'dxcompiler.dll' swapchain 1 gles 0 fence 0 creation -1 loss -1 display 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
-"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -24,7 +24,7 @@ scene = "open"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -45,12 +45,12 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_TELL = "1" }
 line = ["stand-in: instance backends 15 flags 1 compiler 1 path 'C:/dxc/dxcompiler.dll' swapchain 2 gles 2 fence 1 creation 90 loss 95 display 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
-"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -72,7 +72,7 @@ dxc_path = "C:/dxc/dxcompiler.dll"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -91,12 +91,12 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}", STAND_IN_TELL = "1" }
 has = ["path 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' swapchain"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
-"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_name}"]
+"{case}/m/real" = ["{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -108,7 +108,7 @@ scene = "longpath"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -127,11 +127,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -145,7 +145,7 @@ d3d12_compiler = "WEBGPU_D3D12_COMPILER_FXC"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -166,11 +166,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 matches = ["{missing_dxc_says}"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -185,7 +185,7 @@ dxc_path = { path = "none.dll" }
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -207,11 +207,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 matches = ["{visual_says}"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -226,7 +226,7 @@ alpha = "WEBGPU_ALPHA_PREMULTIPLIED"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -248,11 +248,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -266,7 +266,7 @@ instance_backends = {native_instance_backend}
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -287,11 +287,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[3] webgpu:device@1.0.0/frame: no device: no adapter: Validation Error"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -305,7 +305,7 @@ instance_backends = {foreign_instance_backend}
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -326,11 +326,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -344,7 +344,7 @@ instance_flags = 0
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -365,11 +365,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -384,7 +384,7 @@ gl_fence = "WEBGPU_GL_FENCE_AUTO_FINISH"
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -406,11 +406,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -425,7 +425,7 @@ loss_threshold = 100
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -446,7 +446,7 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'instance_backends' is 16, which has a bit that no constant of the bitmask of the field it names has 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -484,7 +484,7 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'instance_flags' is 128, which has a bit that no constant of the bitmask of the field it names has 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -522,7 +522,7 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'd3d12_compiler' is 4, which is no constant of the enum of the field it names 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -560,7 +560,7 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'd3d12_swapchain' is 3, which is no constant of the enum of the field it names 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -598,7 +598,7 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'gles_version' is 5, which is no constant of the enum of the field it names 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -636,7 +636,7 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'gl_fence' is 3, which is no constant of the enum of the field it names 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -674,7 +674,7 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'creation_threshold' is 256, which the field it names cannot hold 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -712,7 +712,7 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'loss_threshold' is 256, which the field it names cannot hold 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -750,7 +750,7 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 line = ["record[3] -/-: module 'webgpu:device@1.0.0' did not load: its setting 'dxc_path' is 1024 bytes of text, and the field it names holds 1024 with the zero that ends it 0 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''

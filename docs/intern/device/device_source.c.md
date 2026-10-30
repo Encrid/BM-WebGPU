@@ -1,4 +1,4 @@
-# src/device_source.c
+# src/device/device_source.c
 
 This file fills the source of the surface for the kind of the window.
 The source is the chained struct of `webgpu.h`, and on Wayland also the display in the extras of the instance.

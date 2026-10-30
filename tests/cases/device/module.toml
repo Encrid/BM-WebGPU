@@ -41,7 +41,7 @@ order = [
 ]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -56,7 +56,7 @@ native = "{bb_native}/bridge_native"
 '''
 
 [case.false.folders]
-"{case}/m" = ["{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["{wgpu_file}"]
 
 [[case]]
 name = "a key of the deployment replaces a default of the manifest"
@@ -68,7 +68,7 @@ line = ["  scratch = 32768  d.toml:10"]
 lacks = ["scratch = 16384  its file"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -105,7 +105,7 @@ status = 0
 line = ["loaded: webgpu:device@1.0.0, native, m/webgpu_device{library}"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -131,11 +131,11 @@ env = { SDL_VIDEO_DRIVER = "{video_driver}" }
 line = ["record[6] test:probe@1.0.0/render: r1 reload 1 0"]
 
 [case.folders]
-"{case}/m" = ["webgpu_device", "probe", "{sdl3}/SDL3{library}", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_device", "device_probe", "{sdl3}/SDL3{library}", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]
@@ -148,7 +148,7 @@ module = { path = "m/webgpu_device{library}" }
 
 [case.false.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/{frame_preset}"]
+presets = ["{root}/tests/device/presets/{frame_preset}"]
 [content]
 paths = ["m"]
 ignore = ["m/SDL3{library}", "m/{wgpu_file}"]

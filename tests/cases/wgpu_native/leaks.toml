@@ -1,6 +1,6 @@
 [[case]]
 name = "the pairs and the kinds of leaks.toml count each object that a module keeps"
-run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/leaks/project", "--out", "{case}/out", "--leaks"]
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/wgpu_native/leaks/project", "--out", "{case}/out", "--leaks"]
 claims = { status = 1, line = [
     "leaks: a module that takes each object keeps 1 wgpuCreateInstance",
     "leaks: a module that takes each object keeps 1 wgpuInstanceCreateSurface",
@@ -26,4 +26,4 @@ claims = { status = 1, line = [
     "leaks: a module that takes each object keeps 2 webgpu_features",
     "leaks: a module that takes each object keeps 1 webgpu_adapter_info",
 ] }
-false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/leaks/project", "--out", "{case}/out", "--leaks", "--set", "give=1"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/tests/wgpu_native/leaks/project", "--out", "{case}/out", "--leaks", "--set", "give=1"] }

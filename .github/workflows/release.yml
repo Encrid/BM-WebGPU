@@ -1,0 +1,109 @@
+name: release
+
+on:
+  push:
+    tags: ['v*', '*-v*']
+
+permissions: {}
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Draft the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: gh release create "$TAG" --repo "$REPO" --draft --verify-tag --title "$TAG" --notes "$TAG"
+
+  pack:
+    needs: draft
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-linux-gnu
+            runner: ubuntu-latest
+            architecture: x64
+          - target: aarch64-linux-gnu
+            runner: ubuntu-24.04-arm
+            architecture: arm64
+          - target: aarch64-macos
+            runner: macos-latest
+            architecture: arm64
+          - target: x86_64-macos
+            runner: macos-15-intel
+            architecture: x64
+          - target: x86_64-windows-gnu
+            runner: windows-latest
+            architecture: x64
+          - target: aarch64-windows-gnu
+            runner: windows-11-arm
+            architecture: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ github.ref_name }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.13'
+          architecture: ${{ matrix.architecture }}
+      - name: Runner
+        run: python .toolchain/tools/runner.py --target ${{ matrix.target }} | bash -e
+      - name: Fetch
+        run: python project.py fetch
+      - name: Test
+        run: python project.py test --tag "$TAG"
+      - name: Pack
+        run: python project.py pack --target ${{ matrix.target }} --tag "$TAG"
+      - name: Upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: gh release upload "$TAG" build/*.zip --repo "$REPO"
+
+  publish:
+    needs: pack
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.13'
+      - name: Publish the release with the digests of its archives
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh release download "$TAG" --repo "$REPO" --dir assets --pattern '*.zip'
+          joined=$(python project.py join --tag "$TAG" --out assets)
+          if [ -z "$joined" ]; then
+            (cd assets && sha256sum *.zip > sha256.txt)
+            gh release upload "$TAG" assets/sha256.txt --repo "$REPO"
+            gh release edit "$TAG" --repo "$REPO" --draft=false
+            exit 0
+          fi
+          name=$(basename "$joined" .zip)
+          for zip in assets/"$name"-*.zip; do gh release delete-asset "$TAG" "${zip#assets/}" --repo "$REPO" --yes; done
+          (cd assets && sha256sum "$name.zip" > sha256.txt)
+          gh release upload "$TAG" "$joined" assets/sha256.txt --repo "$REPO"
+          gh release edit "$TAG" --repo "$REPO" --title "$name v${TAG##*-v}" --draft=false --latest=false

@@ -1,62 +1,62 @@
 [[case]]
 name = "webgpu_window_t has the size, the alignment and the offsets of its Usage"
-run = ["{out}/layout{exe}", "window"]
+run = ["{out}/contract_layout{exe}", "window"]
 claims = { status = 0, order = [
     "size 72", "alignment 8", "surface 0", "width 4", "height 8", "hinstance 16", "hwnd 24", "layer 32",
     "x11_display 40", "x11_window 48", "wl_display 56", "wl_surface 64",
 ] }
-false = { run = ["{out}/layout{exe}", "frame"] }
+false = { run = ["{out}/contract_layout{exe}", "frame"] }
 
 [[case]]
 name = "webgpu_frame_t has the size, the alignment and the offsets of its Usage"
-run = ["{out}/layout{exe}", "frame"]
+run = ["{out}/contract_layout{exe}", "frame"]
 claims = { status = 0, order = [
     "size 64", "alignment 8", "state 0", "format 4", "depth_format 8", "samples 12", "width 16", "height 20",
     "device 24", "queue 32", "frame 40", "target 48", "depth 56",
 ] }
-false = { run = ["{out}/layout{exe}", "window"] }
+false = { run = ["{out}/contract_layout{exe}", "window"] }
 
 [[case]]
 name = "webgpu_surface_t has 4 bytes, and each constant has its value"
-run = ["{out}/layout{exe}", "surface"]
+run = ["{out}/contract_layout{exe}", "surface"]
 claims = { status = 0, order = [
     "size 4", "alignment 4", "WEBGPU_SURFACE_NONE 1", "WEBGPU_SURFACE_WINDOWS 2", "WEBGPU_SURFACE_METAL 3",
     "WEBGPU_SURFACE_X11 4", "WEBGPU_SURFACE_WAYLAND 5",
 ] }
-false = { run = ["{out}/layout{exe}", "frame_state"] }
+false = { run = ["{out}/contract_layout{exe}", "frame_state"] }
 
 [[case]]
 name = "webgpu_frame_state_t has 4 bytes, and each constant has its value"
-run = ["{out}/layout{exe}", "frame_state"]
+run = ["{out}/contract_layout{exe}", "frame_state"]
 claims = { status = 0, order = [
     "size 4", "alignment 4", "WEBGPU_FRAME_READY 1", "WEBGPU_FRAME_SKIPPED 2", "WEBGPU_FRAME_NO_DEVICE 3",
 ] }
-false = { run = ["{out}/layout{exe}", "surface"] }
+false = { run = ["{out}/contract_layout{exe}", "surface"] }
 
 [[case]]
 name = "each descriptor holds the bytes of its Usage"
-run = ["{out}/layout{exe}", "descriptors"]
+run = ["{out}/contract_layout{exe}", "descriptors"]
 claims = { status = 0, line = [
     "uint32_t { WEBGPU_SURFACE_NONE = 1, WEBGPU_SURFACE_WINDOWS = 2, WEBGPU_SURFACE_METAL = 3, WEBGPU_SURFACE_X11 = 4, WEBGPU_SURFACE_WAYLAND = 5 }",
     "uint32_t { WEBGPU_FRAME_READY = 1, WEBGPU_FRAME_SKIPPED = 2, WEBGPU_FRAME_NO_DEVICE = 3 }",
     "{ webgpu_surface_t surface; uint32_t width; uint32_t height; uint64_t hinstance; uint64_t hwnd; uint64_t layer; uint64_t x11_display; uint64_t x11_window; uint64_t wl_display; uint64_t wl_surface; }",
     "{ webgpu_frame_state_t state; uint32_t format; uint32_t depth_format; uint32_t samples; uint32_t width; uint32_t height; uint64_t device; uint64_t queue; uint64_t frame; uint64_t target; uint64_t depth; }",
 ] }
-false = { run = ["{out}/layout{exe}", "texts"] }
+false = { run = ["{out}/contract_layout{exe}", "texts"] }
 
 [[case]]
 name = "each macro of a text gives the braces of its type and the text between them"
-run = ["{out}/layout{exe}", "texts"]
+run = ["{out}/contract_layout{exe}", "texts"]
 claims = { status = 0, line = [
     "{ WEBGPU_SURFACE_NONE = 1, WEBGPU_SURFACE_WINDOWS = 2, WEBGPU_SURFACE_METAL = 3, WEBGPU_SURFACE_X11 = 4, WEBGPU_SURFACE_WAYLAND = 5 }",
     "{ WEBGPU_FRAME_READY = 1, WEBGPU_FRAME_SKIPPED = 2, WEBGPU_FRAME_NO_DEVICE = 3 }",
     "{ webgpu_surface_t surface; uint32_t width; uint32_t height; uint64_t hinstance; uint64_t hwnd; uint64_t layer; uint64_t x11_display; uint64_t x11_window; uint64_t wl_display; uint64_t wl_surface; }",
     "{ webgpu_frame_state_t state; uint32_t format; uint32_t depth_format; uint32_t samples; uint32_t width; uint32_t height; uint64_t device; uint64_t queue; uint64_t frame; uint64_t target; uint64_t depth; }",
 ] }
-false = { run = ["{out}/layout{exe}", "descriptors"] }
+false = { run = ["{out}/contract_layout{exe}", "descriptors"] }
 
 [[case]]
 name = "the header compiles with the headers of Bridge and nothing else"
-run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{language}", "-I", "include", "-I", "{bridge}/include", "-c", "tests/layout/alone.c", "-o", "{case}/alone.o"]
+run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{language}", "-I", "include/contract", "-I", "{bridge}/include", "-c", "tests/contract/layout/alone.c", "-o", "{case}/alone.o"]
 claims = { status = 0 }
-false = { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{language}", "-I", "include", "-c", "tests/layout/alone.c", "-o", "{case}/alone.o"] }
+false = { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{language}", "-I", "include/contract", "-c", "tests/contract/layout/alone.c", "-o", "{case}/alone.o"] }

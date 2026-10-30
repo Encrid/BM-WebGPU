@@ -1,8 +1,8 @@
 [[case]]
 name = "the release of a target holds the module, its header and the licence, and a program builds from it"
-run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}", "--out", "{case}/out", "--pack"]
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}", "--out", "{case}/out", "--part", "device", "--pack"]
 claims = { status = 0, line = [
     "{case}/out/BM-WebGPU-Device-{target}.zip", "webgpu_device{library}", "include/webgpu_device.h", "license",
     "package proof: BM-WebGPU-Device ran",
 ] }
-false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}", "--out", "{case}/out"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}", "--out", "{case}/out", "--part", "device"] }

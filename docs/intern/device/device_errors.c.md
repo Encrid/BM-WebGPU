@@ -1,12 +1,12 @@
-# src/device_errors.c
+# src/device/device_errors.c
 
 This file holds the room where the error texts of the device wait for `frame`.
 It also holds the two callbacks that write into the room, and the function of `frame` that reads it.
 
 ## The room
 
-`docs/extern/webgpu_device.h.md`, *The errors*, tells why the two callbacks of the device copy their texts into the room.
-They keep the rules of `docs/intern/device_inside.h.md`, *Callbacks*. `room_t` has these fields:
+`docs/extern/device/webgpu_device.h.md`, *The errors*, tells why the two callbacks of the device copy their texts into the room.
+They keep the rules of `docs/intern/device/device_inside.h.md`, *Callbacks*. `room_t` has these fields:
 
 | Field | Content |
 | --- | --- |
@@ -49,10 +49,10 @@ The exchange is strong, so it fails only when another writer changed `used`. A w
 
 1. It writes a line at the level 3 for each text below `used`, with `bridge_native_say`.
 2. A text of `TEXT_LOST` gives `device lost: <reason>: <text>`, else `webgpu error: <type>: <text>`.
-3. If `missed` is more than 0, it writes the count: `docs/extern/webgpu_device.h.md`, *Messages*.
+3. If `missed` is more than 0, it writes the count: `docs/extern/device/webgpu_device.h.md`, *Messages*.
 4. It sets `used` and `missed` to 0, and gives the old value of `lost`.
 
-The text of each line goes into the scratch arena. `docs/extern/webgpu_device.h.md`, *The module*, gives the room that `scratch` needs for it.
+The text of each line goes into the scratch arena. `docs/extern/device/webgpu_device.h.md`, *The module*, gives the room that `scratch` needs for it.
 
 The tables `ERROR_NAMES` and `LOST_NAMES` give the name of each code. A code that a table does not hold gives `unknown`.
 Each table holds `NAME_COUNT` codes, from 0. A code of `NAME_COUNT` or more reads the code 0, which gives `unknown`.
@@ -62,7 +62,7 @@ wgpu-native `v29.0.1.1` gives only the types `validation` and `out of memory`, a
 
 - A writer runs only inside a call of WebGPU on an object of the device.
 - The module makes its own calls on the thread of `frame`, after a read, or in `present`.
-- Each other call comes from a render module, which reads `webgpu:Frame`: `docs/extern/webgpu_device.h.md`, *The deployment*.
+- Each other call comes from a render module, which reads `webgpu:Frame`: `docs/extern/device/webgpu_device.h.md`, *The deployment*.
 - `frame` writes `webgpu:Frame`, so Bridge never runs a system that reads it at the same time: the section Conflicts of `bridge_abi.h`.
 - The phases run one after another, and the observers run at a barrier, after the systems of the phase.
 

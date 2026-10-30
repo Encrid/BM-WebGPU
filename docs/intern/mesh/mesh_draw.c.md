@@ -1,4 +1,4 @@
-# src/mesh_draw.c
+# src/mesh/mesh_draw.c
 
 This file turns the rows of `webgpu:View`, `webgpu:Draw` and `webgpu:Batch` into the views and the items of a round.
 It fills the block of each view, and the record of each item.
@@ -8,14 +8,14 @@ It fills the block of each view, and the record of each item.
 `mesh_add_view` does these steps for each row of `webgpu:View`:
 
 1. A `rect` with a width of 0 becomes the whole frame.
-2. It applies the rules of `docs/extern/webgpu_mesh.h.md`, *webgpu:View*: first to the size of `rect`, then to its place.
+2. It applies the rules of `docs/extern/mesh/webgpu_mesh.h.md`, *webgpu:View*: first to the size of `rect`, then to its place.
 3. It writes the view at the next place: its key, `mask`, `rect` and the index of its block.
 4. It fills the block: `matrix`, the scene of the round, and the width and the height of `rect`.
 5. It counts the view only when no rule leaves it out. Thus the next view takes the place of a view that is left out.
 
 A view has no part inside the frame when its height is 0, or when its x or y is not inside the frame.
 `mesh_add_view` gives a view that a rule leaves out to `mesh_say_left_out`, with the id of the view and the rule.
-`draw_view` of `src/mesh_pass.c` gives the viewport and the scissor of each view to the pass: `docs/intern/mesh_pass.c.md`, *A view*.
+`draw_view` of `src/mesh/mesh_pass.c` gives the viewport and the scissor of each view to the pass: `docs/intern/mesh/mesh_pass.c.md`, *A view*.
 
 ## An item
 
@@ -42,13 +42,13 @@ A view has no part inside the frame when its height is 0, or when its x or y is 
 | An entity whose `webgpu:MeshGpu` holds zeros | Left out with no line of its own: the line of the mesh tells why. |
 | An entity whose `webgpu:MeshGpu` holds a buffer | It draws. |
 
-`mesh_add_batch` leaves out each batch that a rule of `docs/extern/webgpu_mesh.h.md`, *The data rules*, refuses: first `layout`, then `primitive`, then the data.
+`mesh_add_batch` leaves out each batch that a rule of `docs/extern/mesh/webgpu_mesh.h.md`, *The data rules*, refuses: first `layout`, then `primitive`, then the data.
 `mesh_add_draw` and `mesh_add_batch` give an item that a rule leaves out to `mesh_say_left_out`, with the id of the item and the rule.
 The vertices of a batch come after the vertices of the batch before it, in the order of the walk.
 
 `add_item` gives the item the next record. The sort of the round moves the items and not the records, so each item keeps its record.
 The shape of an item is its `primitive`, or a wide shape when `size` is above 1 for lines or points.
-`add_item` keeps only the two bits of `depth` that `docs/extern/webgpu_mesh.h.md`, *webgpu:Draw*, names.
+`add_item` keeps only the two bits of `depth` that `docs/extern/mesh/webgpu_mesh.h.md`, *webgpu:Draw*, names.
 
 ## The texture of a draw
 
@@ -62,7 +62,7 @@ The shape of an item is its `primitive`, or a wide shape when `size` is above 1 
 | An entity whose `webgpu:TextureGpu` holds zeros | The group of the white texture. |
 | An entity whose `webgpu:TextureGpu` holds a texture | The group of that texture. |
 
-The third row is the wait of a draw for a new texture: `docs/extern/webgpu_mesh.h.md`, *The GPU objects*. Thus such a draw never shows white for one round.
+The third row is the wait of a draw for a new texture: `docs/extern/mesh/webgpu_mesh.h.md`, *The GPU objects*. Thus such a draw never shows white for one round.
 
 ## Functions
 

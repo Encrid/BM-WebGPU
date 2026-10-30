@@ -217,13 +217,13 @@ run = ["{out}/types{exe}", "settings"]
 
 [[case]]
 name = "the header compiles with the headers of Bridge and nothing else"
-run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{language}", "-I", "include", "-I", "{bridge}/include", "-c", "tests/types/alone.c", "-o", "{case}/alone.o"]
+run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{language}", "-I", "include/mesh", "-I", "{bridge}/include", "-c", "tests/mesh/types/alone.c", "-o", "{case}/alone.o"]
 
 [case.claims]
 status = 0
 
 [case.false]
-run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{language}", "-I", "include", "-c", "tests/types/alone.c", "-o", "{case}/alone.o"]
+run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{language}", "-I", "include/mesh", "-c", "tests/mesh/types/alone.c", "-o", "{case}/alone.o"]
 
 [[case]]
 name = "the module declares webgpu:Frame with the descriptor of webgpu_contract.h"
@@ -233,11 +233,11 @@ run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
 has = ["type 'webgpu:Frame' has another component layout here"]
 
 [case.folders]
-"{case}/m" = ["fake", "webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["fake", "webgpu_mesh", "{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
-presets = ["{root}/tests/presets/probe.toml"]
+presets = ["{root}/tests/mesh/presets/probe.toml"]
 rounds = 1
 [content]
 paths = ["m"]
@@ -247,4 +247,4 @@ native = "{bb_native}/bridge_native"
 '''
 
 [case.false.folders]
-"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+"{case}/m" = ["webgpu_mesh", "mesh_probe", "{wgpu_file}"]

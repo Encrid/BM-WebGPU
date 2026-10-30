@@ -6,7 +6,7 @@ false = { folders = { "{case}/m/real" = [] } }
 
 [case.folders]
 "{case}/m" = ["importer", "{wgpu_name}"]
-"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+"{case}/m/real" = ["{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''
@@ -29,7 +29,7 @@ false = { env = {} }
 
 [case.folders]
 "{case}/m" = ["importer", "{wgpu_name}"]
-"{case}/m/real" = ["{wgpu_native}/{wgpu_file}"]
+"{case}/m/real" = ["{wgpu_file}"]
 
 [case.files]
 "{case}/d.toml" = '''

@@ -1,12 +1,11 @@
-# src/mesh_inside.h
+# src/mesh/mesh_inside.h
 
-This private header is shared by the sources of the module.
-It includes `include/webgpu_mesh.h`, the header `webgpu_contract.h` of BL-WebGPU-Contract, `webgpu.h` of wgpu-native and the headers of BB-Native.
+Each source of the module includes this private header.
+It includes `include/mesh/webgpu_mesh.h`, the header `include/contract/webgpu_contract.h`, `webgpu.h` of wgpu-native and the headers of BB-Native.
 
 ## The slots
 
-Bridge numbers the types of a module from 0, in the order of their declarations.
-Each slot is a `constexpr`, and `bridge_init` of `src/webgpu_mesh.c` declares the types in this order:
+Each slot is a `constexpr`. `bridge_init` of `src/mesh/webgpu_mesh.c` declares the types in the order of this table, and Bridge numbers them from 0:
 
 | Slot | Name | Type |
 | --- | --- | --- |
@@ -36,7 +35,7 @@ Their constants are `KEEP_MESHES`, `KEEP_TEXTURES`, `DRAWS`, `BATCHES` and `REND
 | `webgpu_mesh_gpu_t` | The C type of `webgpu:MeshGpu`: `buffer`, then the `gen`, the `count` of vertices, the `layout` and the `primitive` of its upload. 24 bytes. |
 | `webgpu_texture_gpu_t` | The C type of `webgpu:TextureGpu`: `texture`, its `view`, its bind `group`, then the `gen` and the `bytes` of its upload. 32 bytes. |
 | `mesh_state_t` | The state of the module: the objects of a device, the pipelines, the round buffer, the count of `gpu_memory`, and the round. It also keeps the api of the system that runs, the scene of the round, and the flags `ready` and `release` of the round. It keeps a flag `left` for each set, and the flags `said_room` and `said_rule` of the two lines. |
-| `mesh_round_t` | The memory of a round, its views, its items, its blocks and its records, with their counts: `docs/intern/mesh_memory.c.md`, *The arrays of a round*. |
+| `mesh_round_t` | The memory of a round, its views, its items, its blocks and its records, with their counts: `docs/intern/mesh/mesh_memory.c.md`, *The arrays of a round*. |
 | `mesh_key_t` | The sort key of a view or of an item: `rank`, `order` and `id`. |
 | `mesh_view_t` | A view of the round: its key, `mask`, its `rect`, which is the viewport, and the index of its block. |
 | `mesh_item_t` | A draw or a batch of the round: its key, `views`, its shape, `layout`, `depth`, its vertices, its record and its bind group. |
@@ -44,7 +43,7 @@ Their constants are `KEEP_MESHES`, `KEEP_TEXTURES`, `DRAWS`, `BATCHES` and `REND
 | `mesh_block_t` | The data of one view for the shaders: `matrix`, the whole `webgpu:Scene`, 4 bytes of `pad`, and the size of the view in pixels. 128 bytes. |
 | `mesh_pass_t` | The pass of a round, with the frame and the offsets of the records and of the batches in the round buffer. It also keeps what it binds now: each vertex buffer and its offset, the pipeline, and the bind group 1. |
 | `mesh_shape_t` | An enum of `uint32_t`: `SHAPE_TRIANGLES`, `SHAPE_LINES`, `SHAPE_POINTS`, `SHAPE_WIDE_LINES` and `SHAPE_WIDE_POINTS`. |
-| `mesh_rule_t` | An enum of `uint32_t`, with one item for each rule of `docs/extern/webgpu_mesh.h.md`, *Messages*, in the order of its table. |
+| `mesh_rule_t` | An enum of `uint32_t`, with one item for each rule of `docs/extern/mesh/webgpu_mesh.h.md`, *Messages*, in the order of its table. |
 
 The first field of a GPU component holds its main object, `buffer` or `texture`. A 0 there means that the component holds no object.
 The descriptor of each GPU component comes from the same text as its C type, with the macros of `bridge_schema.h` of Bridge.
@@ -65,33 +64,33 @@ The two GPU components have no gap, so they need no field `pad`.
 
 | Function | Source |
 | --- | --- |
-| `mesh_get_state` | `src/mesh_store.c` |
-| `mesh_walk` | `src/mesh_store.c` |
-| `mesh_find` | `src/mesh_store.c` |
-| `mesh_get_data` | `src/mesh_store.c` |
-| `mesh_take_change` | `src/mesh_store.c` |
-| `mesh_keep_mesh` | `src/mesh_upload.c` |
-| `mesh_keep_texture` | `src/mesh_upload.c` |
-| `mesh_take_memory` | `src/mesh_upload.c` |
-| `mesh_sweep` | `src/mesh_release.c` |
-| `mesh_release_gpu` | `src/mesh_release.c` |
-| `mesh_add_view` | `src/mesh_draw.c` |
-| `mesh_add_draw` | `src/mesh_draw.c` |
-| `mesh_add_batch` | `src/mesh_draw.c` |
-| `mesh_encode` | `src/mesh_pass.c` |
-| `mesh_draw_item` | `src/mesh_bind.c` |
-| `mesh_make_layouts` | `src/mesh_pipeline.c` |
-| `mesh_get_pipeline` | `src/mesh_pipeline.c` |
-| `mesh_set_buffers` | `src/mesh_vertex.c` |
-| `mesh_make_device` | `src/mesh_device.c` |
-| `mesh_make_buffer` | `src/mesh_device.c` |
-| `mesh_make_group` | `src/mesh_device.c` |
-| `mesh_make_texture` | `src/mesh_device.c` |
-| `mesh_release_device` | `src/mesh_device.c` |
-| `mesh_reserve_round` | `src/mesh_memory.c` |
-| `mesh_put_round` | `src/mesh_memory.c` |
-| `mesh_release_round` | `src/mesh_memory.c` |
-| `mesh_free_round` | `src/mesh_memory.c` |
-| `mesh_say_no_room` | `src/mesh_lines.c` |
-| `mesh_say_left_out` | `src/mesh_lines.c` |
-| `mesh_add_systems` | `src/mesh_systems.c` |
+| `mesh_get_state` | `src/mesh/mesh_store.c` |
+| `mesh_walk` | `src/mesh/mesh_store.c` |
+| `mesh_find` | `src/mesh/mesh_store.c` |
+| `mesh_get_data` | `src/mesh/mesh_store.c` |
+| `mesh_take_change` | `src/mesh/mesh_store.c` |
+| `mesh_keep_mesh` | `src/mesh/mesh_upload.c` |
+| `mesh_keep_texture` | `src/mesh/mesh_upload.c` |
+| `mesh_take_memory` | `src/mesh/mesh_upload.c` |
+| `mesh_sweep` | `src/mesh/mesh_release.c` |
+| `mesh_release_gpu` | `src/mesh/mesh_release.c` |
+| `mesh_add_view` | `src/mesh/mesh_draw.c` |
+| `mesh_add_draw` | `src/mesh/mesh_draw.c` |
+| `mesh_add_batch` | `src/mesh/mesh_draw.c` |
+| `mesh_encode` | `src/mesh/mesh_pass.c` |
+| `mesh_draw_item` | `src/mesh/mesh_bind.c` |
+| `mesh_make_layouts` | `src/mesh/mesh_pipeline.c` |
+| `mesh_get_pipeline` | `src/mesh/mesh_pipeline.c` |
+| `mesh_set_buffers` | `src/mesh/mesh_vertex.c` |
+| `mesh_make_device` | `src/mesh/mesh_device.c` |
+| `mesh_make_buffer` | `src/mesh/mesh_device.c` |
+| `mesh_make_group` | `src/mesh/mesh_device.c` |
+| `mesh_make_texture` | `src/mesh/mesh_device.c` |
+| `mesh_release_device` | `src/mesh/mesh_device.c` |
+| `mesh_reserve_round` | `src/mesh/mesh_memory.c` |
+| `mesh_put_round` | `src/mesh/mesh_memory.c` |
+| `mesh_release_round` | `src/mesh/mesh_memory.c` |
+| `mesh_free_round` | `src/mesh/mesh_memory.c` |
+| `mesh_say_no_room` | `src/mesh/mesh_lines.c` |
+| `mesh_say_left_out` | `src/mesh/mesh_lines.c` |
+| `mesh_add_systems` | `src/mesh/mesh_systems.c` |

@@ -1,0 +1,3 @@
+presets = ["../../presets/test.toml"]
+phases = ["check"]
+rounds = 1

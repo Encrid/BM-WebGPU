@@ -1,4 +1,4 @@
-# src/mesh_device.c
+# src/mesh/mesh_device.c
 
 This file makes the objects of a device and releases them.
 It also makes the buffers and the textures of the uploads.
@@ -16,19 +16,19 @@ It also makes the buffers and the textures of the uploads.
 7. `mesh_make_texture` makes the white texture of one pixel, and its bind group.
 8. It adds the 24 bytes of the defaults and the 4 bytes of the white texture to `held`.
 
-The pipelines and the samplers read the copy, and each round reads `webgpu:MeshSettings` itself. Thus the settings act when `docs/extern/webgpu_mesh.h.md`, *The systems*, tells.
+The pipelines and the samplers read the copy, and each round reads `webgpu:MeshSettings` itself. Thus the settings act when `docs/extern/mesh/webgpu_mesh.h.md`, *The systems*, tells.
 The value of the white texture keeps its 4 bytes, so its release gives them back.
 A call of wgpu-native that makes an object always gives one, also on an error. The error goes to the error callback of the device.
 
 ## Buffers and textures
 
 `mesh_make_buffer` makes a buffer of the usage that the caller gives. It writes the bytes of the caller into it through the queue, if the caller gives some.
-A mesh and the defaults get a vertex buffer, and the round buffer gets the usage of `docs/intern/mesh_memory.c.md`, *The round buffer*.
+A mesh and the defaults get a vertex buffer, and the round buffer gets the usage of `docs/intern/mesh/mesh_memory.c.md`, *The round buffer*.
 `mesh_make_texture` makes a texture of `RGBA8Unorm` and its view, and writes the pixels row by row.
 It also makes the bind group 1 of the texture: its view, and the sampler of its `filter`.
 
 `mesh_make_group` makes a bind group of the layout of the group 0 or of the group 1, with the entries of the caller.
-`mesh_make_texture` makes the group 1 of a texture with it, and `grow_round` of `src/mesh_memory.c` the group 0 of the round buffer.
+`mesh_make_texture` makes the group 1 of a texture with it, and `grow_round` of `src/mesh/mesh_memory.c` the group 0 of the round buffer.
 
 ## The release
 

@@ -1,5 +1,5 @@
 [[case]]
 name = "gaps.txt holds the calls that wgpu-native v29.0.1.1 does not implement, one on each line, in the order of its two files"
-run = ["{python}", "tests/gaps/names.py", "{wgpu_native_source}/src/unimplemented.rs", "{wgpu_native_source}/src/lib.rs"]
-claims = { status = 0, output = "src/gaps.txt" }
-false = { run = ["{python}", "tests/gaps/names.py", "{wgpu_native_source}/src/unimplemented.rs"] }
+run = ["{python}", "tests/wgpu_native/gaps/names.py", "{wgpu_native_source}/src/unimplemented.rs", "{wgpu_native_source}/src/lib.rs"]
+claims = { status = 0, output = "src/wgpu_native/gaps.txt" }
+false = { run = ["{python}", "tests/wgpu_native/gaps/names.py", "{wgpu_native_source}/src/unimplemented.rs"] }

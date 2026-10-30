@@ -1,7 +1,9 @@
-# src/gaps.txt
+# src/wgpu_native/gaps.txt
 
 This file lists the calls of `webgpu.h` and `wgpu.h` that wgpu-native `v29.0.1.1` does not implement.
-A release ships the file as `gaps.txt`, and the check `[check] refuse` of a WebGPU module reads it. Each call of the list in `src` or `include` of the module is a fault.
+The zip of the part ships the file as `gaps.txt`.
+`[check] refuse` of `.toolchain/project.toml` names the file, and a WebGPU module of a different project names the copy in the zip.
+Then each call of the list in `src` or `include` is a fault.
 
 ## The list
 

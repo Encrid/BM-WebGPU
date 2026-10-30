@@ -1,8 +1,8 @@
 [[case]]
 name = "the release of a target holds its library, the two headers, leaks.toml, gaps.txt and the notices"
-run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}", "--out", "{case}/out", "--pack"]
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}", "--out", "{case}/out", "--part", "wgpu_native", "--pack"]
 claims = { status = 0, line = [
     "{case}/out/BL-WGPU-Native-{target}.zip", "{wgpu_file}", "include/webgpu/webgpu.h", "include/webgpu/wgpu.h",
     "leaks.toml", "gaps.txt", "license", "third_party/wgpu_native/license",
 ], lacks = ["libwgpu_native.dll.a", "wgpu_native.dll.lib", "vcruntime140.dll"] }
-false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}", "--out", "{case}/out"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}", "--out", "{case}/out", "--part", "wgpu_native"] }

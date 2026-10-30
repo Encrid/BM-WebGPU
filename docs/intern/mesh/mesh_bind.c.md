@@ -1,4 +1,4 @@
-# src/mesh_bind.c
+# src/mesh/mesh_bind.c
 
 This file binds and draws each item of a view in the pass of a round.
 
@@ -14,7 +14,7 @@ This file binds and draws each item of a view in the pass of a round.
 
 `bind_states` binds the pipeline and the group 1, and `bind_buffers` binds the vertex buffers.
 The defaults are bound only when the `layout` of the item lacks a part. Each binding takes the rest of its buffer, from its offset.
-`docs/intern/mesh_vertex.c.md`, *The vertex buffers*, tells what each pipeline reads from them.
+`docs/intern/mesh/mesh_vertex.c.md`, *The vertex buffers*, tells what each pipeline reads from them.
 A direct draw takes a `firstInstance` above 0 with no feature of the device: https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-core/src/command/render.rs, lines 2634 to 2666.
 
 ## What the pass binds

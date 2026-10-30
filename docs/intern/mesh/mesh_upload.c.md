@@ -1,4 +1,4 @@
-# src/mesh_upload.c
+# src/mesh/mesh_upload.c
 
 This file makes the GPU objects of a mesh or of a texture again when its `gen` changes.
 It also counts the bytes of `gpu_memory`.
@@ -14,7 +14,7 @@ Each one does these steps:
 4. `mesh_release_gpu` releases the old objects of the component, with no detach.
 5. It writes the new value in place: the objects of the upload, or zeros when a rule refuses the item.
 
-Steps 2 and 5 give the two rounds of a first upload: `docs/extern/webgpu_mesh.h.md`, *The GPU objects*.
+Steps 2 and 5 give the two rounds of a first upload: `docs/extern/mesh/webgpu_mesh.h.md`, *The GPU objects*.
 Bridge drops an attach to a dead id, and a barrier that runs out of `tables` or `columns` applies no change of the entity.
 The attach holds zeros, so such a loss loses no object. Thus each GPU object of an entity is in a component from the call that makes it.
 A write in place takes no room in `changes`, and the draws of the same round find the new objects.
@@ -22,7 +22,7 @@ Step 3 needs an object, so a component of zeros tries its item again at each rou
 
 ## The upload of a mesh
 
-`upload_mesh` refuses each mesh that a rule of `docs/extern/webgpu_mesh.h.md`, *The data rules*, leaves out. It tests the rules in this order:
+`upload_mesh` refuses each mesh that a rule of `docs/extern/mesh/webgpu_mesh.h.md`, *The data rules*, leaves out. It tests the rules in this order:
 
 1. `layout` is at most 7, so `STRIDES` gives the stride of its vertices.
 2. `primitive` is at most 2.
@@ -51,7 +51,7 @@ The value keeps the `bytes` of the texture, so a release gives back what the upl
 `mesh_take_memory` adds bytes to `held` of the state, if `held` then stays at most `gpu_memory`. Else it gives false.
 The test does not add the two counts, so a large `gpu_memory` cannot wrap.
 
-A refusal gives `held` and the bytes of the item to `mesh_say_no_room`: `docs/intern/mesh_lines.c.md`, *The lines*.
+A refusal gives `held` and the bytes of the item to `mesh_say_no_room`: `docs/intern/mesh/mesh_lines.c.md`, *The lines*.
 
 `held` counts each buffer and each texture that the module holds: the buffer of each mesh, the texture of each texture, and the round buffer.
 It also counts the white texture and the buffer of the defaults. They are no items, so `mesh_make_device` adds their 28 bytes with no test.

@@ -1,7 +1,8 @@
-# src/leaks.toml
+# src/wgpu_native/leaks.toml
 
 This file names the objects of WebGPU that a module takes, for the count of `test --leaks` of each WebGPU module.
-A release ships the file as `leaks.toml`, and each WebGPU module names it in `[leaks] with`.
+The part puts the file into its zip as `leaks.toml`, for `[leaks] with` of a module of another project.
+`.toolchain/config/leaks.toml` names the file for the modules of this project.
 
 ## The pairs
 
@@ -45,7 +46,8 @@ The capabilities, the features and the information of an adapter hold memory tha
 ## The adapter and the device
 
 The adapter and the device come through a callback of the module: argument 2 of `WGPURequestAdapterCallback` and of `WGPURequestDeviceCallback`.
-This file cannot name a function of a module. Thus each module names its two callbacks in its own `leaks.toml`, each as a take at `2`.
+This file cannot name a function of a module. Thus each module names its two callbacks in its own configuration, each as a take at `2`.
+The part `device` names them in `.toolchain/config/device.toml`.
 Its kinds are `webgpu_adapter`, which `wgpuAdapterRelease` gives back, and `webgpu_device`, which `wgpuDeviceRelease` gives back.
 The device of `WGPUDeviceLostCallback` belongs to wgpu-native, so no module counts it.
 

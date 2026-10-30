@@ -70,6 +70,10 @@ wayland_window = "record[3] -/-: module 'test:probe@1.0.0' did not load: its ini
 wayland_frame = "not loaded: m/probe{library}: test:probe@1.0.0 was refused"
 no_display_says = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
 no_wayland_handle_says = "record[3] -/-: module 'test:probe@1.0.0' did not load: its init answered 1 0 0"
+native_instance_backend = "8"
+foreign_instance_backend = "4"
+missing_dxc_says = "no device: no adapter: Validation Error.*dx12 drivers/libraries could not be loaded"
+visual_says = '\A(?!.*no alpha).*render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0'
 
 [targets.aarch64-windows-gnu]
 wgpu_name = "wgpu_native"
@@ -86,6 +90,10 @@ wayland_window = "record[3] -/-: module 'test:probe@1.0.0' did not load: its ini
 wayland_frame = "not loaded: m/probe{library}: test:probe@1.0.0 was refused"
 no_display_says = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
 no_wayland_handle_says = "record[3] -/-: module 'test:probe@1.0.0' did not load: its init answered 1 0 0"
+native_instance_backend = "8"
+foreign_instance_backend = "4"
+missing_dxc_says = "no device: no adapter: Validation Error.*dx12 drivers/libraries could not be loaded"
+visual_says = '\A(?!.*no alpha).*render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0'
 
 [targets.x86_64-linux-gnu]
 wgpu_name = "libwgpu_native"
@@ -102,6 +110,10 @@ wayland_window = "record[6] test:probe@1.0.0/drive: r1 window 5 0"
 wayland_frame = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
 no_display_says = "record[3] webgpu:device@1.0.0/frame: no surface: the window has no handle of this system"
 no_wayland_handle_says = "record[3] webgpu:device@1.0.0/frame: no surface: the window has no handle of this system"
+native_instance_backend = "1"
+foreign_instance_backend = "4"
+missing_dxc_says = "render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
+visual_says = 'no alpha WEBGPU_ALPHA_PREMULTIPLIED: the frame uses WEBGPU_ALPHA_AUTO.*render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0'
 
 [targets.aarch64-linux-gnu]
 wgpu_name = "libwgpu_native"
@@ -118,6 +130,10 @@ wayland_window = "record[6] test:probe@1.0.0/drive: r1 window 5 0"
 wayland_frame = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
 no_display_says = "record[3] webgpu:device@1.0.0/frame: no surface: the window has no handle of this system"
 no_wayland_handle_says = "record[3] webgpu:device@1.0.0/frame: no surface: the window has no handle of this system"
+native_instance_backend = "1"
+foreign_instance_backend = "4"
+missing_dxc_says = "render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
+visual_says = 'no alpha WEBGPU_ALPHA_PREMULTIPLIED: the frame uses WEBGPU_ALPHA_AUTO.*render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0'
 
 [targets.x86_64-macos]
 wgpu_name = "libwgpu_native"
@@ -134,6 +150,10 @@ wayland_window = "record[3] -/-: module 'test:probe@1.0.0' did not load: its ini
 wayland_frame = "not loaded: m/probe{library}: test:probe@1.0.0 was refused"
 no_display_says = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
 no_wayland_handle_says = "record[3] -/-: module 'test:probe@1.0.0' did not load: its init answered 1 0 0"
+native_instance_backend = "4"
+foreign_instance_backend = "8"
+missing_dxc_says = "render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
+visual_says = 'no alpha WEBGPU_ALPHA_PREMULTIPLIED: the frame uses WEBGPU_ALPHA_AUTO.*render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0'
 
 [targets.aarch64-macos]
 wgpu_name = "libwgpu_native"
@@ -150,3 +170,7 @@ wayland_window = "record[3] -/-: module 'test:probe@1.0.0' did not load: its ini
 wayland_frame = "not loaded: m/probe{library}: test:probe@1.0.0 was refused"
 no_display_says = "record[6] test:probe@1.0.0/render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
 no_wayland_handle_says = "record[3] -/-: module 'test:probe@1.0.0' did not load: its init answered 1 0 0"
+native_instance_backend = "4"
+foreign_instance_backend = "8"
+missing_dxc_says = "render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0"
+visual_says = 'no alpha WEBGPU_ALPHA_PREMULTIPLIED: the frame uses WEBGPU_ALPHA_AUTO.*render: r4 frame 1 27 47 1 64 64 1 1 1 1 1 0 0'

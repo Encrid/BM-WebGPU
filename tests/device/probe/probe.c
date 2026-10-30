@@ -19,6 +19,8 @@
 #define LABEL(text) ((WGPUStringView){ text, sizeof(text) - 1 })
 #define ENUM(api, name, T) BRIDGE_NATIVE_DECLARE(api, BRIDGE_ENUM, name, T, \
     BRIDGE_STRIP, BRIDGE_TABLE, BRIDGE_ON_DESTROY_REMOVE)
+#define BITS(api, name, T) BRIDGE_NATIVE_DECLARE(api, BRIDGE_BITMASK, name, \
+    T, BRIDGE_STRIP, BRIDGE_TABLE, BRIDGE_ON_DESTROY_REMOVE)
 #define SINGLE(api, name, T) BRIDGE_NATIVE_COMPONENT(api, name, T, \
     BRIDGE_STRIP, BRIDGE_SINGLETON, BRIDGE_ON_DESTROY_REMOVE)
 
@@ -46,6 +48,7 @@ enum act : uint32_t {
     NO_X11_DISPLAY,
     NO_WL_DISPLAY,
     NO_WL_SURFACE,
+    LONG_PATH,
     END
 };
 
@@ -135,7 +138,9 @@ static const step_t STEPS[] = {
     { "tune", 2, 2, END, 0, 0 },
     { "tell", 1, 1, TELL, 0, 0 },
     { "reload", 1, 1, RELOAD, 0, 0 },
-    { "reload", 2, 2, END, 0, 0 }
+    { "reload", 2, 2, END, 0, 0 },
+    { "longpath", 1, 1, LONG_PATH, 0, 0 },
+    { "longpath", 2, 2, END, 0, 0 }
 };
 
 static uint32_t scene_slot;
@@ -326,9 +331,12 @@ static void tune_settings(const bridge_api_t *api, const test_scene_t *on)
     webgpu_device_settings_t *s = bridge_native_get_single(api,
         settings_slot);
 
-    for (size_t i = 0; s && i < COUNT(STEPS); i++)
+    for (size_t i = 0; s && i < COUNT(STEPS); i++) {
         if (STEPS[i].act == SAMPLES && is_now(&STEPS[i], on))
             s->samples = (webgpu_samples_t)STEPS[i].a;
+        if (STEPS[i].act == LONG_PATH && is_now(&STEPS[i], on))
+            memset(s->dxc_path, 'a', sizeof(s->dxc_path));
+    }
 }
 
 static void ignore_scope([[maybe_unused]] WGPUPopErrorScopeStatus status,
@@ -497,6 +505,12 @@ static void declare_types(const bridge_api_t *api)
     ENUM(api, "webgpu:webgpu_depth_t", webgpu_depth_t);
     ENUM(api, "webgpu:webgpu_limits_t", webgpu_limits_t);
     ENUM(api, "webgpu:webgpu_features_t", webgpu_features_t);
+    BITS(api, "webgpu:webgpu_instance_backends_t", webgpu_instance_backends_t);
+    BITS(api, "webgpu:webgpu_instance_flags_t", webgpu_instance_flags_t);
+    ENUM(api, "webgpu:webgpu_d3d12_compiler_t", webgpu_d3d12_compiler_t);
+    ENUM(api, "webgpu:webgpu_d3d12_swapchain_t", webgpu_d3d12_swapchain_t);
+    ENUM(api, "webgpu:webgpu_gles_version_t", webgpu_gles_version_t);
+    ENUM(api, "webgpu:webgpu_gl_fence_t", webgpu_gl_fence_t);
     ENUM(api, "webgpu:webgpu_surface_t", webgpu_surface_t);
     ENUM(api, "webgpu:webgpu_frame_state_t", webgpu_frame_state_t);
     settings_slot = BRIDGE_NATIVE_COMPONENT(api, "webgpu:DeviceSettings",

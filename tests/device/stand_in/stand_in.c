@@ -302,8 +302,45 @@ static uint32_t take_status(void)
     return (given);
 }
 
+static int get_percent(const uint8_t *percent)
+{
+    return (percent != nullptr ? *percent : -1);
+}
+
+static void tell_extras(const WGPUInstanceExtras *e)
+{
+    WGPUStringView path = e->dxcPath;
+
+    if (path.data == nullptr)
+        path = (WGPUStringView){ "(null)", 6 };
+    fprintf(stderr, "stand-in: instance backends %u flags %u compiler %u "
+        "path '%.*s' swapchain %u gles %u fence %u creation %d loss %d "
+        "display %u\n", (unsigned)e->backends, (unsigned)e->flags,
+        (unsigned)e->dx12ShaderCompiler, (int)path.length, path.data,
+        (unsigned)e->dx12PresentationSystem, (unsigned)e->gles3MinorVersion,
+        (unsigned)e->glFenceBehaviour,
+        get_percent(e->budgetForDeviceCreation),
+        get_percent(e->budgetForDeviceLoss),
+        (unsigned)e->displayHandle.type);
+}
+
+static void tell_instance(const WGPUInstanceDescriptor *descriptor)
+{
+    const WGPUChainedStruct *chain = descriptor != nullptr
+        ? descriptor->nextInChain : nullptr;
+
+    if (getenv("STAND_IN_TELL") == nullptr)
+        return;
+    if (chain != nullptr
+        && chain->sType == (WGPUSType)WGPUSType_InstanceExtras)
+        tell_extras((const WGPUInstanceExtras *)chain);
+    else
+        fprintf(stderr, "stand-in: instance with no extras\n");
+}
+
 WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor *descriptor)
 {
+    tell_instance(descriptor);
     if (getenv("STAND_IN_NO_INSTANCE") != nullptr || get_real() == nullptr)
         return (nullptr);
     return (((WGPUProcCreateInstance)find_real("wgpuCreateInstance"))(

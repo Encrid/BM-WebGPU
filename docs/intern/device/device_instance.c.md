@@ -1,11 +1,11 @@
-# src/device_instance.c
+# src/device/device_instance.c
 
-This file fills the extras of the instance from the settings: `docs/extern/webgpu_device.h.md`, *The instance*.
+This file fills the extras of the instance from the settings: `docs/extern/device/webgpu_device.h.md`, *The instance*.
 
 ## The extras
 
 `device_set_instance` writes each field of `WGPUInstanceExtras` from its setting. Then it chains the extras to the descriptor of the instance.
-It does not write the display, because `set_wayland_source` writes it: `docs/intern/device_source.c.md`.
+It does not write the display, because `set_wayland_source` writes it: `docs/intern/device/device_source.c.md`.
 
 | Field of `WGPUInstanceExtras` | Value |
 | --- | --- |

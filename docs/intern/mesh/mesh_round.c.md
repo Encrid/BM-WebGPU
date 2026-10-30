@@ -1,11 +1,11 @@
-# src/mesh_round.c
+# src/mesh/mesh_round.c
 
 This file holds the systems `keep_meshes` and `keep_textures`. They start each round, and keep the uploads of the meshes and of the textures.
 
 ## The start of a round
 
-`keep_meshes` runs first in the phase `render`: `docs/intern/mesh_systems.c.md`, *The order*.
-It does the steps of `docs/extern/webgpu_mesh.h.md`, *The systems*, that come before the draws:
+`keep_meshes` runs first in the phase `render`: `docs/intern/mesh/mesh_systems.c.md`, *The order*.
+It does the steps of `docs/extern/mesh/webgpu_mesh.h.md`, *The systems*, that come before the draws:
 
 ```pseudo
 FUNCTION bridge_keep_meshes(f : Frame) RETURNS I32
@@ -26,7 +26,7 @@ ENDFUNCTION
 
 The pseudo code takes a frame that is not there as a frame of the state `WEBGPU_FRAME_NO_DEVICE`.
 `keep_textures` runs next. It gives `TEXTURE_GPU` to `sweep_set`, and in a ready round it gives each texture to `mesh_keep_texture`.
-Each system first keeps its api in the state, so that the helpers of `src/mesh_lines.c` write with it.
+Each system first keeps its api in the state, so that the helpers of `src/mesh/mesh_lines.c` write with it.
 
 ## The flags of a round
 
@@ -46,7 +46,7 @@ ENDPROCEDURE
 ```
 
 `open_round` also sets the counts of the round to 0: the views, the items and the bytes of the batches.
-`is_same_device` compares the copy that the state keeps with the four fields of `webgpu:Frame` that `docs/extern/webgpu_mesh.h.md`, *The systems*, names.
+`is_same_device` compares the copy that the state keeps with the four fields of `webgpu:Frame` that `docs/extern/mesh/webgpu_mesh.h.md`, *The systems*, names.
 
 ## The sweep of a set
 
@@ -65,7 +65,7 @@ ENDPROCEDURE
 
 A round that releases is never ready, so one call makes at most one sweep.
 The release writes zeros over each GPU component in place. Thus the next ready round uploads each item into its component, with the objects of the new device.
-`left` of the state holds a flag for each set. A flag tells that a detach found no room: `docs/intern/mesh_release.c.md`, *No room for a detach*.
+`left` of the state holds a flag for each set. A flag tells that a detach found no room: `docs/intern/mesh/mesh_release.c.md`, *No room for a detach*.
 With no objects of a device and no detach that waits, a round with no frame sweeps nothing.
 
 ## Functions

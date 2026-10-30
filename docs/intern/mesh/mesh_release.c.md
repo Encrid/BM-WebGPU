@@ -1,4 +1,4 @@
-# src/mesh_release.c
+# src/mesh/mesh_release.c
 
 This file releases the GPU objects that `webgpu:MeshGpu` and `webgpu:TextureGpu` hold.
 It holds the observers `release_mesh` and `release_texture`, and the sweep of the two sets.
@@ -15,7 +15,7 @@ It holds the observers `release_mesh` and `release_texture`, and the sweep of th
 It gives false only when a detach found no room.
 A caller that keeps the component gives the id 0. These callers are the keep of an upload, a sweep with `all`, and the release of the white texture.
 A buffer goes with `wgpuBufferRelease`. A texture goes with `wgpuBindGroupRelease`, `wgpuTextureViewRelease` and `wgpuTextureRelease`, in this order.
-Each object holds one reference of the module, and its call `Release` gives it back once: the pairs of `leaks.toml` of BL-WGPU-Native.
+Each object holds one reference of the module, and its call `Release` gives it back once: the pairs of `src/wgpu_native/leaks.toml`.
 
 ## The observers
 
@@ -36,11 +36,11 @@ It gives true when a detach found no room.
 
 ## No room for a detach
 
-This section is how a detach waits, as `docs/extern/webgpu_mesh.h.md`, *The GPU objects*, tells.
+This section is how a detach waits, as `docs/extern/mesh/webgpu_mesh.h.md`, *The GPU objects*, tells.
 A detach that finds no room leaves a component of zeros, and sets the flag `left` of its set.
-An entity that still carries its mesh or its texture uploads into that component again, as `docs/intern/mesh_upload.c.md`, *Keep by gen*, tells.
+An entity that still carries its mesh or its texture uploads into that component again, as `docs/intern/mesh/mesh_upload.c.md`, *Keep by gen*, tells.
 A husk keeps the component until a sweep detaches it. While the flag of a set is set, the system of that set sweeps it without `all` before its uploads.
-The sweep is in `docs/intern/mesh_round.c.md`, *The sweep of a set*.
+The sweep is in `docs/intern/mesh/mesh_round.c.md`, *The sweep of a set*.
 
 The sweep reads each cell of the index, so its cost grows with `entities`.
 A sweep without `all` runs only after a detach found no room. A sweep with `all` runs at a lost device, at a new device and at the stop.
@@ -51,14 +51,14 @@ A sweep without `all` runs only after a detach found no room. A sweep with `all`
 | --- | --- |
 | The app destroys the entity. | The component stays on the husk. The observer releases the objects at the barrier of the destroy, and detaches the component. |
 | The app detaches `webgpu:Mesh` or `webgpu:Texture`. | The observer releases the objects at that barrier, and detaches the component. |
-| The `gen` changes. | The keep of `src/mesh_upload.c` releases the old objects, then writes the new objects in place. |
+| The `gen` changes. | The keep of `src/mesh/mesh_upload.c` releases the old objects, then writes the new objects in place. |
 | The device is lost, or a new device comes. | `keep_meshes` and `keep_textures` sweep their sets with `all`. Each component stays, with no object, unless its entity lost its item. `keep_meshes` also releases the objects of the device. |
 | The module stops. | `bridge_shutdown` makes the same release, before Bridge removes the components. |
 
 Each row releases through `mesh_release_gpu`, which writes zeros. Thus when two rows meet one component, the second release finds no object.
 For example, a destroy in the round of a lost device gives a sweep and an observer, and only the first one releases.
 
-No GPU object of an entity lives outside its component, as `docs/intern/mesh_upload.c.md`, *Keep by gen*, tells. Thus no such object can go by a way outside this table.
+No GPU object of an entity lives outside its component, as `docs/intern/mesh/mesh_upload.c.md`, *Keep by gen*, tells. Thus no such object can go by a way outside this table.
 A detach that waits for its barrier never meets an upload in place, since its entity carries no mesh or texture.
 
 ## Functions

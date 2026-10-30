@@ -1,13 +1,13 @@
-# src/mesh_store.c
+# src/mesh/mesh_store.c
 
 This file holds the state of the module, and reads the storage of Bridge.
 It also reads the room that is left in `changes`.
 
 ## The state
 
-A native module gets only its API at each call, so its state has no other place between two rounds.
-The file keeps it in one static struct, and `mesh_get_state` gives it to the other sources.
-A `[[style.exception]]` of the project excuses this struct from the rule G4, with that reason.
+The state has no other place between two rounds, so the file keeps it in one static struct.
+`mesh_get_state` gives it to the other sources.
+The rule G4 does not apply to this struct: a `[[style.exception]]` of `.toolchain/project.toml` gives the reason.
 Bridge runs the systems and the observers of one module one after another: `bridge.h.md` of Bridge, in its section bridge_run_phase.
 Thus no two calls change the state at the same time, and the five systems pass the data of a round through it.
 
@@ -32,7 +32,7 @@ FUNCTION mesh_walk(system : U32, slot : U32, visit : Visit) RETURNS U32
 ENDFUNCTION
 ```
 
-The query of each system has one term of `BRIDGE_AND`, on its kind of item: `docs/intern/mesh_systems.c.md`, *The statements*.
+The query of each system has one term of `BRIDGE_AND`, on its kind of item: `docs/intern/mesh/mesh_systems.c.md`, *The statements*.
 Bridge writes a span only for a table that a query matches. Thus a walk reads only the tables that hold the kind of item of its system.
 Each caller gives the slot of that term, so each table of a span carries the component. With no visit, `mesh_walk` only counts the rows.
 
@@ -48,14 +48,14 @@ Each caller gives the slot of that term, so each table of a span carries the com
 `kind` of the header gives the storage of each slot.
 Bridge writes the kept cell of each set at the barrier of the load, before the first system or observer runs.
 The sources are `bridge_load.c.md` of Bridge, in its step 12, and `storage_cells.c.md` of Bridge, in its section What it writes.
-Thus `mesh_find` reads the index of a set with no test of its kept cell. Only `bridge_shutdown` can run before that barrier: `docs/intern/webgpu_mesh.c.md`, *The stop*.
+Thus `mesh_find` reads the index of a set with no test of its kept cell. Only `bridge_shutdown` can run before that barrier: `docs/intern/mesh/webgpu_mesh.c.md`, *The stop*.
 
 A husk keeps its generation, so its id finds its kept components, and no other component.
 A value stays good until the next barrier, so no source keeps it longer.
 
 ## The data rules
 
-`mesh_get_data` gives the bytes of a field `bridge_text_t`, or 0 and the rule that refuses them. It applies `docs/extern/webgpu_mesh.h.md`, *The data rules*, in this order:
+`mesh_get_data` gives the bytes of a field `bridge_text_t`, or 0 and the rule that refuses them. It applies `docs/extern/mesh/webgpu_mesh.h.md`, *The data rules*, in this order:
 
 1. The bytes must lie from `arena_lo` to `arena_hi` of the header. The test does not add the place and the length, so a long field cannot wrap.
 2. The length must not be 0.

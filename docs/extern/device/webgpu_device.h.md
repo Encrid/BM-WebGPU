@@ -1,6 +1,6 @@
-# include/webgpu_device.h
+# include/device/webgpu_device.h
 
-`include/webgpu_device.h` is the header of the module `webgpu:device@1.0.0`, the WebGPU device of Bridge.
+`include/device/webgpu_device.h` is the header of the module `webgpu:device@1.0.0`, the WebGPU device of Bridge.
 The module makes the device and the surface of one window, and gives the frame of each round to the render modules.
 It covers the instance, the adapter, the device and the surface of `webgpu.h`. It draws nothing: each render module draws its own passes.
 
@@ -15,7 +15,7 @@ It covers the instance, the adapter, the device and the surface of `webgpu.h`. I
 | `pinned` | `true`, because on macOS the module must make and configure the surface on the thread of the window. |
 | `reloadable` | `false`, because the objects of each render module belong to its device. |
 
-The manifest also gives a default for each of these keys of the module. A deployment that states one of them replaces its default.
+The manifest also gives these defaults: `readme.md`, *The modules*.
 
 | Key | Default | Reason |
 | --- | --- | --- |
@@ -27,16 +27,14 @@ The manifest also gives a default for each of these keys of the module. A deploy
 | `persistent` | `"none"` | The module keeps no data in the arena. |
 | `hot_reload` | `false` | The module cannot reload. |
 
-The header `bridge.h` of Bridge tells the room that `spans` needs in a world with many tables.
-
-The file of the module is `webgpu_device`, with the suffix of a library. It runs on the backend of BB-Native, and loads the wgpu-native library of BL-WGPU-Native, which sits beside it.
+The file of the module is `webgpu_device`, with the suffix of a library: `readme.md`, *The modules*, tells where it runs.
 It needs no SDL3: the app gives it the window through `webgpu:Window`.
 
 ## The contract
 
 The module reads `webgpu:Window`, and writes `webgpu:Frame` for the render modules.
-These singletons and their enums `webgpu:webgpu_surface_t` and `webgpu:webgpu_frame_state_t` are the contract of BL-WebGPU-Contract.
-The document of `webgpu_contract.h` of that library tells their fields, their constants and the roles of the modules.
+These singletons and their enums `webgpu:webgpu_surface_t` and `webgpu:webgpu_frame_state_t` are the contract of the part `contract`.
+`docs/extern/contract/webgpu_contract.h.md` tells their fields, their constants and the roles of the modules.
 
 The module makes no surface for a kind of window of another system, for example `WEBGPU_SURFACE_METAL` on Windows: *Messages*.
 It makes none for a value that names no kind, or for a handle of 0.
@@ -152,7 +150,7 @@ With wgpu-native v29.0.1.1, a lost device stops the process at these calls:
 
 ## webgpu:DeviceSettings
 
-`webgpu:DeviceSettings` is the singleton of the settings. Bridge writes it from the deployment, or from the defaults of the manifest.
+`webgpu:DeviceSettings` is the singleton of the settings: `readme.md`, *The modules*, tells how a deployment states it.
 
 | Field | C type | Value |
 | --- | --- | --- |
@@ -181,8 +179,7 @@ With wgpu-native v29.0.1.1, a lost device stops the process at these calls:
 If `fallback` is `true`, or `backend` is not `WEBGPU_BACKEND_ANY`, a system with no such adapter gives none: *Messages*.
 If the surface or the device does not give the value of a setting, the module uses another value. It writes a line at the level 4.
 
-Each enum of the settings is of `uint32_t`. A deployment states a constant by its name or by its value.
-Each bitmask of the settings is of `uint32_t` too. A deployment states it by its value: the sum of the values of its constants.
+Each bitmask of the settings is of `uint32_t`. A deployment states a bitmask by its value: the sum of the values of its constants.
 A deployment can state `dxc_path` as `{ path = "<path>" }`: a path from the folder of the file, as the readme of Bridge-Host tells.
 
 Bridge refuses a value that is not valid, and then the module does not load. The record of Bridge names the setting, for example:
@@ -406,9 +403,8 @@ https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-hal/src/gles/fence.rs#L37-L45 s
 
 ## The C types
 
-`include/webgpu_device.h` gives the C type of each type of the module, and its descriptor for Bridge.
+`include/device/webgpu_device.h` holds the C type and the descriptor of each type of the module: `docs/extern/contract/webgpu_contract.h.md`, *The C types*, tells how.
 It includes `webgpu_contract.h`, which gives the C types of *The contract*.
-The header includes `bridge_schema.h` of Bridge. It makes each C type and its descriptor from one text, with the macros of that header.
 
 | Type of Bridge | C type | Descriptor | Macro of the text |
 | --- | --- | --- | --- |
@@ -430,8 +426,7 @@ The header includes `bridge_schema.h` of Bridge. It makes each C type and its de
 | `webgpu:webgpu_gl_fence_t` | `webgpu_gl_fence_t` | `webgpu_gl_fence_t_desc` | `WEBGPU_GL_FENCE_VALUES` |
 | `webgpu:DeviceSettings` | `webgpu_device_settings_t` | `webgpu_device_settings_t_desc` | `WEBGPU_DEVICE_SETTINGS_FIELDS` |
 
-Each macro of the text gives the braces of its type and the text between them.
-A module in another language does not include the header. It states the descriptor of each type with these bytes, in the order of the table:
+The bytes of the descriptors, in the order of the table:
 
 ```text
 uint32_t { WEBGPU_PRESENT_FIFO = 1, WEBGPU_PRESENT_FIFO_RELAXED = 2, WEBGPU_PRESENT_IMMEDIATE = 3, WEBGPU_PRESENT_MAILBOX = 4 }
@@ -455,8 +450,7 @@ uint32_t { WEBGPU_GL_FENCE_NORMAL = 1, WEBGPU_GL_FENCE_AUTO_FINISH = 2 }
 
 ## The declarations
 
-Each module that reads or writes a type of the module declares it in its `init`. A module in C gives the C type and the descriptor of the header.
-Bridge compares the descriptors byte for byte. It also refuses a second module that states another kind, storage layout or `on_destroy`.
+Each module that reads or writes a type of the module declares it in its `init`: `docs/extern/contract/webgpu_contract.h.md`, *The declarations*, tells the rules.
 
 | Type of Bridge | Kind | Storage layout | `on_destroy` |
 | --- | --- | --- | --- |
@@ -478,9 +472,9 @@ Bridge compares the descriptors byte for byte. It also refuses a second module t
 | `webgpu:webgpu_gl_fence_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
 | `webgpu:DeviceSettings` | `BRIDGE_STRUCT` | `BRIDGE_SINGLETON` | `BRIDGE_ON_DESTROY_REMOVE` |
 
-A module declares the 14 enums and the 2 bitmasks before `webgpu:DeviceSettings`, which names them. Bridge finds the type of a field only among the types that are already declared.
-The module states `BRIDGE_STRIP` as the `on_unload` of each type, so its unload destroys no entity. Bridge does not compare `on_unload`, so each module states its own.
-The module also declares the four types of *The contract*, as the document of `webgpu_contract.h` tells.
+A module declares the 14 enums and the 2 bitmasks before `webgpu:DeviceSettings`, which names them.
+The module states `BRIDGE_STRIP` as the `on_unload` of each type, so its unload destroys no entity.
+The module also declares the four types of *The contract*: `docs/extern/contract/webgpu_contract.h.md`, *The declarations*.
 
 ## The deployment
 
@@ -491,10 +485,8 @@ The module also declares the four types of *The contract*, as the document of `w
 - A deployment gives the settings in `[module."webgpu:device@1.0.0".config]`.
 - A deployment holds one wgpu-native library, beside the WebGPU modules, so that each module loads that one library.
 - The wgpu-native library is no module, so `content.ignore` names it.
-- On `aarch64-windows-gnu`, the wgpu-native library needs the Microsoft Visual C++ Redistributable for arm64 on the machine: the readme of BL-WGPU-Native.
-- The backend of BB-Native has no capability of a limit, so `work_limit`, `memory_limit` and the three timeouts of the module are `"none"`.
-
-The readme of Bridge-Host tells each key of a deployment.
+- On `aarch64-windows-gnu`, the machine needs a runtime of MSVC: `readme.md`, *wgpu_native*.
+- Each limit and each timeout of the module is `"none"`: `readme.md`, *The modules*.
 
 ## Messages
 

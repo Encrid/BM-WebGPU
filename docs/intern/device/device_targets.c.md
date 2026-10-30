@@ -1,4 +1,4 @@
-# src/device_targets.c
+# src/device/device_targets.c
 
 This file chooses the samples and the depth of the frame, and makes the two targets: the multisample texture and the depth texture.
 
@@ -6,7 +6,7 @@ This file chooses the samples and the depth of the frame, and makes the two targ
 
 `device_choose_targets` runs before the request of the device. It gives the features that the targets need, for `WEBGPU_FEATURES_DEFAULT`:
 
-1. It keeps `samples`. `checked` is `true` for 1 and 4 samples: `docs/extern/webgpu_device.h.md`, *webgpu:webgpu_samples_t*.
+1. It keeps `samples`. `checked` is `true` for 1 and 4 samples: `docs/extern/device/webgpu_device.h.md`, *webgpu:webgpu_samples_t*.
 2. For 2, 8 and 16 samples, it adds `SAMPLES_FEATURE`, which is `WGPUNativeFeature_TextureAdapterSpecificFormatFeatures`, if the adapter has it.
 3. It keeps the `WGPUTextureFormat` of `depth`, from the table `DEPTHS`. `WEBGPU_DEPTH_NONE` gives 0.
 4. For `Depth32FloatStencil8`, it adds its feature if the adapter has it. Else it writes the line of `depth`, and uses `Depth24PlusStencil8`.
@@ -53,8 +53,8 @@ ENDFUNCTION
 
 `take_scope` gets the answer in the mode `WGPUCallbackMode_AllowProcessEvents`, as a request does. It sets `checked`, and clears `waiting`.
 After an error, it writes the line of `samples`, and keeps 4 samples. The first configure of the surface then makes the targets at the size of the window.
-`device_choose_targets` and `take_scope` write the line of a setting with `device_say_fallback`: `docs/intern/device_lines.c.md`.
-`take_scope` keeps the rules of `docs/intern/device_inside.h.md`, *Callbacks*.
+`device_choose_targets` and `take_scope` write the line of a setting with `device_say_fallback`: `docs/intern/device/device_lines.c.md`.
+`take_scope` keeps the rules of `docs/intern/device/device_inside.h.md`, *Callbacks*.
 
 ## Functions
 

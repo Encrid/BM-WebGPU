@@ -1,4 +1,4 @@
-# src/mesh_pass.c
+# src/mesh/mesh_pass.c
 
 This file encodes the render pass of a round, and draws each view.
 
@@ -14,7 +14,7 @@ This file encodes the render pass of a round, and draws each view.
 6. It releases the pass, the command buffer and the encoder.
 
 `mesh_encode` keeps the pass in a `mesh_pass_t`, with the frame and two offsets in the round buffer.
-The records start after the blocks of the views, and the batches after the records: `docs/intern/mesh_memory.c.md`, *The round buffer*.
+The records start after the blocks of the views, and the batches after the records: `docs/intern/mesh/mesh_memory.c.md`, *The round buffer*.
 
 `begin_pass` gives the pass these attachments. `get_color_attachment` gives the color, and `get_depth_attachment` gives the depth and the stencil:
 
@@ -26,7 +26,7 @@ The records start after the blocks of the views, and the batches after the recor
 
 Each attachment stores what the pass drew, so a later render module with `WEBGPU_LOAD_KEEP` loads it.
 A round with no view only clears, or draws nothing.
-`begin_pass` clamps `clear_depth` as `docs/extern/webgpu_mesh.h.md`, *webgpu:MeshSettings*, tells. wgpu-core refuses a pass with a clear depth outside 0 to 1.
+`begin_pass` clamps `clear_depth` as `docs/extern/mesh/webgpu_mesh.h.md`, *webgpu:MeshSettings*, tells. wgpu-core refuses a pass with a clear depth outside 0 to 1.
 wgpu-core needs a load and a store of the stencil for a format with a stencil, and reads none for another format.
 The source is https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-core/src/command/render.rs, lines 1696 to 1716.
 
@@ -38,7 +38,7 @@ Then the command buffer would have to stay out of the queue.
 
 wgpu-native v29.0.1.1 drops a command buffer only after `wgpuQueueSubmit` takes it: https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/lib.rs#L111-L118 and https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/lib.rs#L3084.
 On D3D12 and on WARP, a command buffer that stays holds the back buffer. Then the next configure of the surface fails, and stops the process: https://github.com/gfx-rs/wgpu-native/issues/638.
-Thus `mesh_encode` always submits, and an error in the commands stops the process: `docs/extern/webgpu_mesh.h.md`, *Messages*.
+Thus `mesh_encode` always submits, and an error in the commands stops the process: `docs/extern/mesh/webgpu_mesh.h.md`, *Messages*.
 
 ## A view
 
@@ -51,7 +51,7 @@ Thus the projection of a view stays the same, and the pass draws only its part i
 The source is https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-core/src/command/render.rs, lines 2545 to 2571 and 2597 to 2600.
 
 The dynamic offset of the group is the index of the block times `BLOCK`.
-Then `draw_view` gives each item that shares a bit with `mask` of the view to `mesh_draw_item`: `docs/intern/mesh_bind.c.md`, *A draw*.
+Then `draw_view` gives each item that shares a bit with `mask` of the view to `mesh_draw_item`: `docs/intern/mesh/mesh_bind.c.md`, *A draw*.
 
 ## Functions
 

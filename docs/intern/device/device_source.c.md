@@ -1,7 +1,7 @@
 # src/device_source.c
 
 This file fills the source of the surface for the kind of the window.
-The source is the chained struct of `webgpu.h`, and on Wayland also the display of the instance.
+The source is the chained struct of `webgpu.h`, and on Wayland also the display in the extras of the instance.
 
 ## The kinds
 
@@ -22,10 +22,8 @@ So the check comes before each call that makes a surface.
 ## Wayland
 
 On Wayland, the instance gets the display of the window in `WGPUInstanceExtras`. The GLES backend needs it to present: https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/ffi/wgpu.h#L1102-L1112.
-`set_wayland_source` writes the display into the extras, with the flag `WGPUInstanceFlag_Default`, and chains the extras to the descriptor of the instance.
-With that flag, the instance gets the flags of an instance with no extras.
-https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/conv.rs#L345-L347 and https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-types/src/instance.rs#L67-L75 show it.
-For each other kind, the descriptor of the instance stays empty.
+`set_wayland_source` writes the display into the extras. `device_set_instance` writes the other fields of the extras from the settings, and chains them.
+For each other kind, the display of the extras stays `WGPUNativeDisplayHandleType_None`.
 
 ## Functions
 

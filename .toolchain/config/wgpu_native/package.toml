@@ -1,3 +1,0 @@
-[compose.wgpu_native]
-from = "build/third_party/wgpu_native/{target}"
-headers = ["include/webgpu/*.h"]

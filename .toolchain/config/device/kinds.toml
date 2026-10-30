@@ -1,7 +1,0 @@
-[kinds.wgpu_module]
-output = "{name}{library}"
-flags = ["{native_flags}"]
-steps = [
-    { cwd = "{wgpu_native}", run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "-shared", "{pic}", "{soname}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "{include}", "{sources}", "{wgpu_file}", "{flags}", "-o", "{output}"] },
-    { contains = "{manifest:\u0000}" },
-]

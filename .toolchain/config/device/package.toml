@@ -1,6 +1,0 @@
-[package]
-proof = "tests/package/proof.c"
-include = ["{bridge}/include", "{webgpu_contract}/include"]
-
-[compose.base]
-headers = ["include/*.h"]

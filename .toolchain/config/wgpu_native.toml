@@ -1,0 +1,150 @@
+[parts.wgpu_native]
+name = "BL-WGPU-Native"
+uses = []
+third_party = ["wgpu_native"]
+
+[compose.wgpu_native]
+part = "wgpu_native"
+from = "build/third_party/wgpu_native/{target}"
+headers = ["include/webgpu/*.h"]
+
+[[source]]
+name = "wgpu_native"
+url = "https://github.com/gfx-rs/wgpu-native/releases/download/v29.0.1.1/{wgpu_zip}"
+sha256 = "{wgpu_sha256}"
+into = "build/third_party/wgpu_native/{target}"
+
+[[source]]
+name = "wgpu_windows_x86_64"
+url = "https://github.com/gfx-rs/wgpu-native/releases/download/v29.0.1.1/wgpu-windows-x86_64-gnu-release.zip"
+sha256 = "d471e3614733c1d4ddd61bfd19868356477d0d37bf531bf8c6cb64a7f579bd2a"
+into = "build/third_party/wgpu_windows_x86_64"
+
+[[source]]
+name = "wgpu_windows_aarch64"
+url = "https://github.com/gfx-rs/wgpu-native/releases/download/v29.0.1.1/wgpu-windows-aarch64-msvc-release.zip"
+sha256 = "4a876421a8c1e5fe72f849b3722214280fe485cb1c56f77f8b0c82414be5b29f"
+into = "build/third_party/wgpu_windows_aarch64"
+
+[[source]]
+name = "wgpu_native_source"
+url = "https://github.com/gfx-rs/wgpu-native/archive/refs/tags/v29.0.1.1.tar.gz"
+sha256 = "6008651e1d10022d4ded15b69405b4ba88577be5d623938ba98ad241b2cbf818"
+into = "build/third_party/wgpu_native_source"
+top = "wgpu-native-29.0.1.1"
+
+[targets.x86_64-windows-gnu]
+wgpu_zip = "wgpu-windows-x86_64-gnu-release.zip"
+wgpu_sha256 = "d471e3614733c1d4ddd61bfd19868356477d0d37bf531bf8c6cb64a7f579bd2a"
+wgpu_file = "wgpu_native.dll"
+
+[targets.aarch64-windows-gnu]
+wgpu_zip = "wgpu-windows-aarch64-msvc-release.zip"
+wgpu_sha256 = "4a876421a8c1e5fe72f849b3722214280fe485cb1c56f77f8b0c82414be5b29f"
+wgpu_file = "wgpu_native.dll"
+
+[targets.x86_64-linux-gnu]
+wgpu_zip = "wgpu-linux-x86_64-release.zip"
+wgpu_sha256 = "95a4d90c071005a98d03eab348beaa6b07e16eb00d1dcdb9f8348f75eb97ec5a"
+wgpu_file = "libwgpu_native.so"
+
+[targets.aarch64-linux-gnu]
+wgpu_zip = "wgpu-linux-aarch64-release.zip"
+wgpu_sha256 = "015fcdf1dbae82e614a783cc38017e5399ae0927a889fe9b69c9b664bc61b47a"
+wgpu_file = "libwgpu_native.so"
+
+[targets.x86_64-macos]
+wgpu_zip = "wgpu-macos-x86_64-release.zip"
+wgpu_sha256 = "8e2f7378548ddd0e2cf21e7d864dda46e953f0af724855a33778b85ead206d41"
+wgpu_file = "libwgpu_native.dylib"
+
+[targets.aarch64-macos]
+wgpu_zip = "wgpu-macos-aarch64-release.zip"
+wgpu_sha256 = "a5797a37b1adf720bcd5dcffb291edbbd5b7b14be0a3874c28e6393a655a7a3e"
+wgpu_file = "libwgpu_native.dylib"
+
+[kinds.wgpu_program]
+output = "{name}{exe}"
+steps = [
+    { cwd = "{wgpu_native}/lib", run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "-I{wgpu_native}/include", "{sources}", "{wgpu_file}", "{rpath}", "-o", "{output}", "{stack}"] },
+]
+
+[kinds.pe_file]
+output = "{name}.dll"
+steps = [
+    { run = ["{python}", "{sources}", "{output}", "{manifest}"] },
+]
+
+[[artifact]]
+name = "{wgpu_file}"
+kind = "file"
+part = "wgpu_native"
+sources = ["build/third_party/wgpu_native/{target}/lib/{wgpu_file}"]
+
+[[artifact]]
+name = "leaks.toml"
+kind = "file"
+part = "wgpu_native"
+sources = ["src/wgpu_native/leaks.toml"]
+
+[[artifact]]
+name = "gaps.txt"
+kind = "file"
+part = "wgpu_native"
+sources = ["src/wgpu_native/gaps.txt"]
+
+[[artifact]]
+name = "smoke"
+kind = "wgpu_program"
+part = "wgpu_native"
+test = true
+sources = ["tests/wgpu_native/smoke/smoke.c"]
+
+[[artifact]]
+name = "other"
+kind = "library"
+part = "wgpu_native"
+target = "x86_64-windows-gnu"
+test = true
+sources = ["tests/wgpu_native/imports/other.c"]
+
+[[artifact]]
+name = "vcruntime140"
+kind = "library"
+part = "wgpu_native"
+target = "x86_64-windows-gnu"
+test = true
+sources = ["tests/wgpu_native/imports/runtime.c"]
+
+[[artifact]]
+name = "user"
+kind = "library"
+part = "wgpu_native"
+target = "x86_64-windows-gnu"
+test = true
+sources = ["tests/wgpu_native/imports/user.c"]
+link = ["{out}/other.dll"]
+
+[[artifact]]
+name = "both"
+kind = "library"
+part = "wgpu_native"
+target = "x86_64-windows-gnu"
+test = true
+sources = ["tests/wgpu_native/imports/both.c"]
+link = ["{out}/vcruntime140.dll", "{out}/other.dll"]
+
+[[artifact.variants]]
+name = "both_swapped"
+defines = ["SWAPPED"]
+
+[[artifact]]
+name = "delayed"
+kind = "pe_file"
+part = "wgpu_native"
+test = true
+sources = ["tests/wgpu_native/imports/delayed.py"]
+
+[[artifact.variants]]
+name = "unmapped"
+manifest = ["0x9000"]

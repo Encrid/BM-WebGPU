@@ -1,0 +1,2 @@
+[leaks]
+with = ["src/wgpu_native/leaks.toml"]

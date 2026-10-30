@@ -1,0 +1,513 @@
+[[case]]
+name = "the app writes webgpu:Scene and the five tables with write of the six names"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] test:app@1.0.0/check: r2 pixel 32 32 is 51 204 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "app", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:app@1.0.0"]
+write = ["webgpu:Frame", "webgpu:MeshSettings", "webgpu:Scene", "webgpu:View", "webgpu:Mesh", "webgpu:Texture", "webgpu:Draw", "webgpu:Batch"]
+read = ["webgpu:webgpu_frame_state_t", "webgpu:webgpu_load_t", "webgpu:webgpu_compare_t", "webgpu:webgpu_cull_t"]
+[module."test:app@1.0.0".config]
+scene = "unlit"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:app@1.0.0"]
+write = ["webgpu:Frame", "webgpu:MeshSettings", "webgpu:Scene", "webgpu:Mesh", "webgpu:Texture", "webgpu:Draw", "webgpu:Batch"]
+read = ["webgpu:webgpu_frame_state_t", "webgpu:webgpu_load_t", "webgpu:webgpu_compare_t", "webgpu:webgpu_cull_t"]
+[module."test:app@1.0.0".config]
+scene = "unlit"
+'''
+
+[[case]]
+name = "a module of another namespace that changes a setting needs write with webgpu:MeshSettings"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] test:app@1.0.0/check: r2 pixel 32 32 is 7 7 7 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "app", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:app@1.0.0"]
+write = ["webgpu:Frame", "webgpu:MeshSettings", "webgpu:Scene", "webgpu:View", "webgpu:Mesh", "webgpu:Texture", "webgpu:Draw", "webgpu:Batch"]
+read = ["webgpu:webgpu_frame_state_t", "webgpu:webgpu_load_t", "webgpu:webgpu_compare_t", "webgpu:webgpu_cull_t"]
+[module."test:app@1.0.0".config]
+scene = "loadnext"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:app@1.0.0"]
+write = ["webgpu:Frame", "webgpu:Scene", "webgpu:View", "webgpu:Mesh", "webgpu:Texture", "webgpu:Draw", "webgpu:Batch"]
+read = ["webgpu:webgpu_frame_state_t", "webgpu:webgpu_load_t", "webgpu:webgpu_compare_t", "webgpu:webgpu_cull_t", "webgpu:MeshSettings"]
+[module."test:app@1.0.0".config]
+scene = "loadnext"
+'''
+
+[[case]]
+name = "a module of another namespace that changes a setting needs read with the three enums"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] test:app@1.0.0/check: r2 pixel 32 32 is 7 7 7 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "app", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:app@1.0.0"]
+write = ["webgpu:Frame", "webgpu:MeshSettings", "webgpu:Scene", "webgpu:View", "webgpu:Mesh", "webgpu:Texture", "webgpu:Draw", "webgpu:Batch"]
+read = ["webgpu:webgpu_frame_state_t", "webgpu:webgpu_load_t", "webgpu:webgpu_compare_t", "webgpu:webgpu_cull_t"]
+[module."test:app@1.0.0".config]
+scene = "loadnext"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:app@1.0.0"]
+write = ["webgpu:Frame", "webgpu:MeshSettings", "webgpu:Scene", "webgpu:View", "webgpu:Mesh", "webgpu:Texture", "webgpu:Draw", "webgpu:Batch"]
+read = ["webgpu:webgpu_frame_state_t"]
+[module."test:app@1.0.0".config]
+scene = "loadnext"
+'''
+
+[[case]]
+name = "the app needs a persistent share for the data"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] test:app@1.0.0/check: r2 pixel 32 32 is 51 204 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "app", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:app@1.0.0"]
+write = ["webgpu:Frame", "webgpu:MeshSettings", "webgpu:Scene", "webgpu:View", "webgpu:Mesh", "webgpu:Texture", "webgpu:Draw", "webgpu:Batch"]
+read = ["webgpu:webgpu_frame_state_t", "webgpu:webgpu_load_t", "webgpu:webgpu_compare_t", "webgpu:webgpu_cull_t"]
+[module."test:app@1.0.0".config]
+scene = "unlit"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."test:app@1.0.0"]
+write = ["webgpu:Frame", "webgpu:MeshSettings", "webgpu:Scene", "webgpu:View", "webgpu:Mesh", "webgpu:Texture", "webgpu:Draw", "webgpu:Batch"]
+read = ["webgpu:webgpu_frame_state_t", "webgpu:webgpu_load_t", "webgpu:webgpu_compare_t", "webgpu:webgpu_cull_t"]
+persistent = "none"
+[module."test:app@1.0.0".config]
+scene = "unlit"
+'''
+
+[[case]]
+name = "the module needs no grant for webgpu:Frame and webgpu:webgpu_frame_state_t"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+matches = ['(?m)^loaded: [a-z]+:mesh@1\.0\.0, native, ']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.folders]
+"{case}/m" = ["foreign", "{wgpu_native}/{wgpu_file}"]
+
+[[case]]
+name = "the world needs [budget] sparse_sets of 2 or more"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = ["type 'webgpu:TextureGpu' is one more than [budget] sparse_sets of 1"]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[budget]
+sparse_sets = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[budget]
+sparse_sets = 2
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "the world needs [budget] types for the fourteen types of the module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = ["type 'webgpu:TextureGpu' is one more than [budget] types of 13"]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[budget]
+types = 13
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[budget]
+types = 14
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "a limit of the module asks a capability that the backend of BB-Native does not have"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+matches = ["it states work_limit, which backend '[^']+' cannot keep"]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0"]
+work_limit = 1000
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "spans hold a cell for each of the fourteen types in each table"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = ['its spans of 512 bytes do not hold a column_base of 14 types by 19 tables']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0"]
+spans = 512
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0"]
+spans = 65536
+'''
+
+[[case]]
+name = "Bridge stops the module when the list of an observer does not fit in spans"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = [
+    "module 'webgpu:mesh@1.0.0' is stopped: the list of its observer 'release_mesh' no longer fits in its spans of 4096 bytes",
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0"]
+spans = 4096
+[module."webgpu:probe@1.0.0".config]
+scene = "massleave"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "massleave"
+'''
+
+[[case]]
+name = "content.ignore keeps the host from reading the wgpu-native library as a module"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+lacks = ['not a module: m/{wgpu_file}']
+matches = ['(?m)^loaded: webgpu:mesh@1\.0\.0, native, ']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[content]
+paths = ["m"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "the world needs [budget] terms of 4 or more, for keep_meshes and render"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = ['a system asks for 4 terms, which is more than [budget] terms of 3']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[budget]
+terms = 3
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[budget]
+terms = 4
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "the world needs [budget] systems for the five systems and the two observers"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+has = ['it registers one more than [budget] systems of 6']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[budget]
+systems = 6
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+rounds = 1
+[budget]
+systems = 7
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+'''
+
+[[case]]
+name = "the five systems run in the phase render, which a deployment can map to a phase of the world"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+phases = ["drive", "draw", "check"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "firstmesh"
+[module."webgpu:mesh@1.0.0".phases]
+render = "draw"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+phases = ["drive", "draw", "check"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "firstmesh"
+'''

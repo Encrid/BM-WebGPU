@@ -1,0 +1,50 @@
+[project]
+name = "BM-WebGPU-Mesh"
+
+[test]
+timeout = 120
+copies = 1
+writers = ["bridge_native_say"]
+
+[[test.rule]]
+lacks = "probe error:"
+exempt = ["errors"]
+
+[ci]
+needs = ["vulkan"]
+
+[check]
+refuse = ["{wgpu_native}/gaps.txt"]
+
+[[style.exception]]
+rule = "G4"
+path = "src/mesh_store.c"
+why = "A native module gets only its API at each call, so its state has no other place between two rounds."
+
+[[branches.exception]]
+path = "src/mesh_memory.c"
+line = 25
+col = 9
+side = "true"
+why = "realloc gives null only when the process has no memory for the arrays of a round. No case runs the process out of memory, and the backend of BB-Native has no memory limit."
+
+[[branches.exception]]
+path = "src/mesh_memory.c"
+line = 29
+col = 9
+side = "true"
+why = "realloc gives null only when the process has no memory for the arrays of a round. No case runs the process out of memory, and the backend of BB-Native has no memory limit."
+
+[[branches.exception]]
+path = "src/mesh_render.c"
+line = 29
+col = 9
+side = "true"
+why = "mesh_reserve_round gives false only when realloc gives null. No case runs the process out of memory, and the backend of BB-Native has no memory limit."
+
+[[branches.exception]]
+path = "src/mesh_render.c"
+line = 57
+col = 9
+side = "true"
+why = "mesh_reserve_round gives false only when realloc gives null. No case runs the process out of memory, and the backend of BB-Native has no memory limit."

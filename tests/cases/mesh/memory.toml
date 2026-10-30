@@ -1,0 +1,281 @@
+[[case]]
+name = "past gpu_memory the module leaves out the new item, and writes the line at the level 4"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[4] webgpu:mesh@1.0.0/keep_meshes: no room: 612 bytes of gpu_memory are taken, and the item needs 72 more 70 0',
+    'record[6] webgpu:probe@1.0.0/check: r4 pixel 16 32 is 255 0 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r4 pixel 48 32 is 51 102 153 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+gpu_memory = 650
+[module."webgpu:probe@1.0.0".config]
+scene = "noroom"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "noroom"
+'''
+
+[[case]]
+name = "past gpu_memory the module leaves out a new texture, and its draw gets the white texture"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[4] webgpu:mesh@1.0.0/keep_textures: no room: 732 bytes of gpu_memory are taken, and the item needs 4 more 69 0',
+    'record[6] webgpu:probe@1.0.0/check: r4 pixel 16 32 is 255 0 0 255',
+    'record[6] webgpu:probe@1.0.0/check: r4 pixel 48 32 is 255 255 255 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+gpu_memory = 734
+[module."webgpu:probe@1.0.0".config]
+scene = "texnoroom"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "texnoroom"
+'''
+
+[[case]]
+name = "the line of gpu_memory comes at most once in a round"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[4] webgpu:mesh@1.0.0/keep_meshes: no room: 284 bytes of gpu_memory are taken, and the item needs 72 more 70 0',
+]
+matches_not = ['no room: .*no room: ']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+gpu_memory = 300
+[module."webgpu:probe@1.0.0".config]
+scene = "twomeshes"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+gpu_memory = 300
+[module."webgpu:probe@1.0.0".config]
+scene = "twomeshesmore"
+'''
+
+[[case]]
+name = "the buffer of a round counts against gpu_memory, and a round that cannot grow it draws no view"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[4] webgpu:mesh@1.0.0/render: no room: 356 bytes of gpu_memory are taken, and the item needs 256 more 71 0',
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 51 102 153 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+gpu_memory = 600
+[module."webgpu:probe@1.0.0".config]
+scene = "firstmesh"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+gpu_memory = 700
+[module."webgpu:probe@1.0.0".config]
+scene = "firstmesh"
+'''
+
+[[case]]
+name = "a round larger than a buffer of the device draws no view"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[4] webgpu:mesh@1.0.0/render: left out 0: the round is larger than a buffer of the device 59 0',
+    'record[6] webgpu:probe@1.0.0/check: r2 pixel 32 32 is 51 102 153 255',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "manyviews"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "oneview"
+'''
+
+[[case]]
+name = "the defaults of a device take 28 bytes of gpu_memory"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = [
+    'record[4] webgpu:mesh@1.0.0/render: no room: 28 bytes of gpu_memory are taken, and the item needs 256 more 70 0',
+]
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+gpu_memory = 28
+[module."webgpu:probe@1.0.0".config]
+scene = "clear"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:probe@1.0.0".config]
+scene = "clear"
+'''
+
+[[case]]
+name = "a release gives its bytes back, and an item that waits then fits"
+run = ["{bridge_host}/bridge-host{exe}", "{case}/d.toml"]
+
+[case.claims]
+status = 0
+line = ['record[6] webgpu:probe@1.0.0/check: r5 pixel 48 32 is 255 0 0 255']
+
+[case.folders]
+"{case}/m" = ["webgpu_mesh", "probe", "{wgpu_native}/{wgpu_file}"]
+
+[case.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+gpu_memory = 650
+[module."webgpu:probe@1.0.0".config]
+scene = "noroom"
+'''
+
+[case.false.files]
+"{case}/d.toml" = '''
+presets = ["{root}/tests/presets/probe.toml"]
+[content]
+paths = ["m"]
+ignore = ["m/{wgpu_file}"]
+[backend]
+native = "{bb_native}/bridge_native"
+[module."webgpu:mesh@1.0.0".config]
+gpu_memory = 650
+[module."webgpu:probe@1.0.0".config]
+scene = "noroomkept"
+'''

@@ -1,0 +1,3 @@
+presets = ["test.toml"]
+phases = ["drive", "render", "check"]
+rounds = 8

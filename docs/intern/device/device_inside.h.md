@@ -6,9 +6,10 @@ It includes `include/webgpu_device.h`, the headers `webgpu.h` and `wgpu.h` of BL
 ## The slots
 
 Bridge numbers the types of a module from 0, in the order of their declarations.
-`bridge_init` declares the 10 enums of `docs/extern/webgpu_device.h.md`, *The C types*, in the order of that table.
+`bridge_init` first declares each type of `docs/extern/webgpu_device.h.md`, *The C types*, in the order of that table, but `webgpu:DeviceSettings`.
 Then it declares `webgpu:webgpu_surface_t` and `webgpu:webgpu_frame_state_t` of the contract, and the 3 singletons.
-The header gives the slots of the singletons as `constexpr`: `SETTINGS` is 12, `WINDOW` is 13 and `FRAME` is 14.
+The header gives the slots of the singletons as `constexpr`: `SETTINGS` is 18, `WINDOW` is 19 and `FRAME` is 20.
+A `declared_type_t` holds the name of one of the 18 types before the singletons, its descriptor and its kind: enum or bitmask.
 
 ## Types
 
@@ -44,8 +45,8 @@ The header gives the slots of the singletons as `constexpr`: `SETTINGS` is 12, `
 
 | Field | Content |
 | --- | --- |
-| `instance` | The descriptor of the instance. On Wayland, it chains `extras`. Else it is empty. |
-| `extras` | The `WGPUInstanceExtras` that give the display of a window of Wayland to the instance. |
+| `instance` | The descriptor of the instance. `device_set_instance` chains `extras` to it. |
+| `extras` | The `WGPUInstanceExtras` of the instance: the settings of `device_set_instance`, and the display of a window of Wayland. |
 | `surface` | A union of the chained struct of each kind of window: `windows`, `metal`, `x11` and `wayland`. `chain` is the start of each one. |
 
 `device_request_t` holds the descriptor of the device and what the descriptor points to, until the request of `device_ask_device` ends: `docs/intern/device_ask.c.md`.
@@ -96,6 +97,7 @@ The header gives no function of its own. It declares the functions that the sour
 | `device_get_state` | `src/webgpu_device.c` |
 | `device_make_next`, `device_make_surface`, `device_release` | `src/device_make.c` |
 | `device_set_source` | `src/device_source.c` |
+| `device_set_instance` | `src/device_instance.c` |
 | `device_ask_adapter`, `device_ask_device` | `src/device_ask.c` |
 | `device_choose_modes` | `src/device_modes.c` |
 | `device_choose_targets`, `device_make_targets`, `device_release_targets` | `src/device_targets.c` |

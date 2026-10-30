@@ -5,7 +5,16 @@
 */
 #include "device_inside.h"
 
-bool device_make_surface(device_t *d, const webgpu_window_t *w)
+static bool make_instance(gpu_t *g, const webgpu_device_settings_t *s,
+    device_source_t *source)
+{
+    device_set_instance(source, s);
+    g->instance = wgpuCreateInstance(&source->instance);
+    return (wgpuInstanceEnumerateAdapters(g->instance, nullptr, nullptr) > 0);
+}
+
+bool device_make_surface(device_t *d, const webgpu_device_settings_t *s,
+    const webgpu_window_t *w)
 {
     gpu_t *g = &d->gpu;
     device_source_t source = {};
@@ -16,14 +25,15 @@ bool device_make_surface(device_t *d, const webgpu_window_t *w)
         device_say_no_surface(d, "the window has no handle of this system");
         return (false);
     }
-    if (g->instance == nullptr)
-        g->instance = wgpuCreateInstance(&source.instance);
+    if (g->instance == nullptr && !make_instance(g, s, &source))
+        return (true);
     g->surface = wgpuInstanceCreateSurface(g->instance, &shape);
     g->configure = true;
     return (true);
 }
 
-static device_step_t keep_device(device_t *d, const webgpu_window_t *w)
+static device_step_t keep_device(device_t *d,
+    const webgpu_device_settings_t *s, const webgpu_window_t *w)
 {
     gpu_t *g = &d->gpu;
     WGPULimits limits = {};
@@ -39,7 +49,7 @@ static device_step_t keep_device(device_t *d, const webgpu_window_t *w)
         g->height = 1;
         return (device_make_targets(d));
     }
-    if (g->surface == nullptr && !device_make_surface(d, w))
+    if (g->surface == nullptr && !device_make_surface(d, s, w))
         return (DEVICE_NO_FRAME);
     if (device_is_lost(d))
         return (DEVICE_GONE);
@@ -62,7 +72,7 @@ device_step_t device_make_next(device_t *d, const webgpu_device_settings_t *s,
                 step = device_ask_device(d, s);
                 break;
             case NEXT_KEEP:
-                step = keep_device(d, w);
+                step = keep_device(d, s, w);
         }
     }
     if (!d->gpu.failed)

@@ -6,7 +6,9 @@ rounds = 16
 read = [
     "webgpu:webgpu_present_t", "webgpu:webgpu_format_t", "webgpu:webgpu_alpha_t", "webgpu:webgpu_power_t",
     "webgpu:webgpu_backend_t", "webgpu:webgpu_feature_level_t", "webgpu:webgpu_samples_t", "webgpu:webgpu_depth_t",
-    "webgpu:webgpu_limits_t", "webgpu:webgpu_features_t", "webgpu:webgpu_surface_t", "webgpu:webgpu_frame_state_t",
-    "webgpu:Frame",
+    "webgpu:webgpu_limits_t", "webgpu:webgpu_features_t", "webgpu:webgpu_instance_backends_t",
+    "webgpu:webgpu_instance_flags_t", "webgpu:webgpu_d3d12_compiler_t", "webgpu:webgpu_d3d12_swapchain_t",
+    "webgpu:webgpu_gles_version_t", "webgpu:webgpu_gl_fence_t", "webgpu:webgpu_surface_t",
+    "webgpu:webgpu_frame_state_t", "webgpu:Frame",
 ]
 write = ["webgpu:Window", "webgpu:DeviceSettings"]

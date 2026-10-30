@@ -13,7 +13,7 @@ Else it calls `wgpuInstanceRequestAdapter` with these options:
 | `powerPreference` | `power`, which has the values of `webgpu.h`. |
 | `forceFallbackAdapter` | `fallback`. |
 | `backendType` | The `WGPUBackendType` of `backend`, from the table `BACKENDS`. |
-| `compatibleSurface` | The surface, so that the adapter can present to it. |
+| `compatibleSurface` | The surface, so that the adapter can present to it. When the instance has no adapter, there is no surface: `docs/intern/device_make.c.md`, *The surface*. |
 
 `BACKENDS` gives `WGPUBackendType_Undefined` for `WEBGPU_BACKEND_ANY`. For each other constant, it gives the `WGPUBackendType` of the same API: `D3D12`, `Metal`, `Vulkan`, `OpenGL` or `OpenGLES`.
 The table holds no other value, because wgpu-native stops the process for a value that it does not know: https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/lib.rs#L2871-L2891.

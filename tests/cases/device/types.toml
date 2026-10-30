@@ -45,11 +45,40 @@ claims = { status = 0, order = [
 false = { run = ["{out}/layout{exe}", "targets"] }
 
 [[case]]
+name = "webgpu_instance_backends_t and webgpu_instance_flags_t have 4 bytes, and each constant has the value of its table"
+run = ["{out}/layout{exe}", "instance"]
+claims = { status = 0, order = [
+    "webgpu_instance_backends_t size 4 alignment 4", "WEBGPU_INSTANCE_BACKEND_ALL 0", "WEBGPU_INSTANCE_BACKEND_VULKAN 1",
+    "WEBGPU_INSTANCE_BACKEND_GL 2", "WEBGPU_INSTANCE_BACKEND_METAL 4", "WEBGPU_INSTANCE_BACKEND_D3D12 8",
+    "webgpu_instance_flags_t size 4 alignment 4", "WEBGPU_INSTANCE_FLAG_EMPTY 0", "WEBGPU_INSTANCE_FLAG_DEBUG 1",
+    "WEBGPU_INSTANCE_FLAG_VALIDATION 2", "WEBGPU_INSTANCE_FLAG_DISCARD_HAL_LABELS 4",
+    "WEBGPU_INSTANCE_FLAG_ALLOW_UNDERLYING_NONCOMPLIANT_ADAPTER 8", "WEBGPU_INSTANCE_FLAG_GPU_BASED_VALIDATION 16",
+    "WEBGPU_INSTANCE_FLAG_VALIDATION_INDIRECT_CALL 32", "WEBGPU_INSTANCE_FLAG_AUTOMATIC_TIMESTAMP_NORMALIZATION 64",
+    "WEBGPU_INSTANCE_FLAG_DEFAULT 16777216", "WEBGPU_INSTANCE_FLAG_DEBUGGING 33554432",
+    "WEBGPU_INSTANCE_FLAG_ADVANCED_DEBUGGING 67108864", "WEBGPU_INSTANCE_FLAG_WITH_ENV 134217728",
+] }
+false = { run = ["{out}/layout{exe}", "backends"] }
+
+[[case]]
+name = "webgpu_d3d12_compiler_t, webgpu_d3d12_swapchain_t, webgpu_gles_version_t and webgpu_gl_fence_t have 4 bytes, and each constant has the value of its table"
+run = ["{out}/layout{exe}", "backends"]
+claims = { status = 0, order = [
+    "webgpu_d3d12_compiler_t size 4 alignment 4", "WEBGPU_D3D12_COMPILER_AUTO 1", "WEBGPU_D3D12_COMPILER_FXC 2",
+    "WEBGPU_D3D12_COMPILER_DXC 3",
+    "webgpu_d3d12_swapchain_t size 4 alignment 4", "WEBGPU_D3D12_SWAPCHAIN_HWND 1", "WEBGPU_D3D12_SWAPCHAIN_VISUAL 2",
+    "webgpu_gles_version_t size 4 alignment 4", "WEBGPU_GLES_VERSION_AUTO 1", "WEBGPU_GLES_VERSION_3_0 2",
+    "WEBGPU_GLES_VERSION_3_1 3", "WEBGPU_GLES_VERSION_3_2 4",
+    "webgpu_gl_fence_t size 4 alignment 4", "WEBGPU_GL_FENCE_NORMAL 1", "WEBGPU_GL_FENCE_AUTO_FINISH 2",
+] }
+false = { run = ["{out}/layout{exe}", "instance"] }
+
+[[case]]
 name = "each field of webgpu_device_settings_t has the size of its C type"
 run = ["{out}/layout{exe}", "settings"]
 claims = { status = 0, order = [
     "present 4", "format 4", "alpha 4", "power 4", "fallback 1", "backend 4", "feature_level 4", "samples 4",
-    "depth 4", "limits 4", "features 4", "error_room 4",
+    "depth 4", "limits 4", "features 4", "error_room 4", "instance_backends 4", "instance_flags 4", "d3d12_compiler 4",
+    "d3d12_swapchain 4", "gles_version 4", "gl_fence 4", "creation_threshold 1", "loss_threshold 1", "dxc_path 1024",
 ] }
 false = { run = ["{out}/layout{exe}", "device"] }
 
@@ -73,7 +102,13 @@ claims = { status = 0, line = [
     "uint32_t { WEBGPU_DEPTH_NONE = 1, WEBGPU_DEPTH_16_UNORM = 2, WEBGPU_DEPTH_24_PLUS = 3, WEBGPU_DEPTH_24_PLUS_STENCIL_8 = 4, WEBGPU_DEPTH_32_FLOAT = 5, WEBGPU_DEPTH_32_FLOAT_STENCIL_8 = 6 }",
     "uint32_t { WEBGPU_LIMITS_ADAPTER = 1, WEBGPU_LIMITS_DEFAULT = 2 }",
     "uint32_t { WEBGPU_FEATURES_ADAPTER = 1, WEBGPU_FEATURES_DEFAULT = 2 }",
-    "{ webgpu_present_t present; webgpu_format_t format; webgpu_alpha_t alpha; webgpu_power_t power; bool fallback; webgpu_backend_t backend; webgpu_feature_level_t feature_level; webgpu_samples_t samples; webgpu_depth_t depth; webgpu_limits_t limits; webgpu_features_t features; uint32_t error_room; }",
+    "uint32_t { WEBGPU_INSTANCE_BACKEND_ALL = 0, WEBGPU_INSTANCE_BACKEND_VULKAN = 1, WEBGPU_INSTANCE_BACKEND_GL = 2, WEBGPU_INSTANCE_BACKEND_METAL = 4, WEBGPU_INSTANCE_BACKEND_D3D12 = 8 }",
+    "uint32_t { WEBGPU_INSTANCE_FLAG_EMPTY = 0, WEBGPU_INSTANCE_FLAG_DEBUG = 1, WEBGPU_INSTANCE_FLAG_VALIDATION = 2, WEBGPU_INSTANCE_FLAG_DISCARD_HAL_LABELS = 4, WEBGPU_INSTANCE_FLAG_ALLOW_UNDERLYING_NONCOMPLIANT_ADAPTER = 8, WEBGPU_INSTANCE_FLAG_GPU_BASED_VALIDATION = 16, WEBGPU_INSTANCE_FLAG_VALIDATION_INDIRECT_CALL = 32, WEBGPU_INSTANCE_FLAG_AUTOMATIC_TIMESTAMP_NORMALIZATION = 64, WEBGPU_INSTANCE_FLAG_DEFAULT = 16777216, WEBGPU_INSTANCE_FLAG_DEBUGGING = 33554432, WEBGPU_INSTANCE_FLAG_ADVANCED_DEBUGGING = 67108864, WEBGPU_INSTANCE_FLAG_WITH_ENV = 134217728 }",
+    "uint32_t { WEBGPU_D3D12_COMPILER_AUTO = 1, WEBGPU_D3D12_COMPILER_FXC = 2, WEBGPU_D3D12_COMPILER_DXC = 3 }",
+    "uint32_t { WEBGPU_D3D12_SWAPCHAIN_HWND = 1, WEBGPU_D3D12_SWAPCHAIN_VISUAL = 2 }",
+    "uint32_t { WEBGPU_GLES_VERSION_AUTO = 1, WEBGPU_GLES_VERSION_3_0 = 2, WEBGPU_GLES_VERSION_3_1 = 3, WEBGPU_GLES_VERSION_3_2 = 4 }",
+    "uint32_t { WEBGPU_GL_FENCE_NORMAL = 1, WEBGPU_GL_FENCE_AUTO_FINISH = 2 }",
+    "{ webgpu_present_t present; webgpu_format_t format; webgpu_alpha_t alpha; webgpu_power_t power; bool fallback; webgpu_backend_t backend; webgpu_feature_level_t feature_level; webgpu_samples_t samples; webgpu_depth_t depth; webgpu_limits_t limits; webgpu_features_t features; uint32_t error_room; webgpu_instance_backends_t instance_backends; webgpu_instance_flags_t instance_flags; webgpu_d3d12_compiler_t d3d12_compiler; webgpu_d3d12_swapchain_t d3d12_swapchain; webgpu_gles_version_t gles_version; webgpu_gl_fence_t gl_fence; uint8_t creation_threshold; uint8_t loss_threshold; char dxc_path[1024]; }",
 ] }
 false = { run = ["{out}/layout{exe}", "texts"] }
 
@@ -91,7 +126,13 @@ claims = { status = 0, line = [
     "{ WEBGPU_DEPTH_NONE = 1, WEBGPU_DEPTH_16_UNORM = 2, WEBGPU_DEPTH_24_PLUS = 3, WEBGPU_DEPTH_24_PLUS_STENCIL_8 = 4, WEBGPU_DEPTH_32_FLOAT = 5, WEBGPU_DEPTH_32_FLOAT_STENCIL_8 = 6 }",
     "{ WEBGPU_LIMITS_ADAPTER = 1, WEBGPU_LIMITS_DEFAULT = 2 }",
     "{ WEBGPU_FEATURES_ADAPTER = 1, WEBGPU_FEATURES_DEFAULT = 2 }",
-    "{ webgpu_present_t present; webgpu_format_t format; webgpu_alpha_t alpha; webgpu_power_t power; bool fallback; webgpu_backend_t backend; webgpu_feature_level_t feature_level; webgpu_samples_t samples; webgpu_depth_t depth; webgpu_limits_t limits; webgpu_features_t features; uint32_t error_room; }",
+    "{ WEBGPU_INSTANCE_BACKEND_ALL = 0, WEBGPU_INSTANCE_BACKEND_VULKAN = 1, WEBGPU_INSTANCE_BACKEND_GL = 2, WEBGPU_INSTANCE_BACKEND_METAL = 4, WEBGPU_INSTANCE_BACKEND_D3D12 = 8 }",
+    "{ WEBGPU_INSTANCE_FLAG_EMPTY = 0, WEBGPU_INSTANCE_FLAG_DEBUG = 1, WEBGPU_INSTANCE_FLAG_VALIDATION = 2, WEBGPU_INSTANCE_FLAG_DISCARD_HAL_LABELS = 4, WEBGPU_INSTANCE_FLAG_ALLOW_UNDERLYING_NONCOMPLIANT_ADAPTER = 8, WEBGPU_INSTANCE_FLAG_GPU_BASED_VALIDATION = 16, WEBGPU_INSTANCE_FLAG_VALIDATION_INDIRECT_CALL = 32, WEBGPU_INSTANCE_FLAG_AUTOMATIC_TIMESTAMP_NORMALIZATION = 64, WEBGPU_INSTANCE_FLAG_DEFAULT = 16777216, WEBGPU_INSTANCE_FLAG_DEBUGGING = 33554432, WEBGPU_INSTANCE_FLAG_ADVANCED_DEBUGGING = 67108864, WEBGPU_INSTANCE_FLAG_WITH_ENV = 134217728 }",
+    "{ WEBGPU_D3D12_COMPILER_AUTO = 1, WEBGPU_D3D12_COMPILER_FXC = 2, WEBGPU_D3D12_COMPILER_DXC = 3 }",
+    "{ WEBGPU_D3D12_SWAPCHAIN_HWND = 1, WEBGPU_D3D12_SWAPCHAIN_VISUAL = 2 }",
+    "{ WEBGPU_GLES_VERSION_AUTO = 1, WEBGPU_GLES_VERSION_3_0 = 2, WEBGPU_GLES_VERSION_3_1 = 3, WEBGPU_GLES_VERSION_3_2 = 4 }",
+    "{ WEBGPU_GL_FENCE_NORMAL = 1, WEBGPU_GL_FENCE_AUTO_FINISH = 2 }",
+    "{ webgpu_present_t present; webgpu_format_t format; webgpu_alpha_t alpha; webgpu_power_t power; bool fallback; webgpu_backend_t backend; webgpu_feature_level_t feature_level; webgpu_samples_t samples; webgpu_depth_t depth; webgpu_limits_t limits; webgpu_features_t features; uint32_t error_room; webgpu_instance_backends_t instance_backends; webgpu_instance_flags_t instance_flags; webgpu_d3d12_compiler_t d3d12_compiler; webgpu_d3d12_swapchain_t d3d12_swapchain; webgpu_gles_version_t gles_version; webgpu_gl_fence_t gl_fence; uint8_t creation_threshold; uint8_t loss_threshold; char dxc_path[1024]; }",
 ] }
 false = { run = ["{out}/layout{exe}", "descriptors"] }
 

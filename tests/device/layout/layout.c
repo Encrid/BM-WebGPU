@@ -87,6 +87,48 @@ static void show_device(void)
     VALUE(WEBGPU_FEATURES_DEFAULT);
 }
 
+static void show_instance(void)
+{
+    SIZE(webgpu_instance_backends_t);
+    VALUE(WEBGPU_INSTANCE_BACKEND_ALL);
+    VALUE(WEBGPU_INSTANCE_BACKEND_VULKAN);
+    VALUE(WEBGPU_INSTANCE_BACKEND_GL);
+    VALUE(WEBGPU_INSTANCE_BACKEND_METAL);
+    VALUE(WEBGPU_INSTANCE_BACKEND_D3D12);
+    SIZE(webgpu_instance_flags_t);
+    VALUE(WEBGPU_INSTANCE_FLAG_EMPTY);
+    VALUE(WEBGPU_INSTANCE_FLAG_DEBUG);
+    VALUE(WEBGPU_INSTANCE_FLAG_VALIDATION);
+    VALUE(WEBGPU_INSTANCE_FLAG_DISCARD_HAL_LABELS);
+    VALUE(WEBGPU_INSTANCE_FLAG_ALLOW_UNDERLYING_NONCOMPLIANT_ADAPTER);
+    VALUE(WEBGPU_INSTANCE_FLAG_GPU_BASED_VALIDATION);
+    VALUE(WEBGPU_INSTANCE_FLAG_VALIDATION_INDIRECT_CALL);
+    VALUE(WEBGPU_INSTANCE_FLAG_AUTOMATIC_TIMESTAMP_NORMALIZATION);
+    VALUE(WEBGPU_INSTANCE_FLAG_DEFAULT);
+    VALUE(WEBGPU_INSTANCE_FLAG_DEBUGGING);
+    VALUE(WEBGPU_INSTANCE_FLAG_ADVANCED_DEBUGGING);
+    VALUE(WEBGPU_INSTANCE_FLAG_WITH_ENV);
+}
+
+static void show_backends(void)
+{
+    SIZE(webgpu_d3d12_compiler_t);
+    VALUE(WEBGPU_D3D12_COMPILER_AUTO);
+    VALUE(WEBGPU_D3D12_COMPILER_FXC);
+    VALUE(WEBGPU_D3D12_COMPILER_DXC);
+    SIZE(webgpu_d3d12_swapchain_t);
+    VALUE(WEBGPU_D3D12_SWAPCHAIN_HWND);
+    VALUE(WEBGPU_D3D12_SWAPCHAIN_VISUAL);
+    SIZE(webgpu_gles_version_t);
+    VALUE(WEBGPU_GLES_VERSION_AUTO);
+    VALUE(WEBGPU_GLES_VERSION_3_0);
+    VALUE(WEBGPU_GLES_VERSION_3_1);
+    VALUE(WEBGPU_GLES_VERSION_3_2);
+    SIZE(webgpu_gl_fence_t);
+    VALUE(WEBGPU_GL_FENCE_NORMAL);
+    VALUE(WEBGPU_GL_FENCE_AUTO_FINISH);
+}
+
 static void show_settings(void)
 {
     FIELD(present);
@@ -101,6 +143,15 @@ static void show_settings(void)
     FIELD(limits);
     FIELD(features);
     FIELD(error_room);
+    FIELD(instance_backends);
+    FIELD(instance_flags);
+    FIELD(d3d12_compiler);
+    FIELD(d3d12_swapchain);
+    FIELD(gles_version);
+    FIELD(gl_fence);
+    FIELD(creation_threshold);
+    FIELD(loss_threshold);
+    FIELD(dxc_path);
 }
 
 static void show_descriptors(void)
@@ -108,9 +159,13 @@ static void show_descriptors(void)
     printf("%s\n%s\n%s\n%s\n%s\n%s\n", webgpu_present_t_desc,
         webgpu_format_t_desc, webgpu_alpha_t_desc, webgpu_power_t_desc,
         webgpu_backend_t_desc, webgpu_feature_level_t_desc);
-    printf("%s\n%s\n%s\n%s\n%s\n", webgpu_samples_t_desc,
-        webgpu_depth_t_desc, webgpu_limits_t_desc, webgpu_features_t_desc,
-        webgpu_device_settings_t_desc);
+    printf("%s\n%s\n%s\n%s\n", webgpu_samples_t_desc,
+        webgpu_depth_t_desc, webgpu_limits_t_desc, webgpu_features_t_desc);
+    printf("%s\n%s\n%s\n%s\n%s\n%s\n", webgpu_instance_backends_t_desc,
+        webgpu_instance_flags_t_desc, webgpu_d3d12_compiler_t_desc,
+        webgpu_d3d12_swapchain_t_desc, webgpu_gles_version_t_desc,
+        webgpu_gl_fence_t_desc);
+    printf("%s\n", webgpu_device_settings_t_desc);
 }
 
 static void show_texts(void)
@@ -119,10 +174,16 @@ static void show_texts(void)
         TEXT_OF(WEBGPU_FORMAT_VALUES), TEXT_OF(WEBGPU_ALPHA_VALUES),
         TEXT_OF(WEBGPU_POWER_VALUES), TEXT_OF(WEBGPU_BACKEND_VALUES),
         TEXT_OF(WEBGPU_FEATURE_LEVEL_VALUES));
-    printf("%s\n%s\n%s\n%s\n%s\n", TEXT_OF(WEBGPU_SAMPLES_VALUES),
+    printf("%s\n%s\n%s\n%s\n", TEXT_OF(WEBGPU_SAMPLES_VALUES),
         TEXT_OF(WEBGPU_DEPTH_VALUES), TEXT_OF(WEBGPU_LIMITS_VALUES),
-        TEXT_OF(WEBGPU_FEATURES_VALUES),
-        TEXT_OF(WEBGPU_DEVICE_SETTINGS_FIELDS));
+        TEXT_OF(WEBGPU_FEATURES_VALUES));
+    printf("%s\n%s\n%s\n%s\n%s\n%s\n",
+        TEXT_OF(WEBGPU_INSTANCE_BACKENDS_VALUES),
+        TEXT_OF(WEBGPU_INSTANCE_FLAGS_VALUES),
+        TEXT_OF(WEBGPU_D3D12_COMPILER_VALUES),
+        TEXT_OF(WEBGPU_D3D12_SWAPCHAIN_VALUES),
+        TEXT_OF(WEBGPU_GLES_VERSION_VALUES), TEXT_OF(WEBGPU_GL_FENCE_VALUES));
+    printf("%s\n", TEXT_OF(WEBGPU_DEVICE_SETTINGS_FIELDS));
 }
 
 int main(int argc, char **argv)
@@ -130,6 +191,7 @@ int main(int argc, char **argv)
     static const show_mode_t MODES[] = {
         { "modes", show_modes }, { "adapter", show_adapter },
         { "targets", show_targets }, { "device", show_device },
+        { "instance", show_instance }, { "backends", show_backends },
         { "settings", show_settings }, { "descriptors", show_descriptors },
         { "texts", show_texts }
     };

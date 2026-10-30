@@ -40,12 +40,43 @@
         WEBGPU_LIMITS_DEFAULT = 2 }
     #define WEBGPU_FEATURES_VALUES { WEBGPU_FEATURES_ADAPTER = 1, \
         WEBGPU_FEATURES_DEFAULT = 2 }
+    #define WEBGPU_INSTANCE_BACKENDS_VALUES { \
+        WEBGPU_INSTANCE_BACKEND_ALL = 0, WEBGPU_INSTANCE_BACKEND_VULKAN = 1, \
+        WEBGPU_INSTANCE_BACKEND_GL = 2, WEBGPU_INSTANCE_BACKEND_METAL = 4, \
+        WEBGPU_INSTANCE_BACKEND_D3D12 = 8 }
+    #define WEBGPU_INSTANCE_FLAGS_VALUES { WEBGPU_INSTANCE_FLAG_EMPTY = 0, \
+        WEBGPU_INSTANCE_FLAG_DEBUG = 1, WEBGPU_INSTANCE_FLAG_VALIDATION = 2, \
+        WEBGPU_INSTANCE_FLAG_DISCARD_HAL_LABELS = 4, \
+        WEBGPU_INSTANCE_FLAG_ALLOW_UNDERLYING_NONCOMPLIANT_ADAPTER = 8, \
+        WEBGPU_INSTANCE_FLAG_GPU_BASED_VALIDATION = 16, \
+        WEBGPU_INSTANCE_FLAG_VALIDATION_INDIRECT_CALL = 32, \
+        WEBGPU_INSTANCE_FLAG_AUTOMATIC_TIMESTAMP_NORMALIZATION = 64, \
+        WEBGPU_INSTANCE_FLAG_DEFAULT = 16777216, \
+        WEBGPU_INSTANCE_FLAG_DEBUGGING = 33554432, \
+        WEBGPU_INSTANCE_FLAG_ADVANCED_DEBUGGING = 67108864, \
+        WEBGPU_INSTANCE_FLAG_WITH_ENV = 134217728 }
+    #define WEBGPU_D3D12_COMPILER_VALUES { WEBGPU_D3D12_COMPILER_AUTO = 1, \
+        WEBGPU_D3D12_COMPILER_FXC = 2, WEBGPU_D3D12_COMPILER_DXC = 3 }
+    #define WEBGPU_D3D12_SWAPCHAIN_VALUES { \
+        WEBGPU_D3D12_SWAPCHAIN_HWND = 1, WEBGPU_D3D12_SWAPCHAIN_VISUAL = 2 }
+    #define WEBGPU_GLES_VERSION_VALUES { WEBGPU_GLES_VERSION_AUTO = 1, \
+        WEBGPU_GLES_VERSION_3_0 = 2, WEBGPU_GLES_VERSION_3_1 = 3, \
+        WEBGPU_GLES_VERSION_3_2 = 4 }
+    #define WEBGPU_GL_FENCE_VALUES { WEBGPU_GL_FENCE_NORMAL = 1, \
+        WEBGPU_GL_FENCE_AUTO_FINISH = 2 }
     #define WEBGPU_DEVICE_SETTINGS_FIELDS { webgpu_present_t present; \
         webgpu_format_t format; webgpu_alpha_t alpha; webgpu_power_t power; \
         bool fallback; webgpu_backend_t backend; \
         webgpu_feature_level_t feature_level; webgpu_samples_t samples; \
         webgpu_depth_t depth; webgpu_limits_t limits; \
-        webgpu_features_t features; uint32_t error_room; }
+        webgpu_features_t features; uint32_t error_room; \
+        webgpu_instance_backends_t instance_backends; \
+        webgpu_instance_flags_t instance_flags; \
+        webgpu_d3d12_compiler_t d3d12_compiler; \
+        webgpu_d3d12_swapchain_t d3d12_swapchain; \
+        webgpu_gles_version_t gles_version; webgpu_gl_fence_t gl_fence; \
+        uint8_t creation_threshold; uint8_t loss_threshold; \
+        char dxc_path[1024]; }
 
 BRIDGE_SCHEMA_ENUM_TYPE(webgpu_present_t, uint32_t, WEBGPU_PRESENT_VALUES);
 BRIDGE_SCHEMA_ENUM_DESC(webgpu_present_t, uint32_t, WEBGPU_PRESENT_VALUES);
@@ -69,6 +100,28 @@ BRIDGE_SCHEMA_ENUM_TYPE(webgpu_limits_t, uint32_t, WEBGPU_LIMITS_VALUES);
 BRIDGE_SCHEMA_ENUM_DESC(webgpu_limits_t, uint32_t, WEBGPU_LIMITS_VALUES);
 BRIDGE_SCHEMA_ENUM_TYPE(webgpu_features_t, uint32_t, WEBGPU_FEATURES_VALUES);
 BRIDGE_SCHEMA_ENUM_DESC(webgpu_features_t, uint32_t, WEBGPU_FEATURES_VALUES);
+BRIDGE_SCHEMA_BITMASK_TYPE(webgpu_instance_backends_t, uint32_t,
+    WEBGPU_INSTANCE_BACKENDS_VALUES);
+BRIDGE_SCHEMA_BITMASK_DESC(webgpu_instance_backends_t, uint32_t,
+    WEBGPU_INSTANCE_BACKENDS_VALUES);
+BRIDGE_SCHEMA_BITMASK_TYPE(webgpu_instance_flags_t, uint32_t,
+    WEBGPU_INSTANCE_FLAGS_VALUES);
+BRIDGE_SCHEMA_BITMASK_DESC(webgpu_instance_flags_t, uint32_t,
+    WEBGPU_INSTANCE_FLAGS_VALUES);
+BRIDGE_SCHEMA_ENUM_TYPE(webgpu_d3d12_compiler_t, uint32_t,
+    WEBGPU_D3D12_COMPILER_VALUES);
+BRIDGE_SCHEMA_ENUM_DESC(webgpu_d3d12_compiler_t, uint32_t,
+    WEBGPU_D3D12_COMPILER_VALUES);
+BRIDGE_SCHEMA_ENUM_TYPE(webgpu_d3d12_swapchain_t, uint32_t,
+    WEBGPU_D3D12_SWAPCHAIN_VALUES);
+BRIDGE_SCHEMA_ENUM_DESC(webgpu_d3d12_swapchain_t, uint32_t,
+    WEBGPU_D3D12_SWAPCHAIN_VALUES);
+BRIDGE_SCHEMA_ENUM_TYPE(webgpu_gles_version_t, uint32_t,
+    WEBGPU_GLES_VERSION_VALUES);
+BRIDGE_SCHEMA_ENUM_DESC(webgpu_gles_version_t, uint32_t,
+    WEBGPU_GLES_VERSION_VALUES);
+BRIDGE_SCHEMA_ENUM_TYPE(webgpu_gl_fence_t, uint32_t, WEBGPU_GL_FENCE_VALUES);
+BRIDGE_SCHEMA_ENUM_DESC(webgpu_gl_fence_t, uint32_t, WEBGPU_GL_FENCE_VALUES);
 BRIDGE_SCHEMA_STRUCT_TYPE(webgpu_device_settings_t,
     WEBGPU_DEVICE_SETTINGS_FIELDS);
 BRIDGE_SCHEMA_STRUCT_DESC(webgpu_device_settings_t,

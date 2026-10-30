@@ -49,7 +49,7 @@ device_step_t device_ask_adapter(device_t *d,
         .mode = WGPUCallbackMode_AllowProcessEvents,
         .callback = take_adapter, .userdata1 = d };
 
-    if (!device_make_surface(d, w)) {
+    if (!device_make_surface(d, s, w)) {
         d->gpu.failed = true;
         return (DEVICE_MAKING);
     }

@@ -19,7 +19,7 @@ FUNCTION device_make_next(d : device_t, s : webgpu_device_settings_t, w : webgpu
       CASE OF d.gpu.next
          NEXT_ADAPTER : step <- device_ask_adapter(d, s, w)
          NEXT_DEVICE : step <- device_ask_device(d, s)
-         NEXT_KEEP : step <- keep_device(d, w)
+         NEXT_KEEP : step <- keep_device(d, s, w)
       ENDCASE
    ENDIF
    IF d.gpu.failed THEN
@@ -43,7 +43,7 @@ A step or a callback of the make that fails writes its line, and sets `failed`. 
 `keep_device` gives `DEVICE_MAKING` while it takes step 3 or step 4, and `DEVICE_READY` after them:
 
 ```pseudo
-FUNCTION keep_device(d : device_t, w : webgpu_window_t) RETURNS U32
+FUNCTION keep_device(d : device_t, s : webgpu_device_settings_t, w : webgpu_window_t) RETURNS U32
    IF d.gpu.queue = 0 THEN
       d.gpu.queue <- wgpuDeviceGetQueue(d.gpu.device)
       CALL wgpuDeviceGetLimits(d.gpu.device, limits)
@@ -55,7 +55,7 @@ FUNCTION keep_device(d : device_t, w : webgpu_window_t) RETURNS U32
       d.gpu.height <- 1
       RETURN device_make_targets(d)
    ENDIF
-   IF d.gpu.surface = 0 AND NOT device_make_surface(d, w) THEN
+   IF d.gpu.surface = 0 AND NOT device_make_surface(d, s, w) THEN
       RETURN DEVICE_NO_FRAME
    ENDIF
    IF device_is_lost(d) THEN
@@ -74,9 +74,17 @@ Then `keep_device` checks the device, before each configure and each texture of 
 `device_make_surface` first fills the source of the surface with `device_set_source`: `docs/intern/device_source.c.md`.
 When `device_set_source` gives false, it writes the first reason of `no surface` with `device_say_no_surface`: `docs/extern/webgpu_device.h.md`, *Messages*.
 Then it gives false, and its caller acts on it.
-Else it makes the instance if there is none, with the descriptor of the instance in the source.
-The window comes before the instance, because on Wayland that descriptor holds the display of the window.
+Else it makes the instance with `make_instance`, if there is none.
+The window comes before the instance, because on Wayland the extras of the instance hold the display of the window.
 Then it makes the surface of the window, with the label `webgpu:device surface`, and sets `configure`.
+
+`make_instance` fills the extras of the source with `device_set_instance`, and makes the instance from the descriptor of the source.
+Then it counts the adapters of the instance with `wgpuInstanceEnumerateAdapters`.
+It gives that call no list, so the call releases each adapter that it counts: https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/lib.rs#L2935-L2972.
+
+With no adapter, `device_make_surface` makes no surface, and gives true: `docs/extern/webgpu_device.h.md`, *The make*.
+Then `device_ask_adapter` asks for an adapter with no surface, and the answer writes `no device: no adapter`.
+`device_ask_adapter` is the one caller that finds no instance. Thus a surface that `keep_device` makes again has an instance with an adapter.
 
 ## The release
 
@@ -90,6 +98,7 @@ The release of the last reference of the device waits until the GPU is idle. It 
 | Function | Result |
 | --- | --- |
 | `device_make_next` | Takes the next step of the make. Gives a `device_step_t`. |
-| `device_make_surface` | Fills the source, makes the instance if there is none, then makes the surface. Gives false, after its line, for a window with no handle of this system. |
+| `device_make_surface` | Fills the source, makes the instance if there is none, then makes the surface if the instance has an adapter. Gives false, after its line, for a window with no handle of this system. |
+| `make_instance` | Makes the instance with the extras of the settings. Gives true when the instance has an adapter. |
 | `keep_device` | Takes steps 3 and 4 of the make, makes a lost surface again, and checks the device. Gives `DEVICE_GONE` for a lost device, and `DEVICE_READY` after the make. |
 | `device_release` | Releases each object, and sets `gpu` to 0. |

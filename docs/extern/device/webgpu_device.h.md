@@ -11,7 +11,7 @@ It covers the instance, the adapter, the device and the surface of `webgpu.h`. I
 | The identity | `webgpu:device@1.0.0` |
 | `abi` | `2` |
 | `config` | `webgpu:DeviceSettings` |
-| `settings` | `present format alpha power fallback backend feature_level samples depth limits features error_room` |
+| `settings` | `present format alpha power fallback backend feature_level samples depth limits features error_room instance_backends instance_flags d3d12_compiler d3d12_swapchain gles_version gl_fence creation_threshold loss_threshold dxc_path` |
 | `pinned` | `true`, because on macOS the module must make and configure the surface on the thread of the window. |
 | `reloadable` | `false`, because the objects of each render module belong to its device. |
 
@@ -19,9 +19,9 @@ The manifest also gives a default for each of these keys of the module. A deploy
 
 | Key | Default | Reason |
 | --- | --- | --- |
-| `scratch` | `16384` | The declarations of the fifteen types of `init`, and the value of `webgpu:Frame` that it attaches. At a run of `frame`, the texts of its lines: the texts of the room of *The errors*, and the head of each line. With a larger `error_room`, make `scratch` larger too, or a line is cut to the room that is left. |
+| `scratch` | `16384` | The declarations of the 21 types of `init`, and the value of `webgpu:Frame` that it attaches. At a run of `frame`, the texts of its lines: the texts of the room of *The errors*, and the head of each line. With a larger `error_room`, make `scratch` larger too, or a line is cut to the room that is left. |
 | `log_ring` | `2048` | Room for 64 records of 32 bytes: the errors of the device in one round. |
-| `spans` | `4096` | A cell for each of the fifteen types in each table, and the spans of the two systems. |
+| `spans` | `4096` | A cell for each of the 21 types in each table, and the spans of the two systems. |
 | `spawns` | `"none"` | The module makes no entity. |
 | `changes` | `88` | The attach of `webgpu:Frame` in `init`: 24 bytes, and its value of 64 bytes. |
 | `persistent` | `"none"` | The module keeps no data in the arena. |
@@ -76,13 +76,34 @@ A change of a setting after the device is there acts at the next device, for exa
 
 The module makes its objects one step at a time, one step at each run of `frame`. Thus a round never waits for an answer.
 
-1. It makes the instance and the surface of the window, and asks for an adapter.
+1. It makes the instance of *The instance*, and the surface of the window. Then it asks for an adapter.
 2. It asks the adapter for a device.
 3. It takes the queue and the limits of the device.
 4. With 2, 8 or 16 samples, it checks that the device gives that count: *webgpu:webgpu_samples_t*.
 
 Each run calls `wgpuInstanceProcessEvents` once, so that an answer can come before the step that needs it.
 With wgpu-native v29.0.1.1, each request answers inside its call. Thus each step takes one run.
+
+If the instance has no adapter, step 1 makes no surface, and asks for an adapter with no surface.
+That request gives `no device: no adapter`, and the text of wgpu-native tells the cause of each backend.
+The module makes no surface then, because wgpu-native v29.0.1.1 stops the process when no backend can make it.
+https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/lib.rs#L2805-L2810 and https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-core/src/instance.rs#L276-L281 show it.
+
+## The instance
+
+Step 1 of *The make* makes the instance with `WGPUInstanceExtras` of `wgpu.h`. The extras hold 9 settings of *webgpu:DeviceSettings*:
+`instance_backends`, `instance_flags`, `d3d12_compiler`, `d3d12_swapchain`, `gles_version`, `gl_fence`, `creation_threshold`, `loss_threshold` and `dxc_path`.
+With their defaults, wgpu-native makes the instance that it makes with no extras.
+https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/conv.rs#L371-L423 and https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-types/src/instance.rs#L67-L75 show it.
+On Wayland, the extras also hold the display of the window.
+
+A setting of a backend that the system does not have changes nothing. For example, `d3d12_compiler` changes nothing on Linux and macOS.
+On each system, the module still reads each setting and gives it to wgpu-native, and Bridge still checks its value: *webgpu:DeviceSettings*.
+
+wgpu-native tries to start each backend of `instance_backends` that its release has for the system. A backend that does not start gives no adapter.
+For example, D3D12 does not start with `WEBGPU_D3D12_COMPILER_DXC` and a `dxc_path` that names no DXC library.
+Then the adapter comes from another backend, or the request gives `no device: no adapter`.
+The text of wgpu-native then names the cause, for example `dx12 drivers/libraries could not be loaded`.
 
 ## The status of a frame
 
@@ -147,11 +168,40 @@ With wgpu-native v29.0.1.1, a lost device stops the process at these calls:
 | `limits` | `webgpu_limits_t` | The limits that the device asks for. The default is `WEBGPU_LIMITS_ADAPTER`. |
 | `features` | `webgpu_features_t` | The features that the device asks for. The default is `WEBGPU_FEATURES_ADAPTER`. |
 | `error_room` | `uint32_t` | The bytes of the room where the texts of the errors wait for `frame`: *The errors*. The default is 8192. |
+| `instance_backends` | `webgpu_instance_backends_t` | The backends that the instance starts. The default is `WEBGPU_INSTANCE_BACKEND_ALL`. |
+| `instance_flags` | `webgpu_instance_flags_t` | The flags of debug and of validation of the instance. The default is `WEBGPU_INSTANCE_FLAG_DEFAULT`. |
+| `d3d12_compiler` | `webgpu_d3d12_compiler_t` | The compiler of the shaders of D3D12. The default is `WEBGPU_D3D12_COMPILER_AUTO`. |
+| `d3d12_swapchain` | `webgpu_d3d12_swapchain_t` | The swapchain of a surface of D3D12. The default is `WEBGPU_D3D12_SWAPCHAIN_HWND`. |
+| `gles_version` | `webgpu_gles_version_t` | The version of OpenGL ES that the GL backend asks for. The default is `WEBGPU_GLES_VERSION_AUTO`. |
+| `gl_fence` | `webgpu_gl_fence_t` | How the fences of the GL backend tell that the GPU did its work. The default is `WEBGPU_GL_FENCE_NORMAL`. |
+| `creation_threshold` | `uint8_t` | The percent of the memory budget from which a creation gives an error of memory: *The thresholds*. The default is 0. |
+| `loss_threshold` | `uint8_t` | The percent of the memory budget from which the device is lost: *The thresholds*. The default is 0. |
+| `dxc_path` | `char[1024]` | The path of the library that `WEBGPU_D3D12_COMPILER_DXC` loads. A deployment gives at most 1023 bytes and the zero after them. All 1024 bytes count when a system writes no zero. The default is `dxcompiler.dll`. |
 
 If `fallback` is `true`, or `backend` is not `WEBGPU_BACKEND_ANY`, a system with no such adapter gives none: *Messages*.
 If the surface or the device does not give the value of a setting, the module uses another value. It writes a line at the level 4.
 
 Each enum of the settings is of `uint32_t`. A deployment states a constant by its name or by its value.
+Each bitmask of the settings is of `uint32_t` too. A deployment states it by its value: the sum of the values of its constants.
+A deployment can state `dxc_path` as `{ path = "<path>" }`: a path from the folder of the file, as the readme of Bridge-Host tells.
+
+Bridge refuses a value that is not valid, and then the module does not load. The record of Bridge names the setting, for example:
+`did not load: its setting 'd3d12_compiler' is 4, which is no constant of the enum of the field it names`.
+Bridge refuses a value that is no constant of an enum, and a bit that no constant of a bitmask has.
+It also refuses a number that the field cannot hold, and a text of 1024 bytes or more.
+The header `bridge.h` of Bridge tells each of these reasons.
+
+### The thresholds
+
+`creation_threshold` and `loss_threshold` are percents of the memory budget that the system gives to the adapter.
+Only D3D12, and Vulkan with `VK_EXT_memory_budget`, read them.
+The value 0 sets no threshold. The values from 1 to 255 set the threshold at that percent.
+Over `creation_threshold`, the creation of a buffer, a texture, a query set or an acceleration structure gives an error `out of memory`: *The errors*.
+Over `loss_threshold`, wgpu-native loses the device after a submit or a poll: *A lost device*.
+
+wgpu-native v29.0.1.1 gives `creation_threshold` to both thresholds, and does not read `loss_threshold`:
+https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/conv.rs#L393-L394.
+Thus with v29.0.1.1, a device is also lost over `creation_threshold`, and `loss_threshold` changes nothing.
 
 ### webgpu:webgpu_present_t
 
@@ -270,6 +320,90 @@ The depth texture has the samples of the frame. Each render pass chooses to use 
 An adapter can give the experimental features `RayQuery` and `CooperativeMatrix` of `wgpu.h`.
 wgpu-native v29.0.1.1 refuses a device that asks for one of them, because it does not enable the experimental features. Thus the module does not ask for them.
 
+### webgpu:webgpu_instance_backends_t
+
+`webgpu_instance_backends_t` is a bitmask. The values are those of `WGPUInstanceBackend` of `wgpu.h`.
+
+| Constant | Value | The backend |
+| --- | --- | --- |
+| `WEBGPU_INSTANCE_BACKEND_ALL` | 0 | Each backend of wgpu-native. |
+| `WEBGPU_INSTANCE_BACKEND_VULKAN` | 1 | Vulkan. |
+| `WEBGPU_INSTANCE_BACKEND_GL` | 2 | OpenGL and OpenGL ES. |
+| `WEBGPU_INSTANCE_BACKEND_METAL` | 4 | Metal. |
+| `WEBGPU_INSTANCE_BACKEND_D3D12` | 8 | Direct3D 12. |
+
+`backend` chooses the backend of the adapter among the backends that the instance starts.
+The bit `WGPUInstanceBackend_BrowserWebGPU` of `wgpu.h` is no constant, because only a page in a browser has that backend.
+
+### webgpu:webgpu_instance_flags_t
+
+`webgpu_instance_flags_t` is a bitmask. The values are those of `WGPUInstanceFlag` of `wgpu.h`.
+
+| Constant | Value | The flag |
+| --- | --- | --- |
+| `WEBGPU_INSTANCE_FLAG_EMPTY` | 0 | No flag. |
+| `WEBGPU_INSTANCE_FLAG_DEBUG` | 1 | Debug data in the shaders and in the objects. |
+| `WEBGPU_INSTANCE_FLAG_VALIDATION` | 2 | The validation layer of the API under WebGPU, if the system has it. |
+| `WEBGPU_INSTANCE_FLAG_DISCARD_HAL_LABELS` | 4 | wgpu-native gives no label to the API under WebGPU. |
+| `WEBGPU_INSTANCE_FLAG_ALLOW_UNDERLYING_NONCOMPLIANT_ADAPTER` | 8 | Also an adapter of a Vulkan driver that is not conformant. |
+| `WEBGPU_INSTANCE_FLAG_GPU_BASED_VALIDATION` | 16 | The validation on the GPU, with D3D12 and Vulkan. It includes the validation layer. |
+| `WEBGPU_INSTANCE_FLAG_VALIDATION_INDIRECT_CALL` | 32 | The check of the arguments of each indirect draw and dispatch. Without it, wrong arguments have no defined result. |
+| `WEBGPU_INSTANCE_FLAG_AUTOMATIC_TIMESTAMP_NORMALIZATION` | 64 | The timestamps of a query set are in nanoseconds, and the timestamp period of the queue is 1. |
+| `WEBGPU_INSTANCE_FLAG_DEFAULT` | 16777216 | The flags of the build of wgpu-native. The release of wgpu-native sets only `WEBGPU_INSTANCE_FLAG_VALIDATION_INDIRECT_CALL`. |
+| `WEBGPU_INSTANCE_FLAG_DEBUGGING` | 33554432 | The debug data, the validation layer and the check of the indirect calls. |
+| `WEBGPU_INSTANCE_FLAG_ADVANCED_DEBUGGING` | 67108864 | `WEBGPU_INSTANCE_FLAG_DEBUGGING` and the validation on the GPU. |
+| `WEBGPU_INSTANCE_FLAG_WITH_ENV` | 134217728 | wgpu-native also sets each flag whose variable of the environment has a value that is not 0, for example `WGPU_VALIDATION`. |
+
+https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/conv.rs#L318-L359 and https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-types/src/instance.rs#L234-L319 show what each flag sets.
+
+### webgpu:webgpu_d3d12_compiler_t
+
+| Constant | Value | The compiler of the shaders of D3D12 |
+| --- | --- | --- |
+| `WEBGPU_D3D12_COMPILER_AUTO` | 1 | DXC from `dxcompiler.dll` in the search path of the libraries of Windows. If no such library is there, FXC. |
+| `WEBGPU_D3D12_COMPILER_FXC` | 2 | FXC, the library `d3dcompiler_47.dll` of Windows. Its shader model is 5.1, so D3D12 gives no `RayQuery`. |
+| `WEBGPU_D3D12_COMPILER_DXC` | 3 | DXC from the library at `dxc_path`. If wgpu-native cannot load it, D3D12 does not start: *The instance*. |
+
+The value of each constant is 1 more than its value of `WGPUDx12Compiler` of `wgpu.h`.
+With DXC, the shader model of D3D12 is the lower one of the device and of the DXC library.
+If a DXC library loads but does not start, D3D12 does not start either, also with `WEBGPU_D3D12_COMPILER_AUTO`.
+https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-hal/src/dx12/instance.rs#L51-L97 shows the three compilers.
+
+### webgpu:webgpu_d3d12_swapchain_t
+
+The values are those of `WGPUDx12SwapchainKind` of `wgpu.h`.
+
+| Constant | Value | The swapchain of a surface of D3D12 |
+| --- | --- | --- |
+| `WEBGPU_D3D12_SWAPCHAIN_HWND` | 1 | A swapchain of DXGI on the window. Its surface gives only the alpha mode opaque. |
+| `WEBGPU_D3D12_SWAPCHAIN_VISUAL` | 2 | A swapchain of DXGI on a visual of DirectComposition over the window. Its surface gives each alpha mode of `webgpu.h`, also premultiplied. |
+
+https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-hal/src/dx12/adapter.rs#L1296-L1308 shows the alpha modes of each swapchain.
+
+### webgpu:webgpu_gles_version_t
+
+| Constant | Value | The version of OpenGL ES |
+| --- | --- | --- |
+| `WEBGPU_GLES_VERSION_AUTO` | 1 | The highest version that the driver gives. |
+| `WEBGPU_GLES_VERSION_3_0` | 2 | OpenGL ES 3.0. |
+| `WEBGPU_GLES_VERSION_3_1` | 3 | OpenGL ES 3.1. |
+| `WEBGPU_GLES_VERSION_3_2` | 4 | OpenGL ES 3.2. |
+
+The value of each constant is 1 more than its value of `WGPUGles3MinorVersion` of `wgpu.h`.
+The GL backend reads it only for a context of OpenGL ES of EGL. It makes one when EGL cannot make a context of OpenGL.
+If the driver does not give the version, the GL backend does not start.
+https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-hal/src/gles/egl.rs#L467-L479 and https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-hal/src/gles/egl.rs#L583-L591 show it.
+
+### webgpu:webgpu_gl_fence_t
+
+| Constant | Value | The fences of the GL backend |
+| --- | --- | --- |
+| `WEBGPU_GL_FENCE_NORMAL` | 1 | A fence tells that the GPU did the work of a submit. |
+| `WEBGPU_GL_FENCE_AUTO_FINISH` | 2 | A fence tells it at once. Thus the callback of `wgpuQueueOnSubmittedWorkDone` comes at the next poll of the device. |
+
+The value of each constant is 1 more than its value of `WGPUGLFenceBehaviour` of `wgpu.h`.
+https://github.com/gfx-rs/wgpu/blob/v29.0.1/wgpu-hal/src/gles/fence.rs#L37-L45 shows it.
+
 ## The C types
 
 `include/webgpu_device.h` gives the C type of each type of the module, and its descriptor for Bridge.
@@ -288,6 +422,12 @@ The header includes `bridge_schema.h` of Bridge. It makes each C type and its de
 | `webgpu:webgpu_depth_t` | `webgpu_depth_t` | `webgpu_depth_t_desc` | `WEBGPU_DEPTH_VALUES` |
 | `webgpu:webgpu_limits_t` | `webgpu_limits_t` | `webgpu_limits_t_desc` | `WEBGPU_LIMITS_VALUES` |
 | `webgpu:webgpu_features_t` | `webgpu_features_t` | `webgpu_features_t_desc` | `WEBGPU_FEATURES_VALUES` |
+| `webgpu:webgpu_instance_backends_t` | `webgpu_instance_backends_t` | `webgpu_instance_backends_t_desc` | `WEBGPU_INSTANCE_BACKENDS_VALUES` |
+| `webgpu:webgpu_instance_flags_t` | `webgpu_instance_flags_t` | `webgpu_instance_flags_t_desc` | `WEBGPU_INSTANCE_FLAGS_VALUES` |
+| `webgpu:webgpu_d3d12_compiler_t` | `webgpu_d3d12_compiler_t` | `webgpu_d3d12_compiler_t_desc` | `WEBGPU_D3D12_COMPILER_VALUES` |
+| `webgpu:webgpu_d3d12_swapchain_t` | `webgpu_d3d12_swapchain_t` | `webgpu_d3d12_swapchain_t_desc` | `WEBGPU_D3D12_SWAPCHAIN_VALUES` |
+| `webgpu:webgpu_gles_version_t` | `webgpu_gles_version_t` | `webgpu_gles_version_t_desc` | `WEBGPU_GLES_VERSION_VALUES` |
+| `webgpu:webgpu_gl_fence_t` | `webgpu_gl_fence_t` | `webgpu_gl_fence_t_desc` | `WEBGPU_GL_FENCE_VALUES` |
 | `webgpu:DeviceSettings` | `webgpu_device_settings_t` | `webgpu_device_settings_t_desc` | `WEBGPU_DEVICE_SETTINGS_FIELDS` |
 
 Each macro of the text gives the braces of its type and the text between them.
@@ -304,7 +444,13 @@ uint32_t { WEBGPU_SAMPLES_1 = 1, WEBGPU_SAMPLES_2 = 2, WEBGPU_SAMPLES_4 = 4, WEB
 uint32_t { WEBGPU_DEPTH_NONE = 1, WEBGPU_DEPTH_16_UNORM = 2, WEBGPU_DEPTH_24_PLUS = 3, WEBGPU_DEPTH_24_PLUS_STENCIL_8 = 4, WEBGPU_DEPTH_32_FLOAT = 5, WEBGPU_DEPTH_32_FLOAT_STENCIL_8 = 6 }
 uint32_t { WEBGPU_LIMITS_ADAPTER = 1, WEBGPU_LIMITS_DEFAULT = 2 }
 uint32_t { WEBGPU_FEATURES_ADAPTER = 1, WEBGPU_FEATURES_DEFAULT = 2 }
-{ webgpu_present_t present; webgpu_format_t format; webgpu_alpha_t alpha; webgpu_power_t power; bool fallback; webgpu_backend_t backend; webgpu_feature_level_t feature_level; webgpu_samples_t samples; webgpu_depth_t depth; webgpu_limits_t limits; webgpu_features_t features; uint32_t error_room; }
+uint32_t { WEBGPU_INSTANCE_BACKEND_ALL = 0, WEBGPU_INSTANCE_BACKEND_VULKAN = 1, WEBGPU_INSTANCE_BACKEND_GL = 2, WEBGPU_INSTANCE_BACKEND_METAL = 4, WEBGPU_INSTANCE_BACKEND_D3D12 = 8 }
+uint32_t { WEBGPU_INSTANCE_FLAG_EMPTY = 0, WEBGPU_INSTANCE_FLAG_DEBUG = 1, WEBGPU_INSTANCE_FLAG_VALIDATION = 2, WEBGPU_INSTANCE_FLAG_DISCARD_HAL_LABELS = 4, WEBGPU_INSTANCE_FLAG_ALLOW_UNDERLYING_NONCOMPLIANT_ADAPTER = 8, WEBGPU_INSTANCE_FLAG_GPU_BASED_VALIDATION = 16, WEBGPU_INSTANCE_FLAG_VALIDATION_INDIRECT_CALL = 32, WEBGPU_INSTANCE_FLAG_AUTOMATIC_TIMESTAMP_NORMALIZATION = 64, WEBGPU_INSTANCE_FLAG_DEFAULT = 16777216, WEBGPU_INSTANCE_FLAG_DEBUGGING = 33554432, WEBGPU_INSTANCE_FLAG_ADVANCED_DEBUGGING = 67108864, WEBGPU_INSTANCE_FLAG_WITH_ENV = 134217728 }
+uint32_t { WEBGPU_D3D12_COMPILER_AUTO = 1, WEBGPU_D3D12_COMPILER_FXC = 2, WEBGPU_D3D12_COMPILER_DXC = 3 }
+uint32_t { WEBGPU_D3D12_SWAPCHAIN_HWND = 1, WEBGPU_D3D12_SWAPCHAIN_VISUAL = 2 }
+uint32_t { WEBGPU_GLES_VERSION_AUTO = 1, WEBGPU_GLES_VERSION_3_0 = 2, WEBGPU_GLES_VERSION_3_1 = 3, WEBGPU_GLES_VERSION_3_2 = 4 }
+uint32_t { WEBGPU_GL_FENCE_NORMAL = 1, WEBGPU_GL_FENCE_AUTO_FINISH = 2 }
+{ webgpu_present_t present; webgpu_format_t format; webgpu_alpha_t alpha; webgpu_power_t power; bool fallback; webgpu_backend_t backend; webgpu_feature_level_t feature_level; webgpu_samples_t samples; webgpu_depth_t depth; webgpu_limits_t limits; webgpu_features_t features; uint32_t error_room; webgpu_instance_backends_t instance_backends; webgpu_instance_flags_t instance_flags; webgpu_d3d12_compiler_t d3d12_compiler; webgpu_d3d12_swapchain_t d3d12_swapchain; webgpu_gles_version_t gles_version; webgpu_gl_fence_t gl_fence; uint8_t creation_threshold; uint8_t loss_threshold; char dxc_path[1024]; }
 ```
 
 ## The declarations
@@ -324,9 +470,15 @@ Bridge compares the descriptors byte for byte. It also refuses a second module t
 | `webgpu:webgpu_depth_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
 | `webgpu:webgpu_limits_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
 | `webgpu:webgpu_features_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `webgpu:webgpu_instance_backends_t` | `BRIDGE_BITMASK` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `webgpu:webgpu_instance_flags_t` | `BRIDGE_BITMASK` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `webgpu:webgpu_d3d12_compiler_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `webgpu:webgpu_d3d12_swapchain_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `webgpu:webgpu_gles_version_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
+| `webgpu:webgpu_gl_fence_t` | `BRIDGE_ENUM` | `BRIDGE_TABLE` | `BRIDGE_ON_DESTROY_REMOVE` |
 | `webgpu:DeviceSettings` | `BRIDGE_STRUCT` | `BRIDGE_SINGLETON` | `BRIDGE_ON_DESTROY_REMOVE` |
 
-A module declares the 10 enums before `webgpu:DeviceSettings`, which names them. Bridge finds the type of a field only among the types that are already declared.
+A module declares the 14 enums and the 2 bitmasks before `webgpu:DeviceSettings`, which names them. Bridge finds the type of a field only among the types that are already declared.
 The module states `BRIDGE_STRIP` as the `on_unload` of each type, so its unload destroys no entity. Bridge does not compare `on_unload`, so each module states its own.
 The module also declares the four types of *The contract*, as the document of `webgpu_contract.h` tells.
 

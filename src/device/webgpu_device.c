@@ -10,35 +10,47 @@
 [[gnu::section(MANIFEST_SECTION), gnu::used, gnu::retain]]
 static const char WHO[] = MANIFEST;
 
-static const char *const ENUMS[][2] = {
-    { "webgpu:webgpu_present_t", webgpu_present_t_desc },
-    { "webgpu:webgpu_format_t", webgpu_format_t_desc },
-    { "webgpu:webgpu_alpha_t", webgpu_alpha_t_desc },
-    { "webgpu:webgpu_power_t", webgpu_power_t_desc },
-    { "webgpu:webgpu_backend_t", webgpu_backend_t_desc },
-    { "webgpu:webgpu_feature_level_t", webgpu_feature_level_t_desc },
-    { "webgpu:webgpu_samples_t", webgpu_samples_t_desc },
-    { "webgpu:webgpu_depth_t", webgpu_depth_t_desc },
-    { "webgpu:webgpu_limits_t", webgpu_limits_t_desc },
-    { "webgpu:webgpu_features_t", webgpu_features_t_desc },
-    { "webgpu:webgpu_surface_t", webgpu_surface_t_desc },
-    { "webgpu:webgpu_frame_state_t", webgpu_frame_state_t_desc }
+static const declared_type_t TYPES[] = {
+    { "webgpu:webgpu_present_t", webgpu_present_t_desc, BRIDGE_ENUM },
+    { "webgpu:webgpu_format_t", webgpu_format_t_desc, BRIDGE_ENUM },
+    { "webgpu:webgpu_alpha_t", webgpu_alpha_t_desc, BRIDGE_ENUM },
+    { "webgpu:webgpu_power_t", webgpu_power_t_desc, BRIDGE_ENUM },
+    { "webgpu:webgpu_backend_t", webgpu_backend_t_desc, BRIDGE_ENUM },
+    { "webgpu:webgpu_feature_level_t", webgpu_feature_level_t_desc,
+        BRIDGE_ENUM },
+    { "webgpu:webgpu_samples_t", webgpu_samples_t_desc, BRIDGE_ENUM },
+    { "webgpu:webgpu_depth_t", webgpu_depth_t_desc, BRIDGE_ENUM },
+    { "webgpu:webgpu_limits_t", webgpu_limits_t_desc, BRIDGE_ENUM },
+    { "webgpu:webgpu_features_t", webgpu_features_t_desc, BRIDGE_ENUM },
+    { "webgpu:webgpu_instance_backends_t", webgpu_instance_backends_t_desc,
+        BRIDGE_BITMASK },
+    { "webgpu:webgpu_instance_flags_t", webgpu_instance_flags_t_desc,
+        BRIDGE_BITMASK },
+    { "webgpu:webgpu_d3d12_compiler_t", webgpu_d3d12_compiler_t_desc,
+        BRIDGE_ENUM },
+    { "webgpu:webgpu_d3d12_swapchain_t", webgpu_d3d12_swapchain_t_desc,
+        BRIDGE_ENUM },
+    { "webgpu:webgpu_gles_version_t", webgpu_gles_version_t_desc,
+        BRIDGE_ENUM },
+    { "webgpu:webgpu_gl_fence_t", webgpu_gl_fence_t_desc, BRIDGE_ENUM },
+    { "webgpu:webgpu_surface_t", webgpu_surface_t_desc, BRIDGE_ENUM },
+    { "webgpu:webgpu_frame_state_t", webgpu_frame_state_t_desc, BRIDGE_ENUM }
 };
 
 static device_t state;
 
-static void declare_enums(const bridge_api_t *api)
+static void declare_types(const bridge_api_t *api)
 {
     uint32_t name = 0;
     uint32_t desc = 0;
 
-    for (size_t i = 0; i < sizeof(ENUMS) / sizeof(ENUMS[0]); i++) {
-        name = (uint32_t)strlen(ENUMS[i][0]);
-        desc = (uint32_t)strlen(ENUMS[i][1]);
+    for (size_t i = 0; i < sizeof(TYPES) / sizeof(TYPES[0]); i++) {
+        name = (uint32_t)strlen(TYPES[i].name);
+        desc = (uint32_t)strlen(TYPES[i].desc);
         api->declare(api, BRIDGE_NATIVE_STATE(api, bridge_declaration_t,
-            bridge_native_put(api, ENUMS[i][0], name), name, BRIDGE_ENUM,
+            bridge_native_put(api, TYPES[i].name, name), name, TYPES[i].kind,
             sizeof(uint32_t), alignof(uint32_t),
-            bridge_native_put(api, ENUMS[i][1], desc), desc, BRIDGE_STRIP,
+            bridge_native_put(api, TYPES[i].desc, desc), desc, BRIDGE_STRIP,
             BRIDGE_TABLE, BRIDGE_ON_DESTROY_REMOVE));
     }
 }
@@ -51,7 +63,7 @@ BRIDGE_NATIVE(init)
         { FRAME, BRIDGE_WRITE, BRIDGE_OPTIONAL, 0 } };
     bridge_term_t present[1] = { { FRAME, BRIDGE_READ, BRIDGE_OPTIONAL, 0 } };
 
-    declare_enums(api);
+    declare_types(api);
     BRIDGE_NATIVE_COMPONENT(api, "webgpu:DeviceSettings",
         webgpu_device_settings_t, BRIDGE_STRIP, BRIDGE_SINGLETON,
         BRIDGE_ON_DESTROY_REMOVE);

@@ -1,10 +1,10 @@
-# src/mesh_render.c
+# src/mesh/mesh_render.c
 
 This file holds the systems `draws`, `batches` and `render`. They fill the round, and `render` encodes it.
 
 ## The items of a round
 
-`draws` and `batches` run after `keep_textures`, so a draw finds each upload of its round: `docs/intern/mesh_systems.c.md`, *The order*.
+`draws` and `batches` run after `keep_textures`, so a draw finds each upload of its round: `docs/intern/mesh/mesh_systems.c.md`, *The order*.
 Each one gives its kind of item to `add_items`:
 
 ```pseudo
@@ -21,7 +21,7 @@ FUNCTION add_items(system : U32, slot : U32, visit : Visit) RETURNS I32
 ENDFUNCTION
 ```
 
-`draws` gives `DRAW` and `mesh_add_draw`, and `batches` gives `BATCH` and `mesh_add_batch`: `docs/intern/mesh_draw.c.md`.
+`draws` gives `DRAW` and `mesh_add_draw`, and `batches` gives `BATCH` and `mesh_add_batch`: `docs/intern/mesh/mesh_draw.c.md`.
 `NONE` is no visit, so the first walk only counts the rows.
 A round whose memory cannot grow sets `ready` to false, so the systems after it draw nothing.
 

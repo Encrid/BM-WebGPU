@@ -1,6 +1,6 @@
-# include/webgpu_contract.h
+# include/contract/webgpu_contract.h
 
-`include/webgpu_contract.h` gives the four types that the WebGPU modules of Bridge share: their C types, their constants and their descriptors.
+`include/contract/webgpu_contract.h` gives the four types that the WebGPU modules of Bridge share: their C types, their constants and their descriptors.
 Each module in C that writes or reads one of these types includes this header.
 
 ## The roles
@@ -80,7 +80,8 @@ With more than 1 sample, each render pass resolves `target` into `frame`.
 
 ## The C types
 
-The header includes `bridge_schema.h` of Bridge. It makes each C type and its descriptor from one text, with the macros of that header.
+The header includes `bridge_schema.h` of Bridge. Thus a module that includes the header also takes the release of Bridge.
+The header makes each C type and its descriptor from one text, with the macros of `bridge_schema.h`.
 
 | Type of Bridge | C type | Descriptor | Macro of the text |
 | --- | --- | --- | --- |

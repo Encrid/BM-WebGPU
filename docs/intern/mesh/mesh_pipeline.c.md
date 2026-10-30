@@ -1,4 +1,4 @@
-# src/mesh_pipeline.c
+# src/mesh/mesh_pipeline.c
 
 This file holds the WGSL shaders of the module, its layouts and its pipelines.
 It also holds the quads of the wide points and of the wide lines.
@@ -14,7 +14,7 @@ The WGSL text is a constant text of the file, with four entry points:
 | `vs_line` | A corner of the band of a segment of a wide line. |
 | `fs_main` | The color of a fragment. |
 
-The struct `Block` of the WGSL text has the layout of `mesh_block_t`: `docs/intern/mesh_inside.h.md`, *Types*.
+The struct `Block` of the WGSL text has the layout of `mesh_block_t`: `docs/intern/mesh/mesh_inside.h.md`, *Types*.
 WGSL aligns a `vec3f` to 16 bytes, but `webgpu:Scene` packs each `float[3]`.
 Thus `Block` reads the light, its color and the ambient color as nine scalars, and `size` at the offset 120.
 
@@ -36,7 +36,7 @@ ENDFUNCTION
 
 `point` gives the position with a `w` of 1. `direction` gives the normal with a `w` of 0, so the normal turns with `model` and does not move.
 The second line makes the depth after the division by `w` smaller by `bias`.
-`lambert` applies `docs/extern/webgpu_mesh.h.md`, *The shading*, to the red, the green and the blue.
+`lambert` applies `docs/extern/mesh/webgpu_mesh.h.md`, *The shading*, to the red, the green and the blue.
 
 ```pseudo
 FUNCTION fs_main(i : Out) RETURNS Color
@@ -97,13 +97,13 @@ FUNCTION mesh_get_pipeline(layout : U32, shape : U32, depth : U32) RETURNS U32
 ENDFUNCTION
 ```
 
-Step 3 of `docs/extern/webgpu_mesh.h.md`, *The systems*, makes no pipeline in advance. wgpu-native has no call that makes a pipeline in the background.
+Step 3 of `docs/extern/mesh/webgpu_mesh.h.md`, *The systems*, makes no pipeline in advance. wgpu-native has no call that makes a pipeline in the background.
 Thus the round of the first draw of a pipeline makes it, and a pipeline that no draw needs is never made.
 `make_pipeline` gives each pipeline these states:
 
 | State | Value |
 | --- | --- |
-| The vertex | The entry point of the shape, and the buffers of `mesh_set_buffers`: `docs/intern/mesh_vertex.c.md`, *The vertex buffers*. |
+| The vertex | The entry point of the shape, and the buffers of `mesh_set_buffers`: `docs/intern/mesh/mesh_vertex.c.md`, *The vertex buffers*. |
 | The primitive | A list of triangles, of lines or of points. A wide shape draws a list of triangles. |
 | The faces | `cull` and `clockwise` of the settings of the device. A wide shape culls no face, since a point or a line has no face. |
 | The depth | None when `depth_format` is 0. Else `depth_compare` when bit 0 of `depth` is set, else always, and a write when bit 1 is set. |
@@ -112,8 +112,8 @@ Thus the round of the first draw of a pipeline makes it, and a pipeline that no 
 | The color target | `format` of the frame. |
 
 `get_primitive` gives the primitive and the faces. `get_depth_state` gives the depth.
-The settings of the device are the copy that `docs/intern/mesh_device.c.md`, *The objects of a device*, tells.
-The pipelines of a `depth_format` of 0 have no depth state. Thus a frame with no depth texture acts as `docs/extern/webgpu_mesh.h.md`, *webgpu:MeshSettings*, tells.
+The settings of the device are the copy that `docs/intern/mesh/mesh_device.c.md`, *The objects of a device*, tells.
+The pipelines of a `depth_format` of 0 have no depth state. Thus a frame with no depth texture acts as `docs/extern/mesh/webgpu_mesh.h.md`, *webgpu:MeshSettings*, tells.
 
 ## The labels
 

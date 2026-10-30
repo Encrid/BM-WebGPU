@@ -1,4 +1,4 @@
-# src/mesh_systems.c
+# src/mesh/mesh_systems.c
 
 This file gives Bridge the statements of the systems and of the observers of the module.
 
@@ -25,7 +25,7 @@ An observer hears an entity by its term of `BRIDGE_AND` alone. Its optional term
 
 `before` of each system names the system before it in the table, so the five systems make one chain.
 Thus each system runs after the system that writes what it reads: `bridge_abi.h.md` of Bridge, in its section Conflicts.
-The state of the module carries the data of a round from one system to the next: `docs/intern/mesh_store.c.md`, *The state*.
+The state of the module carries the data of a round from one system to the next: `docs/intern/mesh/mesh_store.c.md`, *The state*.
 
 `mesh_add_systems` registers each system with `BRIDGE_NATIVE_ADD_SYSTEM` of BB-Native. Its `before` is the slot of the system before it, and its `before_count` is 1.
 `keep_meshes` has no system before it, so it gives `nullptr` and 0.

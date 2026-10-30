@@ -1,4 +1,4 @@
-# src/mesh_memory.c
+# src/mesh/mesh_memory.c
 
 This file holds the memory of a round: its arrays in the module, and the round buffer on the device.
 
@@ -29,7 +29,7 @@ A round with no view draws nothing, so it writes nothing and does not grow the b
 If `gpu_memory` refuses the new size, `mesh_take_memory` gives its line to `mesh_say_no_room`.
 If `maxBufferSize` refuses it, `grow_round` gives the rule of the round to `mesh_say_left_out`, with the id 0.
 In both cases, the round keeps the old buffer and sets its count of views to 0.
-Thus the round acts as `docs/extern/webgpu_mesh.h.md`, *webgpu:MeshSettings*, tells for a buffer of a round that cannot grow.
+Thus the round acts as `docs/extern/mesh/webgpu_mesh.h.md`, *webgpu:MeshSettings*, tells for a buffer of a round that cannot grow.
 
 Then `mesh_put_round` writes the blocks and the records, with one call each. It writes the vertices of each batch from the arena, with no copy in the module.
 `mesh_release_round` releases the round buffer and its bind group 0 with the other objects of the device, and gives the bytes of the buffer back.

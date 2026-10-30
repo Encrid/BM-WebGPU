@@ -1,12 +1,12 @@
-# src/device_inside.h
+# src/device/device_inside.h
 
 This private header is shared by the sources of the module.
-It includes `include/webgpu_device.h`, the headers `webgpu.h` and `wgpu.h` of BL-WGPU-Native, and the headers of BB-Native.
+It includes `include/device/webgpu_device.h`, the headers `webgpu.h` and `wgpu.h` of wgpu-native, and the headers of BB-Native.
 
 ## The slots
 
 Bridge numbers the types of a module from 0, in the order of their declarations.
-`bridge_init` first declares each type of `docs/extern/webgpu_device.h.md`, *The C types*, in the order of that table, but `webgpu:DeviceSettings`.
+`bridge_init` first declares each type of `docs/extern/device/webgpu_device.h.md`, *The C types*, in the order of that table, but `webgpu:DeviceSettings`.
 Then it declares `webgpu:webgpu_surface_t` and `webgpu:webgpu_frame_state_t` of the contract, and the 3 singletons.
 The header gives the slots of the singletons as `constexpr`: `SETTINGS` is 18, `WINDOW` is 19 and `FRAME` is 20.
 A `declared_type_t` holds the name of one of the 18 types before the singletons, its descriptor and its kind: enum or bitmask.
@@ -37,11 +37,11 @@ A `declared_type_t` holds the name of one of the 18 types before the singletons,
 | `failed` | `true` when a step of the make or a callback failed and wrote its line. |
 | `configure` | `true` when the surface needs a configure at the next run. |
 
-`docs/intern/device_errors.c.md`, *The room*, gives the fields of `room_t`.
-`docs/intern/device_errors.c.md`, *A writer*, gives the fields of `text_head_t`, the head of a text in the room.
-`docs/extern/webgpu_device.h.md`, *The make*, gives the steps that `next` names.
+`docs/intern/device/device_errors.c.md`, *The room*, gives the fields of `room_t`.
+`docs/intern/device/device_errors.c.md`, *A writer*, gives the fields of `text_head_t`, the head of a text in the room.
+`docs/extern/device/webgpu_device.h.md`, *The make*, gives the steps that `next` names.
 
-`device_source_t` is the source of a surface, which `device_make_surface` gives to `device_set_source`: `docs/intern/device_source.c.md`.
+`device_source_t` is the source of a surface, which `device_make_surface` gives to `device_set_source`: `docs/intern/device/device_source.c.md`.
 
 | Field | Content |
 | --- | --- |
@@ -49,7 +49,7 @@ A `declared_type_t` holds the name of one of the 18 types before the singletons,
 | `extras` | The `WGPUInstanceExtras` of the instance: the settings of `device_set_instance`, and the display of a window of Wayland. |
 | `surface` | A union of the chained struct of each kind of window: `windows`, `metal`, `x11` and `wayland`. `chain` is the start of each one. |
 
-`device_request_t` holds the descriptor of the device and what the descriptor points to, until the request of `device_ask_device` ends: `docs/intern/device_ask.c.md`.
+`device_request_t` holds the descriptor of the device and what the descriptor points to, until the request of `device_ask_device` ends: `docs/intern/device/device_ask.c.md`.
 
 | Field | Content |
 | --- | --- |
@@ -88,19 +88,19 @@ https://github.com/gfx-rs/wgpu-native/blob/v29.0.1.1/src/lib.rs#L494-L643 and ht
 ## Functions
 
 The module writes its lines with `bridge_native_say` of BB-Native, at the level `BRIDGE_LOG_ERR` or `BRIDGE_LOG_WARN`.
-The steps write the three families of lines through `src/device_lines.c`, and `device_drain_room` writes the lines of the room.
+The steps write the three families of lines through `src/device/device_lines.c`, and `device_drain_room` writes the lines of the room.
 `[test] writers` names `bridge_native_say`, so that the check of the messages reads each format: `docs/contributing/tests.md`, *The messages of the code*.
 The header gives no function of its own. It declares the functions that the sources share:
 
 | Function | Source |
 | --- | --- |
-| `device_get_state` | `src/webgpu_device.c` |
-| `device_make_next`, `device_make_surface`, `device_release` | `src/device_make.c` |
-| `device_set_source` | `src/device_source.c` |
-| `device_set_instance` | `src/device_instance.c` |
-| `device_ask_adapter`, `device_ask_device` | `src/device_ask.c` |
-| `device_choose_modes` | `src/device_modes.c` |
-| `device_choose_targets`, `device_make_targets`, `device_release_targets` | `src/device_targets.c` |
-| `device_take_frame`, `device_release_frame`, `device_is_lost` | `src/device_present.c` |
-| `device_keep_error`, `device_keep_lost`, `device_drain_room`, `device_size_room` | `src/device_errors.c` |
-| `device_say_no_device`, `device_say_no_surface`, `device_say_fallback` | `src/device_lines.c` |
+| `device_get_state` | `src/device/webgpu_device.c` |
+| `device_make_next`, `device_make_surface`, `device_release` | `src/device/device_make.c` |
+| `device_set_source` | `src/device/device_source.c` |
+| `device_set_instance` | `src/device/device_instance.c` |
+| `device_ask_adapter`, `device_ask_device` | `src/device/device_ask.c` |
+| `device_choose_modes` | `src/device/device_modes.c` |
+| `device_choose_targets`, `device_make_targets`, `device_release_targets` | `src/device/device_targets.c` |
+| `device_take_frame`, `device_release_frame`, `device_is_lost` | `src/device/device_present.c` |
+| `device_keep_error`, `device_keep_lost`, `device_drain_room`, `device_size_room` | `src/device/device_errors.c` |
+| `device_say_no_device`, `device_say_no_surface`, `device_say_fallback` | `src/device/device_lines.c` |
